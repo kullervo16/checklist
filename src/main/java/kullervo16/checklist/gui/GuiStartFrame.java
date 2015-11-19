@@ -5,6 +5,8 @@
  */
 package kullervo16.checklist.gui;
 
+import java.util.Collections;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import kullervo16.checklist.model.ChecklistRepository;
@@ -22,9 +24,13 @@ public class GuiStartFrame extends javax.swing.JFrame {
     /**
      * Creates new form GuiStartFrame
      */
-    public GuiStartFrame() {
+    public GuiStartFrame(String directory) {
         this.templates = new TemplateRepository();
+        this.templates.loadData(directory+"/templates");
+        
         this.checklists= new ChecklistRepository();
+        
+        
         initComponents();
     }
 
@@ -132,7 +138,7 @@ public class GuiStartFrame extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(final String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -159,14 +165,16 @@ public class GuiStartFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GuiStartFrame().setVisible(true);
+                new GuiStartFrame(args[0]).setVisible(true);
             }
         });
     }
     
     private ListModel getTemplates() {
         DefaultListModel model =  new DefaultListModel();
-        for(String template : this.templates.getTemplateNames()) {
+        List<String> templateNames = this.templates.getTemplateNames();
+        Collections.sort(templateNames);
+        for(String template : templateNames) {
             model.addElement(template);
         }
         return model;
@@ -174,7 +182,9 @@ public class GuiStartFrame extends javax.swing.JFrame {
 
     private ListModel getOpenChecklists() {
         DefaultListModel model =  new DefaultListModel();
-        for(String template : this.checklists.getChecklistNames()) {
+        List<String> checklistNames = this.checklists.getChecklistNames();
+        Collections.sort(checklistNames);
+        for(String template : checklistNames) {
             model.addElement(template);
         }
         return model;
