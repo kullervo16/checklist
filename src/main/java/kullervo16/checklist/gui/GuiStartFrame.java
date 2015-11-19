@@ -29,7 +29,7 @@ public class GuiStartFrame extends javax.swing.JFrame {
         this.templates.loadData(directory+"/templates");
         
         this.checklists= new ChecklistRepository();
-        
+        this.checklists.loadData(directory+"/checklists");
         
         initComponents();
     }

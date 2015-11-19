@@ -14,7 +14,7 @@ import java.util.Map;
  * @author jeve
  */
 public class ChecklistRepository {
-    private Map<String, Checklist> data;
+    private Map<String, Checklist> data = new HashMap<>();
 
     
     
