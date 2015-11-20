@@ -8,7 +8,10 @@ package kullervo16.checklist.gui;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.ListModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import kullervo16.checklist.model.ChecklistRepository;
 import kullervo16.checklist.model.TemplateRepository;
 
@@ -23,6 +26,7 @@ public class GuiStartFrame extends javax.swing.JFrame {
     
     /**
      * Creates new form GuiStartFrame
+     * @param directory the folder to pass to the repositories
      */
     public GuiStartFrame(String directory) {
         this.templates = new TemplateRepository();
@@ -49,8 +53,8 @@ public class GuiStartFrame extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         checklistList = new javax.swing.JList();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        createChecklistButton = new javax.swing.JButton();
+        continueChecklistButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -60,22 +64,28 @@ public class GuiStartFrame extends javax.swing.JFrame {
         );
         templateList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(templateList);
+        this.templateList.getSelectionModel().addListSelectionListener(
+            new SelectionHandler(createChecklistButton, continueChecklistButton));
 
         jLabel2.setText("Available open checklists :");
 
         checklistList.setModel(this.getOpenChecklists());
         checklistList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(checklistList);
+        this.checklistList.getSelectionModel().addListSelectionListener(
+            new SelectionHandler(continueChecklistButton, createChecklistButton));
 
-        jButton1.setText("Create a new checklist");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        createChecklistButton.setText("Create a new checklist");
+        createChecklistButton.setEnabled(false);
+        createChecklistButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createChecklistFromTemplate(evt);
             }
         });
 
-        jButton2.setText("Continue checklist");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        continueChecklistButton.setText("Continue checklist");
+        continueChecklistButton.setEnabled(false);
+        continueChecklistButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 continueOpenChecklist(evt);
             }
@@ -98,8 +108,8 @@ public class GuiStartFrame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(createChecklistButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(continueChecklistButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -110,13 +120,13 @@ public class GuiStartFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
+                .addComponent(createChecklistButton)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2)
+                .addComponent(continueChecklistButton)
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -192,14 +202,31 @@ public class GuiStartFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList checklistList;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton continueChecklistButton;
+    private javax.swing.JButton createChecklistButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList templateList;
     // End of variables declaration//GEN-END:variables
+
+    private static class SelectionHandler implements ListSelectionListener {
+        private final JButton buttonToBeEnabled;
+        private final JButton buttonToBeDisabled;
+
+        public SelectionHandler(JButton buttonToBeEnabled, JButton buttonToBeDisabled) {
+            this.buttonToBeEnabled = buttonToBeEnabled;
+            this.buttonToBeDisabled = buttonToBeDisabled;
+        }
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            System.out.println("Selection changed");
+            this.buttonToBeEnabled.setEnabled(true);
+            this.buttonToBeDisabled.setEnabled(false);
+        }
+    }
 
     
 }
