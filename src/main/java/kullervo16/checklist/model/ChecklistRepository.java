@@ -33,7 +33,7 @@ public class ChecklistRepository {
             if(f.isDirectory()) {
                 this.scanDirectoryForTemplates(f, prefix+"/"+f.getName(), newModel);
             } else {
-                newModel.put(prefix+"/"+f.getName(), new Checklist()); // TODO : fill template object
+                newModel.put(prefix+"/"+f.getName(), new Checklist(f)); 
             }
             
         }

@@ -32,7 +32,7 @@ public class TemplateRepository {
             if(f.isDirectory()) {
                 this.scanDirectoryForTemplates(f, prefix+"/"+f.getName(), newModel);
             } else {
-                newModel.put(prefix+"/"+f.getName(), new Template()); // TODO : fill template object
+                newModel.put(prefix+"/"+f.getName(), new Template(f)); 
             }
             
         }
@@ -43,4 +43,10 @@ public class TemplateRepository {
         return names;
                 
     }
+
+    public Template getTemplate(String templateName) {
+        return this.data.get(templateName);
+    }
+
+    
 }
