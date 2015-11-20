@@ -46,4 +46,8 @@ public class ChecklistRepository {
         return names;
                 
     }
+
+    public Checklist getChecklist(String name) {
+        return this.data.get(name);
+    }
 }

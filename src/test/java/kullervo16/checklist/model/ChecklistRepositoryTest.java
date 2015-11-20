@@ -6,10 +6,7 @@
 package kullervo16.checklist.model;
 
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -38,6 +35,12 @@ public class ChecklistRepositoryTest {
         assertEquals(1, result.size());
         
         assertTrue(result.contains("/vas/famhp/acc/deployment_20151124_1.yml"));
+    }
+    
+    @Test
+    public void testGetChecklist() {
+        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124_1.yml");
+        assertNotNull(cl);
     }
     
 }
