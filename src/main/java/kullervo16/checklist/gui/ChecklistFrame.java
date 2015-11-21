@@ -11,7 +11,9 @@ import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.Step;
 
 /**
- *
+ * This frame contains the GUI for a checklist. It contains a single header and 
+ * then a scrollable list of StepPanels, who do the actual work.
+ * 
  * @author jeve
  */
 public class ChecklistFrame extends javax.swing.JFrame {
@@ -32,7 +34,7 @@ public class ChecklistFrame extends javax.swing.JFrame {
         this.progressBar.setValue(cl.getProgress());
         
         for(Step step : this.checklist.getSteps()) {
-            this.stepsPanel.add(new StepPanel(step));
+            this.stepsPanel.add(new StepPanel(this, step));
         }
         pack();
     }

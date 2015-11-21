@@ -13,7 +13,8 @@ import kullervo16.checklist.model.ChecklistRepository;
 import kullervo16.checklist.model.TemplateRepository;
 
 /**
- *
+ * The main class of the GUI... things start here.
+ * 
  * @author jeve
  */
 public class GuiStartFrame extends javax.swing.JFrame {

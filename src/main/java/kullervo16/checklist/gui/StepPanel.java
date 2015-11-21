@@ -7,20 +7,26 @@ package kullervo16.checklist.gui;
 
 import java.awt.Color;
 import java.text.SimpleDateFormat;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import kullervo16.checklist.model.Step;
 
 /**
- *
+ * The GUI for a single step in a checklist. When updated, it will launch a modal
+ * UpdateStepFrame to capture the update information.
+ * 
  * @author jeve
  */
 public class StepPanel extends javax.swing.JPanel {
 
     private Step step;
     private SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD HH:mm");
+    private final JFrame parentFrame;
     /**
      * Creates new form StepPanel
      */
-    public StepPanel(Step step) {
+    public StepPanel(JFrame parent,Step step) {
+        this.parentFrame = parent;
         this.step = step;
         initComponents();     
         this.updateButton.setVisible(!this.step.isComplete());
@@ -95,7 +101,11 @@ public class StepPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void updateStep(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStep
-        
+        UpdateStepPanel usf = new UpdateStepPanel(this.step);
+        JDialog frame = new JDialog(this.parentFrame, "Check", true);
+        frame.getContentPane().add(usf);
+        frame.pack();
+        frame.setVisible(true);
     }//GEN-LAST:event_updateStep
 
 
