@@ -54,6 +54,11 @@ public class StepPanel extends javax.swing.JPanel {
         executed.setText(getExecutedText());
 
         updateButton.setText("Update");
+        updateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateStep(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -88,6 +93,10 @@ public class StepPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void updateStep(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStep
+        
+    }//GEN-LAST:event_updateStep
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

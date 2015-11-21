@@ -132,6 +132,9 @@ public class GuiStartFrame extends javax.swing.JFrame {
     private void continueOpenChecklist(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_continueOpenChecklist
         if(this.checklistList.getSelectedIndex() >= 0) {
             System.out.println("Continue open checklist "+this.checklistList.getSelectedValue());
+            this.setVisible(false);
+            ChecklistFrame clf = new ChecklistFrame(this.checklists.getChecklist((String)this.checklistList.getSelectedValue()));
+            clf.setVisible(true);
         }
     }//GEN-LAST:event_continueOpenChecklist
 
