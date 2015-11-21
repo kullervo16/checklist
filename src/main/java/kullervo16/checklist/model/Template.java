@@ -54,4 +54,8 @@ public class Template {
         this.checkAndLoadDataFromFile();
         return this.steps;
     }
+
+    public String getDisplayName() {
+        return this.file.getName();
+    }
 }

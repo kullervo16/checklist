@@ -81,6 +81,16 @@ public class Step {
         this.executor = executor;
     }
 
+    public boolean isComplete() {
+        switch(this.state) {
+            case UNKNOWN:
+            case ON_HOLD:
+                return false;
+            default:
+                return true;
+        }
+    }
+
     
     
 }

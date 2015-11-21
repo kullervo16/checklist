@@ -80,5 +80,11 @@ public class ChecklistTest {
         assertFalse(cl2.isComplete());
     }
     
-    
+    @Test
+    public void testGetProgress() {
+        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124.yml");
+        assertEquals(100, cl.getProgress());
+        Checklist cl2 = this.repository.getChecklist("/vas/famhp/acc/deployment_20151125.yml");
+        assertEquals(66, cl2.getProgress());
+    }
 }
