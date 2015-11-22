@@ -13,6 +13,13 @@ public class Checklist extends Template{
     public Checklist(File file) {
         super(file);
     }
+
+    public Checklist() {
+    }
+    
+    
+    
+    
     
    public boolean isComplete() {
        for(Step step : this.getSteps()) {

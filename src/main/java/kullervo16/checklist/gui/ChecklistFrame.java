@@ -166,5 +166,6 @@ public class ChecklistFrame extends javax.swing.JFrame implements PropertyChange
     @Override
     public void propertyChange(PropertyChangeEvent evt) {        
         this.progressBar.setValue(this.checklist.getProgress());
+        this.checklist.serialize();
     }
 }

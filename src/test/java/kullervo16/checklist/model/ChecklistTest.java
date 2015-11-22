@@ -5,7 +5,12 @@
  */
 package kullervo16.checklist.model;
 
+import com.esotericsoftware.yamlbeans.YamlException;
+import com.esotericsoftware.yamlbeans.YamlWriter;
+import java.io.StringWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -85,6 +90,29 @@ public class ChecklistTest {
         Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124.yml");
         assertEquals(100, cl.getProgress());
         Checklist cl2 = this.repository.getChecklist("/vas/famhp/acc/deployment_20151125.yml");
-        assertEquals(66, cl2.getProgress());
+        assertEquals(33, cl2.getProgress());
+    }
+    
+    @Test
+    public void testSerialize() {
+        this.repository = new ChecklistRepository();
+        this.repository.loadData("./target/test-classes/data/checklists");
+        
+        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151126.yml");
+               
+        // serialize cl
+        cl.serialize();
+        
+        ChecklistRepository repo2 = new ChecklistRepository();
+        repo2.loadData("./target/test-classes/data/checklists");
+
+        Checklist cl2 = repo2.getChecklist("/vas/famhp/acc/deployment_20151126.yml");      
+        // trigger loading (equals on introspection does not work properly
+        cl.getSteps();
+        cl2.getSteps();
+
+
+        
+        assertEquals(cl, cl2);    
     }
 }
