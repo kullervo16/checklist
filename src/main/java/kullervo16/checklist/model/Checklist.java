@@ -47,7 +47,7 @@ public class Checklist extends Template{
        int totalSteps = steps.size();
        int stepsToDo = 0;
        for(Step step : steps) {
-           if(step.getState().equals(State.UNKNOWN)) {
+           if(!step.isComplete()) {
                stepsToDo ++;
            }
        }

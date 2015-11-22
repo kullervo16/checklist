@@ -6,6 +6,8 @@
 package kullervo16.checklist.gui;
 
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.Step;
@@ -16,7 +18,7 @@ import kullervo16.checklist.model.Step;
  * 
  * @author jeve
  */
-public class ChecklistFrame extends javax.swing.JFrame {
+public class ChecklistFrame extends javax.swing.JFrame implements PropertyChangeListener{
 
     private Checklist checklist;
     /**
@@ -36,6 +38,7 @@ public class ChecklistFrame extends javax.swing.JFrame {
         for(Step step : this.checklist.getSteps()) {
             this.stepsPanel.add(new StepPanel(this, step));
         }
+        this.addPropertyChangeListener(this);
         pack();
     }
 
@@ -158,5 +161,10 @@ public class ChecklistFrame extends javax.swing.JFrame {
 
     private Dimension getStepPreferredSize() {
         return new Dimension(800, this.getNumberOfRows() * 100);        
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {        
+        this.progressBar.setValue(this.checklist.getProgress());
     }
 }

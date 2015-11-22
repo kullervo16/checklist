@@ -6,6 +6,7 @@
 package kullervo16.checklist.gui;
 
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -42,16 +43,17 @@ public class StepPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        id = new javax.swing.JLabel();
+        responsible = new javax.swing.JLabel();
         action = new javax.swing.JLabel();
         executed = new javax.swing.JLabel();
         updateButton = new javax.swing.JButton();
+        id = new javax.swing.JLabel();
 
         setBackground(getBackgroundColor());
-        setPreferredSize(new java.awt.Dimension(780, 115));
+        setPreferredSize(new java.awt.Dimension(700, 115));
 
-        id.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        id.setText(this.step.getId());
+        responsible.setFont(new java.awt.Font("Tahoma", 2, 18)); // NOI18N
+        responsible.setText(this.step.getResponsible());
 
         action.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         action.setText(this.step.getAction());
@@ -66,6 +68,9 @@ public class StepPanel extends javax.swing.JPanel {
             }
         });
 
+        id.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        id.setText(this.step.getId());
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -74,29 +79,31 @@ public class StepPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(executed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addComponent(executed, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(updateButton)
+                        .addGap(0, 154, Short.MAX_VALUE))
+                    .addComponent(action, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(action, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(updateButton)
-                .addGap(57, 57, 57))
+                        .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(responsible, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(id)
-                    .addComponent(action))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(executed)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                .addComponent(updateButton)
-                .addContainerGap())
+                    .addComponent(responsible))
+                .addGap(4, 4, 4)
+                .addComponent(action)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(executed)
+                    .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -114,6 +121,8 @@ public class StepPanel extends javax.swing.JPanel {
         // now update the GUI
         this.setBackground(this.getBackgroundColor());
         this.executed.setText(getExecutedText());
+        this.updateButton.setVisible(!this.step.isComplete());
+        this.parentFrame.firePropertyChange("progress", 0, 1);
     }//GEN-LAST:event_updateStep
 
 
@@ -121,6 +130,7 @@ public class StepPanel extends javax.swing.JPanel {
     private javax.swing.JLabel action;
     private javax.swing.JLabel executed;
     private javax.swing.JLabel id;
+    private javax.swing.JLabel responsible;
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
 
