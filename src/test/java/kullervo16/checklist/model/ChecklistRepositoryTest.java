@@ -32,14 +32,14 @@ public class ChecklistRepositoryTest {
         System.out.println("getChecklistNames");
         
         List<String> result = this.repository.getChecklistNames();
-        assertEquals(1, result.size());
+        assertEquals(3, result.size());
         
-        assertTrue(result.contains("/vas/famhp/acc/deployment_20151124_1.yml"));
+        assertTrue(result.contains("/vas/famhp/acc/deployment_20151124.yml"));
     }
     
     @Test
     public void testGetChecklist() {
-        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124_1.yml");
+        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124.yml");
         assertNotNull(cl);
     }
     

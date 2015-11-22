@@ -122,7 +122,7 @@ public class StepPanel extends javax.swing.JPanel {
         this.setBackground(this.getBackgroundColor());
         this.executed.setText(getExecutedText());
         this.updateButton.setVisible(!this.step.isComplete());
-        this.parentFrame.firePropertyChange("progress", 0, 1);
+        this.parentFrame.firePropertyChange("progress", 0, 1);        
     }//GEN-LAST:event_updateStep
 
 

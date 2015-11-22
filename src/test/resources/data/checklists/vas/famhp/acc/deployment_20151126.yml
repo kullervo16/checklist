@@ -1,51 +1,57 @@
-steps :    
-    - id: createSecureGit
-      responsible: middleware
-      action: request secure GIT to JDSS. Request URL
-      check: on the deployment station, perform git clone with the URL from JDSS
-      executor: ikke
-      state: OK
-    - id: createApplication
-      responsible: middleware
-      action: create the application in the proper zone
-      check:
-          - step: verify proper gear type (must match environment)
-          - step: rhc ssh <application> -n <domain>
-      executor: ikke
-      state: ON_HOLD
-    - id: odtInit
-      responsible: middleware
-      action: perform odt init
-      check: project is on disk
-      executor: ikke
-    - id: odtInit2
-      responsible: middleware
-      action: perform odt init
-      check: project is on disk
-      executor: ikke
-    - id: odtInit3
-      responsible: middleware
-      action: perform odt init
-      check: project is on disk
-      executor: ikke
-    - id: odtInit4
-      responsible: middleware
-      action: perform odt init
-      check: project is on disk
-      executor: ikke
-    - id: odtInit5
-      responsible: middleware
-      action: perform odt init
-      check: project is on disk
-      executor: ikke
-    - id: odtInit6
-      responsible: middleware
-      action: perform odt init
-      check: project is on disk
-      executor: ikke
-    - id: odtInit7
-      responsible: middleware
-      action: perform odt init
-      check: project is on disk
-      executor: ikke
-      
+steps:
+  - id: createSecureGit
+    responsible: middleware
+    action: request secure GIT to JDSS. Request URL
+    state: OK
+    executor: ikke
+    check: on the deployment station, perform git clone with the URL from JDSS
+  - id: createApplication
+    responsible: middleware
+    action: create the application in the proper zone
+    state: ON_HOLD
+    executor: jeve
+    check: 
+      - step: verify proper gear type (must match environment)
+      - step: rhc ssh <application> -n <domain>
+  - id: odtInit
+    responsible: middleware
+    action: perform odt init
+    state: OK
+    executor: ikke
+    check: project is on disk
+  - id: odtInit2
+    responsible: middleware
+    action: perform odt init
+    state: OK
+    executor: ikke
+    check: project is on disk
+  - id: odtInit3
+    responsible: middleware
+    action: perform odt init
+    state: UNKNOWN
+    executor: ikke
+    check: project is on disk
+  - id: odtInit4
+    responsible: middleware
+    action: perform odt init
+    state: UNKNOWN
+    executor: ikke
+    check: project is on disk
+  - id: odtInit5
+    responsible: middleware
+    action: perform odt init
+    state: UNKNOWN
+    executor: ikke
+    check: project is on disk
+  - id: odtInit6
+    responsible: middleware
+    action: perform odt init
+    state: UNKNOWN
+    executor: ikke
+    check: project is on disk
+  - id: odtInit7
+    responsible: middleware
+    action: perform odt init
+    state: UNKNOWN
+    executor: ikke
+    check: project is on disk

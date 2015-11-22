@@ -11,7 +11,6 @@ import java.beans.PropertyChangeListener;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import kullervo16.checklist.model.State;
@@ -123,7 +122,8 @@ public class UpdateStepPanel extends javax.swing.JPanel implements PropertyChang
         }
         this.step.setState(aggregatedState);
         this.step.setComment(this.commentArea.getText());     
-        this.parentFrame.setVisible(false);       
+        this.parentFrame.setVisible(false);   
+        this.step.setExecutor(System.getenv("USERNAME"));
     }//GEN-LAST:event_updateButtonActionPerformed
 
 
