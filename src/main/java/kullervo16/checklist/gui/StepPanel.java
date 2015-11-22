@@ -101,11 +101,19 @@ public class StepPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void updateStep(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStep
-        UpdateStepPanel usf = new UpdateStepPanel(this.step);
+        
         JDialog frame = new JDialog(this.parentFrame, "Check", true);
+        UpdateStepPanel usf = new UpdateStepPanel(this.step, frame);
         frame.getContentPane().add(usf);
         frame.pack();
         frame.setVisible(true);
+        
+        System.err.println("#################");
+        System.err.println(step.getState() + " : "+ step.getComment());
+        
+        // now update the GUI
+        this.setBackground(this.getBackgroundColor());
+        this.executed.setText(getExecutedText());
     }//GEN-LAST:event_updateStep
 
 

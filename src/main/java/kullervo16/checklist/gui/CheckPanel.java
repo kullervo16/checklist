@@ -5,6 +5,10 @@
  */
 package kullervo16.checklist.gui;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import kullervo16.checklist.model.State;
+
 /**
  * Gui for a single check.
  * 
@@ -12,15 +16,30 @@ package kullervo16.checklist.gui;
  */
 public class CheckPanel extends javax.swing.JPanel {
 
-    private String check;
+    private final String check;
+    private final PropertyChangeListener updateListener;
+    private State oldState = State.UNKNOWN;
     /**
      * Creates new form CheckPanel
      */
-    public CheckPanel(String check) {
+    public CheckPanel(String check, PropertyChangeListener updateListener) {
         this.check = check;
+        this.updateListener = updateListener;
         initComponents();
     }
 
+    public State getState() {
+        if(this.okButton.isSelected()) {
+            return State.OK;
+        } else if (this.nokButton.isSelected()) {
+            return State.NOK;
+        } else if (this.notApplicableButton.isSelected()) {
+            return State.NOT_APPLICABLE;
+        } else if (this.onHoldButton.isSelected()) {
+            return State.ON_HOLD;
+        }
+        return State.UNKNOWN;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -43,15 +62,35 @@ public class CheckPanel extends javax.swing.JPanel {
 
         buttonGroup.add(okButton);
         okButton.setText("OK");
+        okButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                buttonStateChanged(evt);
+            }
+        });
 
         buttonGroup.add(nokButton);
         nokButton.setText("NOK");
+        nokButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                buttonStateChanged(evt);
+            }
+        });
 
         buttonGroup.add(onHoldButton);
         onHoldButton.setText("on hold");
+        onHoldButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                buttonStateChanged(evt);
+            }
+        });
 
         buttonGroup.add(notApplicableButton);
         notApplicableButton.setText("not applicable");
+        notApplicableButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                buttonStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -85,6 +124,11 @@ public class CheckPanel extends javax.swing.JPanel {
                 .addContainerGap(22, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buttonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_buttonStateChanged
+        this.updateListener.propertyChange(new PropertyChangeEvent(this, "state", this.oldState, this.getState()));
+        this.oldState = this.getState();
+    }//GEN-LAST:event_buttonStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -6,24 +6,40 @@
 package kullervo16.checklist.gui;
 
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.LinkedList;
+import java.util.List;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Step;
 
 /**
  *
  * @author jeve
  */
-public class UpdateStepPanel extends javax.swing.JPanel {
+public class UpdateStepPanel extends javax.swing.JPanel implements PropertyChangeListener, DocumentListener{
     private final Step step;
+    private final List<CheckPanel> checkPanels = new LinkedList<>();
+    private final JDialog parentFrame;
 
     /**
      * Creates new form UpdateStepPanel
      */
-    public UpdateStepPanel(Step step) {
+    public UpdateStepPanel(Step step, JDialog parent) {
         this.step = step;
+        this.parentFrame = parent;
         initComponents();
         for(String check : step.getChecks()) {
-            this.checkGrid.add(new CheckPanel(check));
+            CheckPanel cp = new CheckPanel(check, this);
+            this.checkPanels.add(cp);
+            this.checkGrid.add(cp);
         }
+        this.commentArea.getDocument().addDocumentListener(this);
+        this.nokCommentLabel.setVisible(false);
     }
 
     /**
@@ -40,6 +56,7 @@ public class UpdateStepPanel extends javax.swing.JPanel {
         updateButton = new javax.swing.JButton();
         checkGrid = new javax.swing.JPanel();
         commentLabel = new javax.swing.JLabel();
+        nokCommentLabel = new javax.swing.JLabel();
 
         commentArea.setColumns(20);
         commentArea.setRows(5);
@@ -47,11 +64,19 @@ public class UpdateStepPanel extends javax.swing.JPanel {
 
         updateButton.setText("Update");
         updateButton.setEnabled(false);
+        updateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButtonActionPerformed(evt);
+            }
+        });
 
         checkGrid.setPreferredSize(this.getCheckGridDimension());
         checkGrid.setLayout(new java.awt.GridLayout(this.getNumberOfChecks(), 0));
 
         commentLabel.setText("Comments :");
+
+        nokCommentLabel.setForeground(new java.awt.Color(255, 0, 51));
+        nokCommentLabel.setText("Comment is mandatory if at least 1 check is NOK");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -61,9 +86,10 @@ public class UpdateStepPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(checkGrid, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(nokCommentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(updateButton))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(commentLabel)
@@ -80,10 +106,25 @@ public class UpdateStepPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(updateButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(updateButton)
+                    .addComponent(nokCommentLabel))
                 .addGap(4, 4, 4))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        // update the step with the check information
+        State aggregatedState = State.UNKNOWN;
+        for (CheckPanel cp : this.checkPanels) {
+            if (cp.getState().compareTo(aggregatedState) > 0) {
+                aggregatedState = cp.getState();
+            }
+        }
+        this.step.setState(aggregatedState);
+        this.step.setComment(this.commentArea.getText());     
+        this.parentFrame.setVisible(false);       
+    }//GEN-LAST:event_updateButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -91,6 +132,7 @@ public class UpdateStepPanel extends javax.swing.JPanel {
     private javax.swing.JTextArea commentArea;
     private javax.swing.JLabel commentLabel;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel nokCommentLabel;
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
 
@@ -101,4 +143,36 @@ public class UpdateStepPanel extends javax.swing.JPanel {
     private int getNumberOfChecks() {
         return this.step.getChecks().size();
     }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        boolean canEnableButton = true;
+        boolean shouldRequireComment = false;
+        for(CheckPanel cp : this.checkPanels) {
+            canEnableButton &= !cp.getState().equals(State.UNKNOWN);
+            shouldRequireComment |= cp.getState().equals(State.NOK);
+        }
+        if(shouldRequireComment) {
+            this.nokCommentLabel.setVisible(true);
+            canEnableButton &= this.commentArea.getText().length() > 5;
+        }
+        this.updateButton.setEnabled(canEnableButton);
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {        
+        this.propertyChange(new PropertyChangeEvent(this, "text", null, null));
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {        
+        this.propertyChange(new PropertyChangeEvent(this, "text", null, null));
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {        
+        this.propertyChange(new PropertyChangeEvent(this, "text", null, null));
+    }
+    
+    
 }

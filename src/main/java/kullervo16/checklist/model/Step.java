@@ -18,6 +18,7 @@ public class Step {
     private State state;
     private String executor;
     private Date lastUpdate;
+    private String comment;
 
     public Step(Map stepMap) {        
         this.id = (String) stepMap.get("id");
@@ -89,6 +90,14 @@ public class Step {
             default:
                 return true;
         }
+    }
+
+    public void setComment(String text) {
+        this.comment = text;
+    }
+
+    public String getComment() {
+        return this.comment;
     }
 
     
