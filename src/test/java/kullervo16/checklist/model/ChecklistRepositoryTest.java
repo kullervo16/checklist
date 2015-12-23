@@ -5,6 +5,7 @@
  */
 package kullervo16.checklist.model;
 
+import kullervo16.checklist.service.ChecklistRepository;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;

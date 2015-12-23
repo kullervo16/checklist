@@ -1,10 +1,12 @@
-package kullervo16.checklist.model;
+package kullervo16.checklist.service;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.ejb.Singleton;
+import kullervo16.checklist.model.Checklist;
 
 
 
@@ -13,6 +15,7 @@ import java.util.Map;
  * 
  * @author jeve
  */
+@Singleton
 public class ChecklistRepository {
     private Map<String, Checklist> data = new HashMap<>();
 

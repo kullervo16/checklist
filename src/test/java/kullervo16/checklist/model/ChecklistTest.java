@@ -5,6 +5,7 @@
  */
 package kullervo16.checklist.model;
 
+import kullervo16.checklist.service.ChecklistRepository;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import java.io.StringWriter;
