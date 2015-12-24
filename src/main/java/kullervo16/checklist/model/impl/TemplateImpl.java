@@ -15,18 +15,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import kullervo16.checklist.model.dto.TemplateDto;
 
 /**
  * Data object to model a template. It is backed by a YAML file.
  * 
  * @author jeve
  */
-public class TemplateImpl implements Template {
+public class TemplateImpl extends TemplateDto {
 
     private File file;
     
-    private List<StepImpl> steps = new LinkedList<>();
-    private String displayName;
     
     // variables for cache control
     private long lastCheck;
@@ -39,6 +38,11 @@ public class TemplateImpl implements Template {
     public TemplateImpl() {
     }
         
+    @Override
+    public List<? extends Step> getSteps() {
+        this.checkAndLoadDataFromFile();
+        return Collections.unmodifiableList(this.steps);
+    }
     
     private void checkAndLoadDataFromFile() {        
         if(this.file != null && System.currentTimeMillis() - lastCheck > 1000 && this.file.lastModified() - this.fileModifTime > 0) {
@@ -61,18 +65,11 @@ public class TemplateImpl implements Template {
         }
     }
     
-    public List<? extends Step> getSteps() {
-        this.checkAndLoadDataFromFile();        
-        return Collections.unmodifiableList(this.steps);
-    }
 
     public String getDisplayName() {
         return this.displayName;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
     
     
     
@@ -89,8 +86,10 @@ public class TemplateImpl implements Template {
         this.checkAndLoadDataFromFile();
         try(PrintWriter writer = new PrintWriter(this.file);) {
             writer.append("steps:\n");
-            for(StepImpl step : this.steps) {
-                step.serialize(writer);
+            for(Step step : this.steps) {
+                if(step instanceof StepImpl) {
+                    ((StepImpl)step).serialize(writer);
+                }
             }
             writer.flush();        
         }catch(IOException ioe) {
@@ -122,10 +121,9 @@ public class TemplateImpl implements Template {
         return true;
     }
 
+    
     @Override
     public String toString() {
-        return "Template{" + "steps=" + steps + ", lastCheck=" + lastCheck + ", fileModifTime=" + fileModifTime + '}';
+        return "TemplateImpl{" + "steps=" + steps + ", lastCheck=" + lastCheck + ", fileModifTime=" + fileModifTime + '}';
     }
-    
-    
 }

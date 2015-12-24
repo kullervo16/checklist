@@ -10,10 +10,12 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import kullervo16.checklist.model.Template;
 import kullervo16.checklist.model.impl.TemplateImpl;
+import kullervo16.checklist.model.dto.TemplateDto;
 import kullervo16.checklist.service.TemplateRepository;
 
 /**
@@ -37,10 +39,10 @@ public class TemplateService {
     }
     
     @GET
-    @Path("/get")
+    @Path("/get/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Template getTemplate() {
-        TemplateImpl res = new TemplateImpl();
+    public Template getTemplate(@PathParam("id") String id) {
+        TemplateDto res = new TemplateImpl();
         res.setDisplayName("boe");
         return res;
 
