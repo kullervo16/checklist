@@ -5,6 +5,8 @@
  */
 package kullervo16.checklist.rest;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -14,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import kullervo16.checklist.model.Template;
+import kullervo16.checklist.model.TemplateInfo;
 import kullervo16.checklist.service.TemplateRepository;
 
 /**
@@ -31,8 +34,8 @@ public class TemplateService {
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> listTemplateNames() {        
-        return this.templateRepository.getTemplateNames();
+    public List<TemplateInfo> listTemplateNames() {                
+        return this.templateRepository.getTemplateInformation();
 
     }
     

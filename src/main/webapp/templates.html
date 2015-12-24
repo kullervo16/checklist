@@ -38,8 +38,10 @@
         <div role="main" class="container theme-showcase">
             <!-- Main jumbotron for a primary marketing message or call to action-->
             <div class="jumbotron"><h1>Templates</h1></div>
-            <div ng-controller="templateController">
-                <p></p>
+            <div ng-controller="templateController as template">
+                <ul class="list-group" ng-repeat="t in items ">
+                    <li class="list-group-item">{{t.id}}</li>
+                </ul>
                     
         </div>
         <!-- /container-->

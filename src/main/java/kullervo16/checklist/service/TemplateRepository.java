@@ -1,13 +1,14 @@
 package kullervo16.checklist.service;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
-import kullervo16.checklist.model.Template;
+import kullervo16.checklist.model.TemplateInfo;
 import kullervo16.checklist.model.dto.TemplateDto;
 import kullervo16.checklist.model.impl.TemplateImpl;
 
@@ -59,6 +60,19 @@ public class TemplateRepository {
 
     public TemplateDto getTemplate(String templateName) {
         return this.data.get(templateName);
+    }
+
+    public List<TemplateInfo> getTemplateInformation() {
+        List<TemplateInfo> result = new LinkedList<>();
+        for(String name : this.getTemplateNames()) {
+            TemplateInfo ti = new TemplateInfo();
+            ti.setId(name);
+            ti.setCategory(name.substring(1, name.lastIndexOf("/")));
+            ti.setName(name.substring(name.lastIndexOf("/")+1));
+            result.add(ti);
+        }
+        Collections.sort(result);
+        return result;
     }
 
     
