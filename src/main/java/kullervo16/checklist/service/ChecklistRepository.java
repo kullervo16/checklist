@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.Singleton;
 import kullervo16.checklist.model.Checklist;
+import kullervo16.checklist.model.impl.ChecklistImpl;
 
 
 
@@ -36,7 +37,7 @@ public class ChecklistRepository {
             if(f.isDirectory()) {
                 this.scanDirectoryForTemplates(f, prefix+"/"+f.getName(), newModel);
             } else {
-                newModel.put(prefix+"/"+f.getName(), new Checklist(f)); 
+                newModel.put(prefix+"/"+f.getName(), new ChecklistImpl(f)); 
             }
             
         }

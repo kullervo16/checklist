@@ -25,7 +25,7 @@ public class TemplateTest {
     public void testDeserialiseTemplate() {
         Template t = this.repository.getTemplate("/deployment/firstDeployment.yml");
         assertNotNull(t);
-        List<Step> steps = t.getSteps();
+        List<? extends Step> steps = t.getSteps();
         assertNotNull(steps);
         assertEquals(3,steps.size());
         

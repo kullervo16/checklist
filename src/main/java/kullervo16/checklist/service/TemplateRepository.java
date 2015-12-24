@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import kullervo16.checklist.model.Template;
+import kullervo16.checklist.model.impl.TemplateImpl;
 
 
 
@@ -43,7 +44,7 @@ public class TemplateRepository {
             if(f.isDirectory()) {
                 this.scanDirectoryForTemplates(f, prefix+"/"+f.getName(), newModel);
             } else {
-                newModel.put(prefix+"/"+f.getName(), new Template(f)); 
+                newModel.put(prefix+"/"+f.getName(), new TemplateImpl(f)); 
             }
             
         }

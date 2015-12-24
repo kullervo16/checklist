@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import kullervo16.checklist.model.Template;
+import kullervo16.checklist.model.impl.TemplateImpl;
 import kullervo16.checklist.service.TemplateRepository;
 
 /**
@@ -30,8 +31,7 @@ public class TemplateService {
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> listTemplateNames() {
-        System.err.println("########################"+this.templateRepository);
+    public List<String> listTemplateNames() {        
         return this.templateRepository.getTemplateNames();
 
     }
@@ -40,7 +40,9 @@ public class TemplateService {
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
     public Template getTemplate() {
-        return new Template();
+        TemplateImpl res = new TemplateImpl();
+        res.setDisplayName("boe");
+        return res;
 
     }
 }

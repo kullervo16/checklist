@@ -6,12 +6,8 @@
 package kullervo16.checklist.model;
 
 import kullervo16.checklist.service.ChecklistRepository;
-import com.esotericsoftware.yamlbeans.YamlException;
-import com.esotericsoftware.yamlbeans.YamlWriter;
-import java.io.StringWriter;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import kullervo16.checklist.model.impl.ChecklistImpl;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -40,7 +36,7 @@ public class ChecklistTest {
     public void testDeserialise() {
         Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124.yml");
         assertNotNull(cl);
-        List<Step> steps = cl.getSteps();
+        List<? extends Step> steps = cl.getSteps();
         assertNotNull(steps);
         assertEquals(3, steps.size());
         
@@ -99,7 +95,7 @@ public class ChecklistTest {
         this.repository = new ChecklistRepository();
         this.repository.loadData("./target/test-classes/data/checklists");
         
-        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151126.yml");
+        ChecklistImpl cl = (ChecklistImpl)this.repository.getChecklist("/vas/famhp/acc/deployment_20151126.yml");
                
         // serialize cl
         cl.serialize();
