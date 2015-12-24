@@ -7,7 +7,6 @@ package kullervo16.checklist.model.dto;
 
 import java.util.LinkedList;
 import java.util.List;
-import kullervo16.checklist.model.Step;
 import kullervo16.checklist.model.Template;
 
 /**
@@ -16,14 +15,14 @@ import kullervo16.checklist.model.Template;
  */
 public class TemplateDto implements Template{
     protected String displayName;
-    protected List<? extends Step> steps = new LinkedList<>();
+    protected List<? extends StepDto> steps = new LinkedList<>();
 
     @Override
-    public List<? extends Step> getSteps() {
+    public List<? extends StepDto> getSteps() {
         return steps;
     }
 
-    public void setSteps(List<? extends Step> steps) {
+    public void setSteps(List<? extends StepDto> steps) {
         this.steps = steps;
     }
 

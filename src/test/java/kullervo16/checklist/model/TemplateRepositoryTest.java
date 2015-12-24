@@ -29,13 +29,13 @@ public class TemplateRepositoryTest {
                 
         List<String> result = this.repository.getTemplateNames();
         assertEquals(2, result.size());
-        assertTrue(result.contains("/deployment/firstDeployment.yml"));
-        assertTrue(result.contains("/development/startProject.yml"));
+        assertTrue(result.contains("/deployment/firstDeployment"));
+        assertTrue(result.contains("/development/startProject"));
     }
     
     @Test
     public void testGetTemplate() {
-        Template t = this.repository.getTemplate("/deployment/firstDeployment.yml");
+        Template t = this.repository.getTemplate("/deployment/firstDeployment");
         assertNotNull(t);
     }
 }

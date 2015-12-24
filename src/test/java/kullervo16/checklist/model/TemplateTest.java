@@ -23,7 +23,7 @@ public class TemplateTest {
     
     @Test
     public void testDeserialiseTemplate() {
-        Template t = this.repository.getTemplate("/deployment/firstDeployment.yml");
+        Template t = this.repository.getTemplate("/deployment/firstDeployment");
         assertNotNull(t);
         List<? extends Step> steps = t.getSteps();
         assertNotNull(steps);

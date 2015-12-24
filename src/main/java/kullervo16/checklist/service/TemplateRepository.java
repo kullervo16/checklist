@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import kullervo16.checklist.model.Template;
+import kullervo16.checklist.model.dto.TemplateDto;
 import kullervo16.checklist.model.impl.TemplateImpl;
 
 
@@ -20,12 +21,12 @@ import kullervo16.checklist.model.impl.TemplateImpl;
 @Singleton
 public class TemplateRepository {
 
-    private Map<String,Template> data = new HashMap<>();
+    private Map<String,TemplateImpl> data = new HashMap<>();
     
     @PostConstruct
     public void init() {
         // TODO : fetch from config
-        this.loadData("/home/jef/NetBeansProjects/checklist/src/test/resources/data");
+        this.loadData("/home/jef/NetBeansProjects/checklist/src/test/resources/data/templates");
     }
         
     /**
@@ -34,17 +35,17 @@ public class TemplateRepository {
      */
     
     public void loadData(String folder) {
-        Map<String,Template> newData = new HashMap<>();
+        Map<String,TemplateImpl> newData = new HashMap<>();
         this.scanDirectoryForTemplates(new File(folder), "", newData);
         this.data = newData;
     }
     
-    private void scanDirectoryForTemplates(File startDir, String prefix,Map<String,Template> newModel) {
+    private void scanDirectoryForTemplates(File startDir, String prefix,Map<String,TemplateImpl> newModel) {
         for(File f : startDir.listFiles()) {
             if(f.isDirectory()) {
                 this.scanDirectoryForTemplates(f, prefix+"/"+f.getName(), newModel);
             } else {
-                newModel.put(prefix+"/"+f.getName(), new TemplateImpl(f)); 
+                newModel.put(prefix+"/"+f.getName().substring(0,f.getName().lastIndexOf(".")), new TemplateImpl(f)); 
             }
             
         }
@@ -56,7 +57,7 @@ public class TemplateRepository {
                 
     }
 
-    public Template getTemplate(String templateName) {
+    public TemplateDto getTemplate(String templateName) {
         return this.data.get(templateName);
     }
 

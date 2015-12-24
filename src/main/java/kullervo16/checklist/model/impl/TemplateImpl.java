@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import kullervo16.checklist.model.dto.StepDto;
 import kullervo16.checklist.model.dto.TemplateDto;
 
 /**
@@ -39,7 +40,7 @@ public class TemplateImpl extends TemplateDto {
     }
         
     @Override
-    public List<? extends Step> getSteps() {
+    public List<? extends StepDto> getSteps() {
         this.checkAndLoadDataFromFile();
         return Collections.unmodifiableList(this.steps);
     }
