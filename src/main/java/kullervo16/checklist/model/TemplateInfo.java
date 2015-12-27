@@ -5,33 +5,23 @@
  */
 package kullervo16.checklist.model;
 
+import java.util.List;
+
 /**
  * Data object specifying the info for a template
  * @author jef
  */
 public class TemplateInfo implements Comparable<TemplateInfo>{
     
-    private String name;
+    private String description;
     
-    private String category;
+    private List<String> tags;
+    
+    private List<String> milestones;
     
     private String id;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
+    
 
     public String getId() {
         return id;
@@ -40,6 +30,32 @@ public class TemplateInfo implements Comparable<TemplateInfo>{
     public void setId(String id) {
         this.id = id;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public List<String> getMilestones() {
+        return milestones;
+    }
+
+    public void setMilestones(List<String> milestones) {
+        this.milestones = milestones;
+    }
+    
+    
 
     @Override
     public int compareTo(TemplateInfo t) {

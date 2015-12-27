@@ -48,14 +48,29 @@ public class TemplateImpl extends TemplateDto {
     private void checkAndLoadDataFromFile() {        
         if(this.file != null && System.currentTimeMillis() - lastCheck > 1000 && this.file.lastModified() - this.fileModifTime > 0) {
             YamlReader reader;
-            LinkedList<StepImpl> newStepList = new LinkedList<>();
+            
             try {
-                reader = new YamlReader(new FileReader(this.file));
+                // init
+                LinkedList<StepImpl> newStepList = new LinkedList<>();
+                this.tags  = new LinkedList<>();
+                this.milestones = new LinkedList<>();
+                
+                reader = new YamlReader(new FileReader(this.file));                
                 Map template = (Map) reader.read();
-                for(Map stepMap : (List<Map>)template.get("steps")) {
-                    newStepList.add(new StepImpl(stepMap));
+                if(template != null) {
+                    for(Map stepMap : (List<Map>)template.get(STEPS)) {
+                        newStepList.add(new StepImpl(stepMap));
+                    }
+                    this.steps = newStepList;
+                    this.description = (String) template.get(DESCRIPTION);
+                    if(template.get(TAGS) != null) {
+                        this.tags.addAll((List<String>) template.get(TAGS));
+                    }
+                    if(template.get(MILESTONES) != null) {
+                        this.milestones.addAll((List<String>) template.get(MILESTONES));     
+                    }
                 }
-                this.steps = newStepList;
+                
                 this.lastCheck = System.currentTimeMillis();
                 this.fileModifTime = file.lastModified();
                 this.displayName = this.file.getName();
@@ -66,14 +81,27 @@ public class TemplateImpl extends TemplateDto {
         }
     }
     
+    
 
-    public String getDisplayName() {
-        return this.displayName;
+    @Override
+    public String getDescription() {
+        this.checkAndLoadDataFromFile();
+        return this.description;
     }
 
-    
-    
-    
+    @Override
+    public List<String> getMilestones() {
+        this.checkAndLoadDataFromFile();
+        return this.milestones;
+    }
+
+    @Override
+    public List<String> getTags() {
+        this.checkAndLoadDataFromFile();
+        return this.tags;
+    }
+
+            
     /**
      * Method can be overwritten by subclasses to present the header.
      * @param writer 
@@ -126,5 +154,10 @@ public class TemplateImpl extends TemplateDto {
     @Override
     public String toString() {
         return "TemplateImpl{" + "steps=" + steps + ", lastCheck=" + lastCheck + ", fileModifTime=" + fileModifTime + '}';
-    }
+    }   
+    
+    private static final String STEPS = "steps";
+    private static final String DESCRIPTION = "description";
+    private static final String MILESTONES = "milestones";
+    private static final String TAGS = "tags";
 }

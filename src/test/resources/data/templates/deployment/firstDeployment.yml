@@ -1,3 +1,10 @@
+description: Checklist to monitor a first deployment of an application
+tags:
+    - deployment
+    - software
+milestones:
+    - readyForDeployment
+    - deployed
 steps :    
     - id: createSecureGit
       responsible: middleware

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import kullervo16.checklist.model.TemplateInfo;
@@ -35,7 +36,7 @@ public class TemplateRepository {
      * @param folder the directory to scan
      */
     
-    public void loadData(String folder) {
+    public synchronized void loadData(String folder) {
         Map<String,TemplateImpl> newData = new HashMap<>();
         this.scanDirectoryForTemplates(new File(folder), "", newData);
         this.data = newData;
@@ -62,13 +63,15 @@ public class TemplateRepository {
         return this.data.get(templateName);
     }
 
-    public List<TemplateInfo> getTemplateInformation() {
+    public synchronized List<TemplateInfo> getTemplateInformation() {
         List<TemplateInfo> result = new LinkedList<>();
-        for(String name : this.getTemplateNames()) {
+        for(Entry<String,TemplateImpl> entry : this.data.entrySet()) {
             TemplateInfo ti = new TemplateInfo();
-            ti.setId(name);
-            ti.setCategory(name.substring(1, name.lastIndexOf("/")));
-            ti.setName(name.substring(name.lastIndexOf("/")+1));
+            ti.setId(entry.getKey());
+            
+            ti.setDescription(entry.getValue().getDescription());    
+            ti.setMilestones(entry.getValue().getMilestones());
+            ti.setTags(entry.getValue().getTags());
             result.add(ti);
         }
         Collections.sort(result);
