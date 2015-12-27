@@ -1,41 +1,24 @@
-package kullervo16.checklist.model.impl;
+package kullervo16.checklist.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kullervo16.checklist.model.*;
-import java.io.File;
 import java.util.List;
-import kullervo16.checklist.model.dto.StepDto;
 
 /**
  * Data object class to model a Checklist... it is backed by a YAML file.
  * 
  * @author jeve
  */
-public class ChecklistImpl extends TemplateImpl implements Checklist{
+public class ChecklistDto extends TemplateDto implements Checklist{
       
-    public ChecklistImpl(File file) {
-        super(file);
-    }
+    
 
-    public ChecklistImpl() {
+    public ChecklistDto() {
     }
-
-    public ChecklistImpl(Template template, File file) {
-        super(file);
-        this.description = template.getDescription();
-        this.displayName = template.getDisplayName();
-        this.tags = template.getTags();
-        this.milestones = template.getMilestones();
-        this.steps = (List<? extends StepDto>) template.getSteps();
         
-    }
-    
-    
-    
     
     
    @Override
-   @JsonIgnore
    public boolean isComplete() {
        for(Step step : this.getSteps()) {
            if(!step.isComplete()) {
@@ -51,7 +34,6 @@ public class ChecklistImpl extends TemplateImpl implements Checklist{
     * @return 
     */
    @Override
-   @JsonIgnore
    public State getState() {
        State aggregatedState = State.UNKNOWN;
        for(Step step : this.getSteps()) {
@@ -67,7 +49,6 @@ public class ChecklistImpl extends TemplateImpl implements Checklist{
     * @return 
     */
    @Override
-   @JsonIgnore
    public int getProgress() {
        List<? extends Step> stepWalker = this.getSteps();
        int totalSteps = stepWalker.size();

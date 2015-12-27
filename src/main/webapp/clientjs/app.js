@@ -21,7 +21,7 @@
         function createChecklist(templateId) {
             $http.post('rest/template/createChecklist?id='+templateId)
                 .success(function (data,status,headers,config) {
-                    $window.location.href = data;                    
+                    $window.location.href = 'checklist.html?id='+data;                    
                 }).error(function (data,status,headers,config) {
                     console.log('Error creating new checklist');
                 });  

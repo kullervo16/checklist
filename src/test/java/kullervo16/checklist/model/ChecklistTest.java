@@ -28,13 +28,13 @@ public class ChecklistTest {
     
     @Test
     public void testNonExisting() {
-        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/non_existing.yml");
+        Checklist cl = this.repository.getChecklist("non_existing.yml");
         assertNull(cl);
     }
     
     @Test
     public void testDeserialise() {
-        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124.yml");
+        Checklist cl = this.repository.getChecklist("deployment_20151124.yml");
         assertNotNull(cl);
         List<? extends Step> steps = cl.getSteps();
         assertNotNull(steps);
@@ -70,23 +70,23 @@ public class ChecklistTest {
     
     @Test
     public void testGetState() {
-        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124.yml");
+        Checklist cl = this.repository.getChecklist("deployment_20151124.yml");
         assertEquals(State.NOK, cl.getState());
     }
     
     @Test
     public void testIsComplete() {
-        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124.yml");
+        Checklist cl = this.repository.getChecklist("deployment_20151124.yml");
         assertTrue(cl.isComplete());
-        Checklist cl2 = this.repository.getChecklist("/vas/famhp/acc/deployment_20151125.yml");
+        Checklist cl2 = this.repository.getChecklist("deployment_20151125.yml");
         assertFalse(cl2.isComplete());
     }
     
     @Test
     public void testGetProgress() {
-        Checklist cl = this.repository.getChecklist("/vas/famhp/acc/deployment_20151124.yml");
+        Checklist cl = this.repository.getChecklist("deployment_20151124.yml");
         assertEquals(100, cl.getProgress());
-        Checklist cl2 = this.repository.getChecklist("/vas/famhp/acc/deployment_20151125.yml");
+        Checklist cl2 = this.repository.getChecklist("deployment_20151125.yml");
         assertEquals(33, cl2.getProgress());
     }
     
@@ -95,7 +95,7 @@ public class ChecklistTest {
         this.repository = new ChecklistRepository();
         this.repository.loadData("./target/test-classes/data/checklists");
         
-        ChecklistImpl cl = (ChecklistImpl)this.repository.getChecklist("/vas/famhp/acc/deployment_20151126.yml");
+        ChecklistImpl cl = (ChecklistImpl)this.repository.getChecklist("deployment_20151126.yml");
                
         // serialize cl
         cl.serialize();
@@ -103,7 +103,7 @@ public class ChecklistTest {
         ChecklistRepository repo2 = new ChecklistRepository();
         repo2.loadData("./target/test-classes/data/checklists");
 
-        Checklist cl2 = repo2.getChecklist("/vas/famhp/acc/deployment_20151126.yml");      
+        Checklist cl2 = repo2.getChecklist("deployment_20151126.yml");      
         // trigger loading (equals on introspection does not work properly
         cl.getSteps();
         cl2.getSteps();
