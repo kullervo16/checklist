@@ -35,14 +35,13 @@
                 <!-- /.nav-collapse-->
             </div>
         </div>
-        <div role="main" class="container theme-showcase">
-            <!-- Main jumbotron for a primary marketing message or call to action-->
-            <div class="jumbotron"><h1>Templates</h1></div>
+        <div role="main" class="container theme-showcase">            
+            <div class="jumbotron"><h1>Available templates</h1></div>
             <div ng-controller="templateController as template">
                 <div class="list-group" ng-repeat="t in items">                
                     <h4 class="list-group-item-heading">{{t.id}}</h4>
                     <p><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;&nbsp;{{t.description}}</p>
-                    <div ng-show="{{t.tags.length}}">
+                    <div ng-show="{{t.tags.length}}" class="pull-right">
                         <p ><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 
                             <span ng-repeat="tag in t.tags">
                                 &nbsp;
@@ -51,7 +50,7 @@
                             </span>
                         </p>                        
                     </div>
-                    <div ng-show="{{t.milestones.length}}">
+                    <div ng-show="{{t.milestones.length}}" class="pull-right">
                         <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> 
                             <span ng-repeat="milestone in t.milestones">
                                 &nbsp;
@@ -60,7 +59,18 @@
                             </span>
                         </p> 
                     </div>
-
+                    
+                    <div class="btn-group btn-group" role="group" aria-label="operations">
+                        <button type="button" class="btn btn-default" aria-label="New checklist">
+                          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" aria-label="Inspect">
+                          <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" aria-label="Stats">
+                          <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
