@@ -35,9 +35,8 @@
                 <!-- /.nav-collapse-->
             </div>
         </div>
-        <div role="main" class="container theme-showcase">            
-            <div class="jumbotron"><h1>Available templates</h1></div>
-            <div ng-controller="templateController as template">
+        <div role="main" class="container theme-showcase">                        
+            <div ng-controller="checklistController as checklist">
                 <div class="list-group" ng-repeat="t in items">                
                     <h4 class="list-group-item-heading">{{t.id}}</h4>
                     <p><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;&nbsp;{{t.description}}</p>

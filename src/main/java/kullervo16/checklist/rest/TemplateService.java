@@ -5,19 +5,22 @@
  */
 package kullervo16.checklist.rest;
 
-import java.util.Collections;
-import java.util.LinkedList;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import kullervo16.checklist.model.Template;
 import kullervo16.checklist.model.TemplateInfo;
 import kullervo16.checklist.service.TemplateRepository;
+import org.jboss.resteasy.core.ServerResponse;
 
 /**
  * REST service to expose the templates via JSON.
@@ -44,5 +47,12 @@ public class TemplateService {
     @Produces(MediaType.APPLICATION_JSON)
     public Template getTemplate(@QueryParam("id") String id) {        
         return this.templateRepository.getTemplate(id);    
+    }
+    
+    @POST
+    @Path("/createChecklist")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String createChecklist(@QueryParam("id") String id) throws URISyntaxException {        
+        return "\"checklist.html?id=boe\"";        
     }
 }
