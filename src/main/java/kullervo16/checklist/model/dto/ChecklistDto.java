@@ -1,8 +1,10 @@
 package kullervo16.checklist.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.File;
 import kullervo16.checklist.model.*;
 import java.util.List;
+import kullervo16.checklist.model.persist.ChecklistPersister;
 
 /**
  * Data object class to model a Checklist... it is backed by a YAML file.
@@ -12,13 +14,28 @@ import java.util.List;
 public class ChecklistDto extends TemplateDto implements Checklist{
       
     
-
     public ChecklistDto() {
+    }
+    
+    public ChecklistDto(File file) {
+        this.persister = new ChecklistPersister(file, this);
+    }
+
+    public ChecklistDto(Template template, File file) {
+        this(file);
+        this.description = template.getDescription();
+        this.displayName = template.getDisplayName();
+        this.tags = template.getTags();
+        this.milestones = template.getMilestones();
+        this.steps = (List<StepDto>) template.getSteps();
+        
+        
     }
         
     
     
    @Override
+   @JsonIgnore
    public boolean isComplete() {
        for(Step step : this.getSteps()) {
            if(!step.isComplete()) {
@@ -34,6 +51,7 @@ public class ChecklistDto extends TemplateDto implements Checklist{
     * @return 
     */
    @Override
+   @JsonIgnore
    public State getState() {
        State aggregatedState = State.UNKNOWN;
        for(Step step : this.getSteps()) {
@@ -49,6 +67,7 @@ public class ChecklistDto extends TemplateDto implements Checklist{
     * @return 
     */
    @Override
+   @JsonIgnore
    public int getProgress() {
        List<? extends Step> stepWalker = this.getSteps();
        int totalSteps = stepWalker.size();
@@ -60,5 +79,7 @@ public class ChecklistDto extends TemplateDto implements Checklist{
        }
        return (int)((totalSteps - stepsToDo) / (totalSteps * 0.01));
    }
+
+    
 
 }

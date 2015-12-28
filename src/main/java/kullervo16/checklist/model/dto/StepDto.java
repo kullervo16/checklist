@@ -21,7 +21,7 @@ public class StepDto implements Step {
     protected State state;
     protected String executor;
     protected Date lastUpdate;
-    protected String comment;
+    protected String comment;    
 
     public StepDto(Map stepMap) {        
         this.id = (String) stepMap.get("id");
@@ -197,6 +197,5 @@ public class StepDto implements Step {
     public String toString() {
         return "Step{" + "id=" + id + ", responsible=" + responsible + ", action=" + action + ", checks=" + checks + ", state=" + state + ", executor=" + executor + ", lastUpdate=" + lastUpdate + ", comment=" + comment + '}';
     }
-    
-    
+        
 }

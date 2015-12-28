@@ -7,7 +7,8 @@ package kullervo16.checklist.model;
 
 import kullervo16.checklist.service.ChecklistRepository;
 import java.util.List;
-import kullervo16.checklist.model.impl.ChecklistImpl;
+import kullervo16.checklist.model.dto.ChecklistDto;
+import kullervo16.checklist.model.persist.ChecklistPersister;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -95,10 +96,10 @@ public class ChecklistTest {
         this.repository = new ChecklistRepository();
         this.repository.loadData("./target/test-classes/data/checklists");
         
-        ChecklistImpl cl = (ChecklistImpl)this.repository.getChecklist("deployment_20151126.yml");
-               
+        ChecklistDto cl = (ChecklistDto)this.repository.getChecklist("deployment_20151126.yml");
+        
         // serialize cl
-        cl.serialize();
+        cl.getPersister().serialize();
         
         ChecklistRepository repo2 = new ChecklistRepository();
         repo2.loadData("./target/test-classes/data/checklists");

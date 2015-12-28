@@ -5,9 +5,14 @@
  */
 package kullervo16.checklist.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import kullervo16.checklist.model.Step;
 import kullervo16.checklist.model.Template;
+import kullervo16.checklist.model.persist.TemplatePersister;
 
 /**
  * DTO object for a template. Contains all data, no logic.
@@ -15,25 +20,25 @@ import kullervo16.checklist.model.Template;
  */
 public class TemplateDto implements Template{
     protected String displayName;
-    protected List<? extends StepDto> steps = new LinkedList<>();
+    protected List<StepDto> steps = new LinkedList<>();
     protected String description;
     protected List<String> tags;
-    protected List<String> milestones;                
+    protected List<String> milestones;   
+    protected TemplatePersister persister;
 
-    @Override
-    public List<? extends StepDto> getSteps() {
-        return steps;
+    
+    public TemplateDto() {
+        
     }
-
-    public void setSteps(List<? extends StepDto> steps) {
-        this.steps = steps;
+    
+    public TemplateDto(File f) {
+        this.persister = new TemplatePersister(f, this);
     }
-
+        
     @Override
     public String getDisplayName() {
         return displayName;
     }
-
        
 
     public void setDisplayName(String displayName) {
@@ -44,21 +49,7 @@ public class TemplateDto implements Template{
     public String toString() {
         return "TemplateDto{" + "displayName=" + displayName + ", steps=" + steps + '}';
     }
-
-    @Override
-    public String getDescription() {
-        return this.description;
-    }
-
-    @Override
-    public List<String> getMilestones() {
-        return this.milestones;
-    }
-
-    @Override
-    public List<String> getTags() {
-        return this.tags;
-    }
+    
 
     public void setDescription(String description) {
         this.description = description;
@@ -70,6 +61,86 @@ public class TemplateDto implements Template{
 
     public void setMilestones(List<String> milestones) {
         this.milestones = milestones;
+    }
+    
+    @Override
+    public String getDescription() {
+        this.checkAndLoadDataFromFile();
+        return this.description;
+    }
+
+    @Override
+    public List<String> getMilestones() {
+        this.checkAndLoadDataFromFile();
+        return this.milestones;
+    }
+
+    @Override
+    public List<String> getTags() {
+        this.checkAndLoadDataFromFile();
+        return this.tags;
+    }
+    
+    @Override
+    public List<? extends Step> getSteps() {
+        this.checkAndLoadDataFromFile();
+        return this.steps;
+    }
+
+    private void checkAndLoadDataFromFile() {
+        if(this.persister != null) {
+            this.persister.checkAndLoadDataFromFile();
+        }
+    }
+
+    public void setSteps(List<StepDto> steps) {
+        this.steps = steps;
+    }
+    
+    @JsonIgnore
+    public TemplatePersister getPersister() {
+        return this.persister;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.displayName);
+        hash = 31 * hash + Objects.hashCode(this.steps);
+        hash = 31 * hash + Objects.hashCode(this.description);
+        hash = 31 * hash + Objects.hashCode(this.tags);
+        hash = 31 * hash + Objects.hashCode(this.milestones);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TemplateDto other = (TemplateDto) obj;
+        if (!Objects.equals(this.displayName, other.displayName)) {
+            return false;
+        }
+        if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
+        if (!Objects.equals(this.steps, other.steps)) {
+            return false;
+        }
+        if (!Objects.equals(this.tags, other.tags)) {
+            return false;
+        }
+        if (!Objects.equals(this.milestones, other.milestones)) {
+            return false;
+        }
+        return true;
     }
     
     

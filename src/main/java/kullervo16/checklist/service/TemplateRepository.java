@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import kullervo16.checklist.model.TemplateInfo;
 import kullervo16.checklist.model.dto.TemplateDto;
-import kullervo16.checklist.model.impl.TemplateImpl;
+import kullervo16.checklist.model.persist.TemplatePersister;
 
 
 
@@ -23,7 +23,7 @@ import kullervo16.checklist.model.impl.TemplateImpl;
 @Singleton
 public class TemplateRepository {
 
-    private Map<String,TemplateImpl> data = new HashMap<>();
+    private Map<String,TemplateDto> data = new HashMap<>();
     
     @PostConstruct
     public void init() {
@@ -36,18 +36,18 @@ public class TemplateRepository {
      * @param folder the directory to scan
      */
     
-    public synchronized void loadData(String folder) {
-        Map<String,TemplateImpl> newData = new HashMap<>();
+    public void loadData(String folder) {
+        Map<String,TemplateDto> newData = new HashMap<>();
         this.scanDirectoryForTemplates(new File(folder), "", newData);
         this.data = newData;
     }
     
-    private void scanDirectoryForTemplates(File startDir, String prefix,Map<String,TemplateImpl> newModel) {
+    private void scanDirectoryForTemplates(File startDir, String prefix,Map<String,TemplateDto> newModel) {
         for(File f : startDir.listFiles()) {
             if(f.isDirectory()) {
                 this.scanDirectoryForTemplates(f, prefix+"/"+f.getName(), newModel);
             } else {
-                newModel.put(prefix+"/"+f.getName().substring(0,f.getName().lastIndexOf(".")), new TemplateImpl(f)); 
+                newModel.put(prefix+"/"+f.getName().substring(0,f.getName().lastIndexOf(".")), new TemplateDto(f)); 
             }
             
         }
@@ -63,9 +63,10 @@ public class TemplateRepository {
         return this.data.get(templateName);
     }
 
-    public synchronized List<TemplateInfo> getTemplateInformation() {
+    public List<TemplateInfo> getTemplateInformation() {
         List<TemplateInfo> result = new LinkedList<>();
-        for(Entry<String,TemplateImpl> entry : this.data.entrySet()) {
+        Map<String,TemplateDto> snapshot = Collections.unmodifiableMap(data);
+        for(Entry<String,TemplateDto> entry : snapshot.entrySet()) {
             TemplateInfo ti = new TemplateInfo();
             ti.setId(entry.getKey());
             
