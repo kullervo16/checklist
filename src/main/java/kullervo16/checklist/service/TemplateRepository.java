@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import kullervo16.checklist.model.TemplateInfo;
 import kullervo16.checklist.model.dto.TemplateDto;
-import kullervo16.checklist.model.persist.TemplatePersister;
 
 
 

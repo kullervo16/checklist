@@ -29,13 +29,11 @@
         }
         
         function getClassForMilestone(milestone) {
-            if(milestone['reached']) {
+            if(milestone.reached) {
                 return "label label-success";
             } else {
                 return "label label-default";
-            }
-
-           
+            }           
         }
         
         $scope.createChecklist = createChecklist;
@@ -49,12 +47,49 @@
         
         $http.get('rest/checklist/get?id='+$location.search().id)
                 .success(function (data,status,headers,config) {
-                    $scope.items = data;                    
+                    $scope.data = data;                    
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/checklist/get');
                 });   
                
+        function getClassForMilestone(milestone) {
+            if(milestone.reached) {
+                return "label label-success";
+            } else {
+                return "label label-default";
+            }           
+        }
+        function getClassForStep(step) {
+            if(step.state === 'OK') {
+                return "ok";
+            } else if(step.state === 'ON_HOLD') {
+                return "onHold";
+            } else if(step.state === 'NOT_APPLICABLE') {
+                return "notApplicable";
+            } else if(step.state === 'EXECUTION_FAILED' || step.state === 'CHECK_FAILED') {
+                return "nok";
+            }   
+            return "unknown";
+        }
+        function showActionButtons(step) {
+            return step.state === 'UNKNOWN';
+        }
+        /**
+         * Action result for a step, send to the backend and reload.
+         */
+        function updateAction(step, result) {
+            $http.post('rest/checklist/setActionResult?id='+$location.search().id+"&step="+step.id+"&result="+result)
+                .success(function (data,status,headers,config) {
+                    $scope.data = data;                      
+                }).error(function (data,status,headers,config) {
+                    console.log('Error updating step '+step.id);
+                });  
+        }
         
+        $scope.getClassForMilestone = getClassForMilestone;
+        $scope.getClassForStep   = getClassForStep;
+        $scope.showActionButtons = showActionButtons;
+        $scope.updateAction      = updateAction;
     }
     );
 

@@ -73,7 +73,7 @@ public class TemplatePersister  {
                 
                 this.lastCheck = System.currentTimeMillis();
                 this.fileModifTime = file.lastModified();
-                this.template.setDisplayName(this.file.getName());
+                this.template.setDisplayName(this.file.getName().substring(0,this.file.getName().lastIndexOf(".")));
             } catch (FileNotFoundException | YamlException ex) {
                 Logger.getLogger(TemplatePersister.class.getName()).log(Level.SEVERE, null, ex);
             }

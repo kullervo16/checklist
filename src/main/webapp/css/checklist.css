@@ -1,0 +1,34 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 28, 2015, 12:57:15 PM
+    Author     : jef
+*/
+
+div.ok {
+    color:white;
+    background-color: green;
+}
+
+div.unknown {
+    color:black;
+    background-color: white;
+}
+
+div.onHold {
+    color:black;
+    background-color: wheat;
+}
+
+div.nok {
+    color:white;
+    background-color: darkred;
+}
+
+div.notApplicable {
+    color:black;
+    background-color: lightgray;
+}

@@ -18,4 +18,4 @@ steps :
       action: perform odt init
       check: project is on disk
       executor: hij
-      state: NOK
+      state: EXECUTION_FAILED

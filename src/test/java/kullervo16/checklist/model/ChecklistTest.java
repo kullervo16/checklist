@@ -8,7 +8,6 @@ package kullervo16.checklist.model;
 import kullervo16.checklist.service.ChecklistRepository;
 import java.util.List;
 import kullervo16.checklist.model.dto.ChecklistDto;
-import kullervo16.checklist.model.persist.ChecklistPersister;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -62,7 +61,7 @@ public class ChecklistTest {
         
         assertEquals(State.OK, steps.get(0).getState());
         assertEquals(State.OK, steps.get(1).getState());
-        assertEquals(State.NOK, steps.get(2).getState());
+        assertEquals(State.EXECUTION_FAILED, steps.get(2).getState());
         
         assertEquals("ikke", steps.get(0).getExecutor());
         assertEquals("gij", steps.get(1).getExecutor());
@@ -72,7 +71,7 @@ public class ChecklistTest {
     @Test
     public void testGetState() {
         Checklist cl = this.repository.getChecklist("deployment_20151124.yml");
-        assertEquals(State.NOK, cl.getState());
+        assertEquals(State.EXECUTION_FAILED, cl.getState());
     }
     
     @Test

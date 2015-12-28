@@ -11,7 +11,7 @@ package kullervo16.checklist.model;
  * @author jeve
  */
 public enum State implements Comparable<State>{
-    UNKNOWN(0), NOT_APPLICABLE(1), OK(2), ON_HOLD(3), NOK(4);
+    UNKNOWN(0), NOT_APPLICABLE(1), OK(2), ON_HOLD(3), EXECUTION_FAILED(4), EXECUTED(5), CHECK_FAILED(6);
     
     private final int value;
 
