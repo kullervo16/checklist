@@ -17,7 +17,7 @@ public class TemplateInfo implements Comparable<TemplateInfo>{
     
     private List<String> tags;
     
-    private List<String> milestones;
+    private List<Milestone> milestones;
     
     private String id;
 
@@ -47,11 +47,11 @@ public class TemplateInfo implements Comparable<TemplateInfo>{
         this.tags = tags;
     }
 
-    public List<String> getMilestones() {
+    public List<Milestone> getMilestones() {
         return milestones;
     }
 
-    public void setMilestones(List<String> milestones) {
+    public void setMilestones(List<Milestone> milestones) {
         this.milestones = milestones;
     }
     

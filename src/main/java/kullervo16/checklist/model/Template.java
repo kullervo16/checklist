@@ -32,7 +32,7 @@ public interface Template {
      * 
      * @return a list of milestones in the procedure... may be empty
      */
-    public List<String> getMilestones();
+    public List<Milestone> getMilestones();
 
     /**
      * 

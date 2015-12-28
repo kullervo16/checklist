@@ -54,7 +54,7 @@
                         <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> 
                             <span ng-repeat="milestone in t.milestones">
                                 &nbsp;
-                                <span class="label label-success" >{{milestone}}</span>
+                                <span ng-class="getClassForMilestone(milestone)" >{{milestone.name}}</span>
                                 &nbsp;
                             </span>
                         </p> 

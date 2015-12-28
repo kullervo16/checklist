@@ -47,23 +47,25 @@ public class TemplatePersister  {
                 // init
                 LinkedList<StepDto> steps = new LinkedList<>();
                 LinkedList<String> tags  = new LinkedList<>();
-                LinkedList<String> milestones = new LinkedList<>();    
+                LinkedList<Milestone> milestones = new LinkedList<>();    
                                 
                 
                 reader = new YamlReader(new FileReader(this.file));                
                 Map templateMap = (Map) reader.read();
                 if(templateMap != null) {
                     for(Map stepMap : (List<Map>)templateMap.get(STEPS)) {
-                        steps.add(new StepDto(stepMap));                        
+                        StepDto step = new StepDto(stepMap);
+                        steps.add(step);  
+                        if(step.getMilestone() != null) {
+                            milestones.add(step.getMilestone());
+                        }
                     }
                     
                     this.template.setDescription((String) templateMap.get(DESCRIPTION));
                     if(templateMap.get(TAGS) != null) {
                         tags.addAll((List<String>) templateMap.get(TAGS));                        
                     }
-                    if(templateMap.get(MILESTONES) != null) {
-                        milestones.addAll((List<String>) templateMap.get(MILESTONES));     
-                    }
+                    
                 }
                 this.template.setTags(tags);
                 this.template.setMilestones(milestones);

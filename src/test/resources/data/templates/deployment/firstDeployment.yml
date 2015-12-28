@@ -2,21 +2,20 @@ description: Checklist to monitor a first deployment of an application
 tags:
     - deployment
     - software
-milestones:
-    - readyForDeployment
-    - deployed
 steps :    
     - id: createSecureGit
       responsible: middleware
       action: request secure GIT to JDSS. Request URL
       check: on the deployment station, perform git clone with the URL from JDSS
+      milestone: readyForDeployment
     - id: createApplication
       responsible: middleware
       action: create the application in the proper zone
       check:
           - step: verify proper gear type (must match environment)
-          - step: rhc ssh <application> -n <domain>
+          - step: rhc ssh <application> -n <domain>      
     - id: odtInit
       responsible: middleware
       action: perform odt init
       check: project is on disk
+      milestone: deployed

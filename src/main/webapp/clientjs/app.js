@@ -28,7 +28,18 @@
            
         }
         
+        function getClassForMilestone(milestone) {
+            if(milestone['reached']) {
+                return "label label-success";
+            } else {
+                return "label label-default";
+            }
+
+           
+        }
+        
         $scope.createChecklist = createChecklist;
+        $scope.getClassForMilestone = getClassForMilestone;
     }
     );
     

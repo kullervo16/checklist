@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import kullervo16.checklist.model.Milestone;
 import kullervo16.checklist.model.Step;
 import kullervo16.checklist.model.Template;
 import kullervo16.checklist.model.persist.TemplatePersister;
@@ -22,9 +23,9 @@ public class TemplateDto implements Template{
     protected String displayName;
     protected List<StepDto> steps = new LinkedList<>();
     protected String description;
-    protected List<String> tags;
-    protected List<String> milestones;   
+    protected List<String> tags;    
     protected TemplatePersister persister;
+    protected List<Milestone> milestones;
 
     
     public TemplateDto() {
@@ -59,7 +60,7 @@ public class TemplateDto implements Template{
         this.tags = tags;
     }
 
-    public void setMilestones(List<String> milestones) {
+    public void setMilestones(List<Milestone> milestones) {
         this.milestones = milestones;
     }
     
@@ -70,8 +71,8 @@ public class TemplateDto implements Template{
     }
 
     @Override
-    public List<String> getMilestones() {
-        this.checkAndLoadDataFromFile();
+    public List<Milestone> getMilestones() {
+        this.checkAndLoadDataFromFile();        
         return this.milestones;
     }
 

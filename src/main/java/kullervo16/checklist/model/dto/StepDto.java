@@ -21,7 +21,8 @@ public class StepDto implements Step {
     protected State state;
     protected String executor;
     protected Date lastUpdate;
-    protected String comment;    
+    protected String comment;
+    protected Milestone milestone;
 
     public StepDto(Map stepMap) {        
         this.id = (String) stepMap.get("id");
@@ -43,6 +44,18 @@ public class StepDto implements Step {
             this.state = State.valueOf((String)stepMap.get("state"));
         } else {
             this.state = State.UNKNOWN;        
+        }
+        
+        if(stepMap.containsKey("milestone")) {
+            Milestone ms;
+            if(stepMap.get("milestone") instanceof String) {
+                ms = new Milestone((String) stepMap.get("milestone"), false);
+            } else {
+                Map<String,String> mileStoneMap = (Map) stepMap.get("milestone");
+                
+                ms = new Milestone(mileStoneMap.get("name"), mileStoneMap.get("reached").equals("true"));
+            }
+            this.milestone = ms;
         }
     }
 
@@ -108,6 +121,15 @@ public class StepDto implements Step {
         return lastUpdate;
     }
 
+    public Milestone getMilestone() {
+        return milestone;
+    }
+
+    public void setMilestone(Milestone milestone) {
+        this.milestone = milestone;
+    }
+    
+    
     /**
      *
      * @param state
@@ -145,20 +167,24 @@ public class StepDto implements Step {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 29 * hash + Objects.hashCode(this.id);
-        hash = 29 * hash + Objects.hashCode(this.responsible);
-        hash = 29 * hash + Objects.hashCode(this.action);
-        hash = 29 * hash + Objects.hashCode(this.checks);
-        hash = 29 * hash + Objects.hashCode(this.state);
-        hash = 29 * hash + Objects.hashCode(this.executor);
-        hash = 29 * hash + Objects.hashCode(this.lastUpdate);
-        hash = 29 * hash + Objects.hashCode(this.comment);
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.id);
+        hash = 67 * hash + Objects.hashCode(this.responsible);
+        hash = 67 * hash + Objects.hashCode(this.action);
+        hash = 67 * hash + Objects.hashCode(this.checks);
+        hash = 67 * hash + Objects.hashCode(this.state);
+        hash = 67 * hash + Objects.hashCode(this.executor);
+        hash = 67 * hash + Objects.hashCode(this.lastUpdate);
+        hash = 67 * hash + Objects.hashCode(this.comment);
+        hash = 67 * hash + Objects.hashCode(this.milestone);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
@@ -175,19 +201,22 @@ public class StepDto implements Step {
         if (!Objects.equals(this.action, other.action)) {
             return false;
         }
+        if (!Objects.equals(this.executor, other.executor)) {
+            return false;
+        }
+        if (!Objects.equals(this.comment, other.comment)) {
+            return false;
+        }
+        if (!Objects.equals(this.milestone, other.milestone)) {
+            return false;
+        }
         if (!Objects.equals(this.checks, other.checks)) {
             return false;
         }
         if (this.state != other.state) {
             return false;
         }
-        if (!Objects.equals(this.executor, other.executor)) {
-            return false;
-        }
         if (!Objects.equals(this.lastUpdate, other.lastUpdate)) {
-            return false;
-        }
-        if (!Objects.equals(this.comment, other.comment)) {
             return false;
         }
         return true;
@@ -195,7 +224,8 @@ public class StepDto implements Step {
 
     @Override
     public String toString() {
-        return "Step{" + "id=" + id + ", responsible=" + responsible + ", action=" + action + ", checks=" + checks + ", state=" + state + ", executor=" + executor + ", lastUpdate=" + lastUpdate + ", comment=" + comment + '}';
+        return "StepDto{" + "id=" + id + ", responsible=" + responsible + ", action=" + action + ", checks=" + checks + ", state=" + state + ", executor=" + executor + ", lastUpdate=" + lastUpdate + ", comment=" + comment + ", milestone=" + milestone + '}';
     }
-        
+
+    
 }
