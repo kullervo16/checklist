@@ -23,6 +23,7 @@ public class StepDto implements Step {
     protected Date lastUpdate;
     protected String comment;
     protected Milestone milestone;
+    protected List<String> errors;
     
     public StepDto() {
     }
@@ -41,7 +42,7 @@ public class StepDto implements Step {
         this.milestone  = step.getMilestone() == null ? null : new Milestone(step.getMilestone().getName(),step.getMilestone().isReached());
         this.responsible= step.getResponsible();
         this.state  = step.getState();
-                
+        this.errors = new LinkedList<>(step.getErrors());
     }
 
     /**
@@ -61,6 +62,17 @@ public class StepDto implements Step {
         } else {
             for(Map<String,String> entry : (List<Map>) stepMap.get("check")) {
                 this.checks.add(entry.get("step"));
+            }
+        }
+        this.errors = new LinkedList<>();
+        if(stepMap.get("errors") != null) {
+            if(stepMap.get("errors") instanceof String) {
+               // convert String to list (this makes it a lot easier to configure the yaml           
+               this.errors.add((String) stepMap.get("errors"));
+            } else {
+                for(String error : (List<String>) stepMap.get("errors")) {
+                    this.checks.add(error);
+                }
             }
         }
         
@@ -248,6 +260,15 @@ public class StepDto implements Step {
     @Override
     public String toString() {
         return "StepDto{" + "id=" + id + ", responsible=" + responsible + ", action=" + action + ", checks=" + checks + ", state=" + state + ", executor=" + executor + ", lastUpdate=" + lastUpdate + ", comment=" + comment + ", milestone=" + milestone + '}';
+    }
+
+    @Override
+    public List<String> getErrors() {
+        return this.errors;
+    }
+
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
     }
 
     

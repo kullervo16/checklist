@@ -12,30 +12,35 @@ div.ok {
     color:white;
     background-color: green;
     padding-left:10px;
+    padding-bottom:10px;
 }
 
 div.unknown {
     color:black;
     background-color: white;
     padding-left:10px;
+    padding-bottom:10px;
 }
 
 div.onHold {
     color:black;
     background-color: wheat;
     padding-left:10px;
+    padding-bottom:10px;
 }
 
 div.nok {
     color:white;
     background-color: darkred;
     padding-left:10px;
+    padding-bottom:10px;
 }
 
 div.notApplicable {
     color:black;
     background-color: lightgray;
     padding-left:10px;
+    padding-bottom:10px;
 }
 
 textarea {

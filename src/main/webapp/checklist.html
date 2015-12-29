@@ -67,6 +67,9 @@
                             <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{step.responsible}}</h4>                            
                         </div>
                         <h4><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>&nbsp;&nbsp;{{step.action}}</h4>
+                        <div ng-show="step.errors.length">
+                            <h4><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;Errors:&nbsp;<span class="badge">{{step.errors.length}}</span></h4>                                
+                        </div>
                         <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showActionButtons(step)">
                             <p>Action result :&nbsp;&nbsp;</p>
                             <button type="button" class="btn btn-default" aria-label="ok" ng-click="updateAction(step, true);">
@@ -85,6 +88,7 @@
                                 </button>
                             </p>
                         </div>
+                        
                     </div>
                     
                     

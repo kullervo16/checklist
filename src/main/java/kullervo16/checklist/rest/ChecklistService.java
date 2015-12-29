@@ -74,6 +74,7 @@ public class ChecklistService {
                     default:
                         throw new IllegalStateException("Current step state "+step.getState()+" does not permit adding errors");
                 }
+                step.getErrors().add(error);
             }
         }
         return cl;

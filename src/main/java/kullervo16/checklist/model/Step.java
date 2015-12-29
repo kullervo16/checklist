@@ -37,6 +37,6 @@ public interface  Step {
 
     public String getComment();
    
-    
+    public List<String> getErrors();
     
 }
