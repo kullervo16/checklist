@@ -41,7 +41,7 @@
                 <div class="list-group" ng-repeat="t in items">                
                     <h4 class="list-group-item-heading">{{t.id}}</h4>
                     <p><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;&nbsp;{{t.description}}</p>
-                    <div ng-show="{{t.tags.length}}" class="pull-right">
+                    <div ng-show="t.tags.length" class="pull-right">
                         <p ><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 
                             <span ng-repeat="tag in t.tags">
                                 &nbsp;
@@ -50,7 +50,7 @@
                             </span>
                         </p>                        
                     </div>
-                    <div ng-show="{{t.milestones.length}}" class="pull-right">
+                    <div ng-show="t.milestones.length" class="pull-right">
                         <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> 
                             <span ng-repeat="milestone in t.milestones">
                                 &nbsp;

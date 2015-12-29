@@ -63,8 +63,7 @@
                 return "label label-default";
             }           
         }
-        function getClassForStep(step) {
-            console.log('get class for '+step.id+" "+step.state);
+        function getClassForStep(step) {          
             if(step.state === 'OK') {
                 return "ok";
             } else if(step.state === 'ON_HOLD') {
@@ -72,10 +71,8 @@
             } else if(step.state === 'NOT_APPLICABLE') {
                 return "notApplicable";
             } else if(step.state === 'EXECUTION_FAILED' || step.state === 'CHECK_FAILED') {
-                console.log(" -> nok");
                 return "nok";
             }   
-            console.log(" -> unknown");
             return "unknown";
         }
         function showActionButtons(step) {
