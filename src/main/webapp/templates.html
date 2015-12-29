@@ -27,9 +27,9 @@
                         <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme--></div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a href="templates.html">Templates</a></li>
-                        <li><a href="checklist.html">Checklists</a></li>
-                        <li><a href="stats.html">Statistics</a></li>
+                        <li><a href="./templates.html" target="_self">Templates</a></li>
+                        <li><a href="./checklist.html" target="_self">Checklists</a></li>
+                        <li><a href="./stats.html" target="_self">Statistics</a></li>
                     </ul>
                 </div>
                 <!-- /.nav-collapse-->
@@ -37,7 +37,7 @@
         </div>
         <div role="main" class="container theme-showcase">            
             <div class="jumbotron"><h1>Available templates</h1></div>
-            <div ng-controller="templateController as template">
+            <div ng-controller="templateController as template">                
                 <div class="list-group" ng-repeat="t in items">                
                     <h4 class="list-group-item-heading">{{t.id}}</h4>
                     <p><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;&nbsp;{{t.description}}</p>

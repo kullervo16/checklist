@@ -23,7 +23,31 @@ public class StepDto implements Step {
     protected Date lastUpdate;
     protected String comment;
     protected Milestone milestone;
+    
+    public StepDto() {
+    }
 
+    /**
+     * copy constructor.
+     * @param step 
+     */
+    StepDto(StepDto step) {
+        this.action = step.getAction();
+        this.checks = new LinkedList<>(step.getChecks());
+        this.comment= step.getComment();
+        this.executor=step.getExecutor();
+        this.id     = step.getId();
+        this.lastUpdate = step.getLastUpdate();
+        this.milestone  = step.getMilestone() == null ? null : new Milestone(step.getMilestone().getName(),step.getMilestone().isReached());
+        this.responsible= step.getResponsible();
+        this.state  = step.getState();
+                
+    }
+
+    /**
+     * Yaml constructor
+     * @param stepMap 
+     */
     public StepDto(Map stepMap) {        
         this.id = (String) stepMap.get("id");
         this.responsible = (String) stepMap.get("responsible");
@@ -59,8 +83,7 @@ public class StepDto implements Step {
         }
     }
 
-    public StepDto() {
-    }
+    
     
     
 

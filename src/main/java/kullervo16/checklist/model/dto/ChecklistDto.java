@@ -2,6 +2,7 @@ package kullervo16.checklist.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.File;
+import java.util.LinkedList;
 import kullervo16.checklist.model.*;
 import java.util.List;
 import kullervo16.checklist.model.persist.ChecklistPersister;
@@ -26,8 +27,15 @@ public class ChecklistDto extends TemplateDto implements Checklist{
         this.description = template.getDescription();
         this.displayName = template.getDisplayName();
         this.tags = template.getTags();
-        this.milestones = template.getMilestones();
-        this.steps = (List<StepDto>) template.getSteps();
+        // deep copies... we're working completely in memory here, don't want to link references...
+        this.milestones = new LinkedList<>();
+        for(Milestone ms : template.getMilestones()) {
+            this.milestones.add(new Milestone(ms.getName(), ms.isReached()));
+        }        
+        this.steps = new LinkedList<>();
+        for(StepDto step : (List<StepDto>) template.getSteps()) {
+            this.steps.add(new StepDto(step));
+        }
         
         
     }

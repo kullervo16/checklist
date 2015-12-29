@@ -10,18 +10,21 @@
 
     app.controller('templateController', function($scope,$http,$window) {
         // init stuff... get data from backend
-        $http.get('rest/template/list')
+        var init =  function () {
+            $http.get('rest/template/list')
                 .success(function (data,status,headers,config) {
                     $scope.items = data;                    
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/template/list');
-                });   
+                });  
+        };
+         
                
         // function definitions
         function createChecklist(templateId) {
             $http.post('rest/template/createChecklist?id='+templateId)
                 .success(function (data,status,headers,config) {
-                    $window.location.href = 'checklist.html?id='+data;                    
+                    $window.location.href = './checklist.html?id='+data;                      
                 }).error(function (data,status,headers,config) {
                     console.log('Error creating new checklist');
                 });  
@@ -38,15 +41,16 @@
         
         $scope.createChecklist = createChecklist;
         $scope.getClassForMilestone = getClassForMilestone;
+        init();
     }
     );
     
     
     app.controller('checklistController', function($scope,$http,$window,$location) {
-        // init stuff... get data from backend       
-        
+        // init stuff... get data from backend               
         $http.get('rest/checklist/get?id='+$location.search().id)
                 .success(function (data,status,headers,config) {
+                    console.log("Data loaded");
                     $scope.data = data;                    
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/checklist/get');
@@ -60,6 +64,7 @@
             }           
         }
         function getClassForStep(step) {
+            console.log('get class for '+step.id+" "+step.state);
             if(step.state === 'OK') {
                 return "ok";
             } else if(step.state === 'ON_HOLD') {
@@ -67,8 +72,10 @@
             } else if(step.state === 'NOT_APPLICABLE') {
                 return "notApplicable";
             } else if(step.state === 'EXECUTION_FAILED' || step.state === 'CHECK_FAILED') {
+                console.log(" -> nok");
                 return "nok";
             }   
+            console.log(" -> unknown");
             return "unknown";
         }
         function showActionButtons(step) {
