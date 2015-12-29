@@ -47,7 +47,9 @@
     
     
     app.controller('checklistController', function($scope,$http,$window,$location) {
-        // init stuff... get data from backend               
+        // =================================================
+        // init stuff... get data from backend     
+        // =================================================
         $http.get('rest/checklist/get?id='+$location.search().id)
                 .success(function (data,status,headers,config) {
                     console.log("Data loaded");
@@ -56,6 +58,9 @@
                     console.log('Error getting rest/checklist/get');
                 });   
                
+        // =================================================
+        // CSS class calculation
+        // =================================================        
         function getClassForMilestone(milestone) {
             if(milestone.reached) {
                 return "label label-success";
@@ -64,20 +69,34 @@
             }           
         }
         function getClassForStep(step) {          
-            if(step.state === 'OK') {
+            if(step.state === 'EXECUTED') {
                 return "ok";
             } else if(step.state === 'ON_HOLD') {
                 return "onHold";
             } else if(step.state === 'NOT_APPLICABLE') {
                 return "notApplicable";
-            } else if(step.state === 'EXECUTION_FAILED' || step.state === 'CHECK_FAILED') {
+            } else if(step.state === 'EXECUTION_FAILED' 
+                   || step.state === 'CHECK_FAILED' 
+                   || step.state === 'CHECK_FAILED_NO_COMMENT' 
+                   || step.state === 'EXECUTION_FAILED_NO_COMMENT') {
                 return "nok";
             }   
             return "unknown";
         }
-        function showActionButtons(step) {
-            return step.state === 'UNKNOWN';
+        // =================================================
+        // Visibility determination
+        // =================================================        
+        
+        function showErrorDialog(step) {
+            return step.state === 'EXECUTION_FAILED_NO_COMMENT' || step.state === 'CHECK_FAILED_NO_COMMENT';
         }
+        
+        function showActionDetails(step) {
+            return step.state === 'UNKNOWN' || step.state === 'EXECUTION_FAILED';
+        }
+        // =================================================
+        // Backend update operations
+        // =================================================
         /**
          * Action result for a step, send to the backend and reload.
          */
@@ -90,10 +109,24 @@
                 });  
         }
         
+        function addErrorAction(step, error) {
+            $http.post('rest/checklist/addErrorToStep?id='+$location.search().id+"&step="+step.id, error)
+                .success(function (data,status,headers,config) {
+                    $scope.data = data;                      
+                }).error(function (data,status,headers,config) {
+                    console.log('Error updating step '+step.id);
+                });  
+        }
+        
         $scope.getClassForMilestone = getClassForMilestone;
-        $scope.getClassForStep   = getClassForStep;
-        $scope.showActionButtons = showActionButtons;
-        $scope.updateAction      = updateAction;
+        $scope.getClassForStep      = getClassForStep;
+        
+        $scope.showActionButtons = showActionDetails;
+        $scope.showActionDetails = showActionDetails;
+        $scope.showErrorDialog   = showErrorDialog;
+        
+        $scope.updateAction   = updateAction;
+        $scope.addErrorAction = addErrorAction;
     }
     );
 

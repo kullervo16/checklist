@@ -49,11 +49,33 @@ public class ChecklistService {
                 if(result) {
                     step.setState(State.EXECUTED);
                 } else {
-                    step.setState(State.EXECUTION_FAILED);
+                    step.setState(State.EXECUTION_FAILED_NO_COMMENT);
                 }
             }
         }
         return cl;
     }
     
+    
+    @POST
+    @Path("/addErrorToStep")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Checklist addErrorToStep(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, String error) {        
+        Checklist cl = this.checklistRepository.getChecklist(checklistId);  
+        for(Step step : cl.getSteps()) {
+            if(step.getId().equals(stepId)) {                
+                switch (step.getState()) {
+                    case EXECUTION_FAILED_NO_COMMENT:
+                        step.setState(State.EXECUTION_FAILED);
+                        break;
+                    case CHECK_FAILED_NO_COMMENT:
+                        step.setState(State.CHECK_FAILED);
+                        break;
+                    default:
+                        throw new IllegalStateException("Current step state "+step.getState()+" does not permit adding errors");
+                }
+            }
+        }
+        return cl;
+    }
 }

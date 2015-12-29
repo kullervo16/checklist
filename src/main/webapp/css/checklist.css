@@ -11,24 +11,38 @@ and open the template in the editor.
 div.ok {
     color:white;
     background-color: green;
+    padding-left:10px;
 }
 
 div.unknown {
     color:black;
     background-color: white;
+    padding-left:10px;
 }
 
 div.onHold {
     color:black;
     background-color: wheat;
+    padding-left:10px;
 }
 
 div.nok {
     color:white;
     background-color: darkred;
+    padding-left:10px;
 }
 
 div.notApplicable {
     color:black;
     background-color: lightgray;
+    padding-left:10px;
+}
+
+textarea {
+    font-size:0.9em;
+    color:#6da021;
+    border:1px solid #6da021;
+    width:300px; height:50px;
+    padding-left:10px;
+    font-family: tahoma, sans-serif;
 }
