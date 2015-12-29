@@ -28,7 +28,7 @@ public class TemplateRepositoryTest {
         System.out.println("getTemplateNames");
                 
         List<String> result = this.repository.getTemplateNames();
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
         assertTrue(result.contains("/deployment/firstDeployment"));
         assertTrue(result.contains("/development/startProject"));
     }

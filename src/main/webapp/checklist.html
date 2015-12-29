@@ -39,26 +39,25 @@
         <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">    
             <div class="jumbotron">
                 <h1>{{data.displayName}}</h1>
-                <h3>{{data.description}}</h3>
-                
-                <div ng-show="data.tags.length" class="pull-left">
-                        <p ><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 
-                            <span ng-repeat="tag in data.tags">
-                                &nbsp;
-                                <span class="label label-primary" >{{tag}}</span>
-                                &nbsp;
-                            </span>
-                        </p>                        
-                    </div>
-                    <div ng-show="data.milestones.length" class="pull-right">
-                        <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> 
-                            <span ng-repeat="milestone in data.milestones">
-                                &nbsp;
-                                <span ng-class="getClassForMilestone(milestone)" >{{milestone.name}}</span>
-                                &nbsp;
-                            </span>
-                        </p> 
-                    </div>
+                <h3>{{data.description}}</h3>                                
+            </div>
+            <div ng-show="data.tags.length">
+                <p ><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 
+                    <span ng-repeat="tag in data.tags">
+                        &nbsp;
+                        <span class="label label-primary" >{{tag}}</span>
+                        &nbsp;
+                    </span>
+                </p>                        
+            </div>
+            <div ng-show="data.milestones.length">
+                <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> 
+                    <span ng-repeat="milestone in data.milestones">
+                        &nbsp;
+                        <span ng-class="getClassForMilestone(milestone)" >{{milestone.name}}</span>
+                        &nbsp;
+                    </span>
+                </p> 
             </div>
             <div>
                 <div class="list-group" ng-repeat="step in data.steps">    

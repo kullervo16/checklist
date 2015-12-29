@@ -1,0 +1,58 @@
+description: Checklist to monitor a first deployment of an application
+tags:
+    - tag1
+    - tag2
+    - tag3
+    - tag4
+    - tag5
+    - tag6
+    - tag7
+    - tag8
+    - tag9
+    - tag10
+steps :    
+    - id: step1
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone1
+    - id: step2
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone2
+    - id: step3
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone3
+    - id: step4
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone4
+    - id: step5
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone5      
+    - id: step6
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone6
+    - id: step7
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone7
+    - id: step8
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone8
+    - id: step9
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone9     
