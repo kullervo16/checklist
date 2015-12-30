@@ -56,6 +56,23 @@ public class ChecklistService {
         return cl;
     }
     
+    @POST
+    @Path("/setCheckResult")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Checklist setCheckResult(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("result") boolean result) {        
+        Checklist cl = this.checklistRepository.getChecklist(checklistId);  
+        for(Step step : cl.getSteps()) {
+            if(step.getId().equals(stepId)) {
+                if(result) {
+                    step.setState(State.OK);
+                } else {
+                    step.setState(State.CHECK_FAILED_NO_COMMENT);
+                }
+            }
+        }
+        return cl;
+    }
+    
     
     @POST
     @Path("/addErrorToStep")

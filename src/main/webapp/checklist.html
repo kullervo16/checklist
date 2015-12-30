@@ -88,6 +88,21 @@
                                 </button>
                             </p>
                         </div>
+                        <div ng-show="showChecks(step)">
+                            <p>Please verify following condition(s):</p>
+                            <ul ng-repeat="check in step.checks">
+                                <li>{{check}}&nbsp;&nbsp;
+                                    <div class="btn-group btn-group-xs" role="group" aria-label="operations" ng-show="showCheckButtons(step,check)">
+                                        <button type="button" class="btn btn-default" aria-label="OK" ng-click="setCheckResult(step,check,true)">
+                                          <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default" aria-label="NOK" ng-click="setCheckResult(step,check,false)">
+                                          <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                         
                     </div>
                     

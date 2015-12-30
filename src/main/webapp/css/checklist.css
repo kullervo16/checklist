@@ -15,6 +15,13 @@ div.ok {
     padding-bottom:10px;
 }
 
+div.executed {
+    color:white;
+    background-color: lightseagreen;
+    padding-left:10px;
+    padding-bottom:10px;
+}
+
 div.unknown {
     color:black;
     background-color: white;

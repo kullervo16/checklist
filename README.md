@@ -1,4 +1,7 @@
-# checklist
+# Checklists
+
+For the reason why even you should use them, read [this extract explanation of why pilots use (and doctors should)](http://thehealthcareblog.com/blog/2007/12/29/pilots-use-checklists-doctors-dont-why-not-by-maggie-mahar/).
+
 Simple GUI application that allows you to handle yaml-described checklists. A simple webapplication exposes the content and statistics to let you detect weak spots in your processes.
 
 It has support for both tags and milestones :
@@ -6,7 +9,7 @@ It has support for both tags and milestones :
  * tags will organise your templates and checklists. You use them to retrieve them and to group the statistics
  * milestones define a status in the process the checklist supports. You reach a milestone if all checks before that milestone are ok. Via the milestone, you can see which instances of the checklists reached a given state.
 
-##Templates
+## Templates
 
 The templates are defined in  YAML. This is the syntax :
 
@@ -59,3 +62,7 @@ The idea is to use a file based backend with GIT as a remote synchronisation sto
 If you loose your data (or you are using a 100% container approach and do not use persistent storage at all), the system will pull from the GIT to restore its state.
 
 
+## Testing
+
+There are minimal unit tests in this project, only to test the low level stuff. Since the in-memory backend is so fast, the actual tests are written as integration tests running against a deployed backend. 
+That way we test the real thing, and we are sure you can use the API also with rest-easy directly (so not only as an angular js client). Check out the checklistTest for more information (or as a demonstration of the API).

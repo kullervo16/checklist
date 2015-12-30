@@ -57,6 +57,7 @@
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/checklist/get');
                 });   
+        $scope.checkResults = {};
                
         // =================================================
         // CSS class calculation
@@ -69,8 +70,10 @@
             }           
         }
         function getClassForStep(step) {          
-            if(step.state === 'EXECUTED') {
+            if(step.state === 'OK') {
                 return "ok";
+            } else if(step.state === 'EXECUTED') {
+                return "executed";
             } else if(step.state === 'ON_HOLD') {
                 return "onHold";
             } else if(step.state === 'NOT_APPLICABLE') {
@@ -93,6 +96,17 @@
         
         function showActionDetails(step) {
             return step.state === 'UNKNOWN' || step.state === 'EXECUTION_FAILED';
+        }
+        
+        function showChecks(step) {
+            return step.state === 'EXECUTED';
+        }
+        
+        function showCheckButtons(step,check) {
+            if (! (step.id in $scope.checkResults)) {
+                return true; // no results yet, so definitely show
+            }
+            return ! (check in $scope.checkResults[step.id]); // only when no result yet for that check
         }
         // =================================================
         // Backend update operations
@@ -118,15 +132,42 @@
                 });  
         }
         
+        function setCheckResult(step, check, result) {
+            
+            if (! (step.id in $scope.checkResults)) {
+                $scope.checkResults[step.id] = {};
+            }
+            
+            var stepMap = $scope.checkResults[step.id];            
+            stepMap[check] = result;
+           
+            if ( Object.keys(stepMap).length === step.checks.length) {
+                // all results are in... update the backend
+                var combinedResult = true;
+                for(var key in $scope.checkResults[step.id]) {
+                    combinedResult &= $scope.checkResults[step.id][key];
+                }
+                $http.post('rest/checklist/setCheckResult?id='+$location.search().id+"&step="+step.id+"&result="+(combinedResult === 1))
+                .success(function (data,status,headers,config) {
+                    $scope.data = data;                      
+                }).error(function (data,status,headers,config) {
+                    console.log('Error updating step '+step.id);
+                });  
+            }
+        }
+        
         $scope.getClassForMilestone = getClassForMilestone;
         $scope.getClassForStep      = getClassForStep;
         
         $scope.showActionButtons = showActionDetails;
         $scope.showActionDetails = showActionDetails;
         $scope.showErrorDialog   = showErrorDialog;
+        $scope.showChecks        = showChecks;
+        $scope.showCheckButtons  = showCheckButtons;
         
         $scope.updateAction   = updateAction;
         $scope.addErrorAction = addErrorAction;
+        $scope.setCheckResult = setCheckResult;
     }
     );
 
