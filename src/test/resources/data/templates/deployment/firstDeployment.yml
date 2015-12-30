@@ -1,21 +1,34 @@
+# description of the procedure that the checklist will support
 description: Checklist to monitor a first deployment of an application
+# tags help you organise your checklists. The tags in the template are automatically added to all checklists that are 
+# based on this template. You can add as many as you need
 tags:
     - deployment
     - software
+# The steps represent the various parts of the procedure.
 steps :    
+      # the id must be unique within the template
     - id: createSecureGit
+      # who should perform this action
       responsible: middleware
+      # the action to be performed. You should either have an action or a subtemplate (see further)      
       action: request secure GIT to JDSS. Request URL
+      # the verification to be executed when the action is performed. Can be a single item or a list (see next step for example)
       check: on the deployment station, perform git clone with the URL from JDSS
+      # an optional milestone that is considered to be reached when this step is ok
       milestone: readyForDeployment
     - id: createApplication
       responsible: middleware
       action: create the application in the proper zone
+      # and example with multiple checks for 1 action (when you want more than 1 action, simply create new steps)
       check:
           - step: verify proper gear type (must match environment)
-          - step: rhc ssh <application> -n <domain>      
+          - step: rhc ssh <application> -n <domain>    
+      # the weight of this step in the progress bar to get a more realistic progress if you want (if not specified : default = 1)
+      weight: 5
     - id: odtInit
       responsible: middleware
       action: perform odt init
       check: project is on disk
       milestone: deployed
+      

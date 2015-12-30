@@ -77,20 +77,25 @@ public class ChecklistDto extends TemplateDto implements Checklist{
     * This method returns a percentage of progress
     * @return 
     */
-   @Override
-   @JsonIgnore
+   @Override   
    public int getProgress() {
        List<? extends Step> stepWalker = this.getSteps();
-       int totalSteps = stepWalker.size();
+       int totalSteps = 0;
        int stepsToDo = 0;
        for(Step step : stepWalker) {
            if(!step.isComplete()) {
-               stepsToDo ++;
+               stepsToDo += step.getWeight();
            }
+           totalSteps += step.getWeight();
+       }
+       if(stepsToDo == 0) {
+           return 100; // prevent rounding issues (complete should be 100%, not 99.999 :-) )
        }
        return (int)((totalSteps - stepsToDo) / (totalSteps * 0.01));
    }
 
-    
+    public void setProgress(int progress) {
+        // ignore, progress is calculated, but otherwise JAX-RS complains (however, we want it in the JSON for our angular client).
+    }
 
 }

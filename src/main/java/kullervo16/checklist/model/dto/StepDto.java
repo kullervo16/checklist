@@ -24,6 +24,7 @@ public class StepDto implements Step {
     protected String comment;
     protected Milestone milestone;
     protected List<String> errors;
+    protected int weight;
     
     public StepDto() {
     }
@@ -43,6 +44,7 @@ public class StepDto implements Step {
         this.responsible= step.getResponsible();
         this.state  = step.getState();
         this.errors = new LinkedList<>(step.getErrors());
+        this.weight = step.getWeight();
     }
 
     /**
@@ -55,6 +57,11 @@ public class StepDto implements Step {
         this.action = (String) stepMap.get("action");
         this.checks = new LinkedList<>();
         this.executor = (String)stepMap.get("executor");
+        this.weight   = 1;
+        
+        if(stepMap.get("weight") != null) {
+            this.weight = Integer.parseInt(stepMap.get("weight").toString());
+        }
         
         if(stepMap.get("check") instanceof String) {
            // convert String to list (this makes it a lot easier to configure the yaml           
@@ -185,7 +192,10 @@ public class StepDto implements Step {
     public boolean isComplete() {
         switch(this.state) {
             case UNKNOWN:
-            case ON_HOLD:
+            case ON_HOLD:    
+            case EXECUTED:
+            case CHECK_FAILED_NO_COMMENT:
+            case EXECUTION_FAILED_NO_COMMENT:
                 return false;
             default:
                 return true;
@@ -269,6 +279,14 @@ public class StepDto implements Step {
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
     

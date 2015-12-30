@@ -1,5 +1,5 @@
 (function() {
-    var app = angular.module('checklist',[]);
+    var app = angular.module('checklist',['ui.bootstrap']);
     
     app.config(['$locationProvider', function($locationProvider){
         $locationProvider.html5Mode({

@@ -15,6 +15,8 @@
         <!-- Bootstrap theme-->
         <link href="css/bootstrap-theme.min.css" rel="stylesheet">
         <link href="css/checklist.css" rel="stylesheet">
+        <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
+        <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
         <script src="clientjs/app.js"></script>
     </head>
 
@@ -58,6 +60,9 @@
                         &nbsp;
                     </span>
                 </p> 
+            </div>
+            <div class="progress">
+              <uib-progressbar animate="false" value="data.progress" type="success"><b>{{data.progress}}%</b></uib-progressbar>
             </div>
             <div>
                 <div class="list-group" ng-repeat="step in data.steps">    
