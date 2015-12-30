@@ -132,6 +132,15 @@
                 });  
         }
         
+        function addTag(tag) {
+            $http.post('rest/checklist/addTag?id='+$location.search().id+"&tag="+tag)
+                .success(function (data,status,headers,config) {
+                    $scope.data = data;                      
+                }).error(function (data,status,headers,config) {
+                    console.log('Error adding a tag '+step.id);
+                });              
+        }
+        
         function setCheckResult(step, check, result) {
             
             if (! (step.id in $scope.checkResults)) {
@@ -168,6 +177,7 @@
         $scope.updateAction   = updateAction;
         $scope.addErrorAction = addErrorAction;
         $scope.setCheckResult = setCheckResult;
+        $scope.addTag         = addTag;
     }
     );
 

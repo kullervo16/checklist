@@ -21,5 +21,11 @@ public interface Checklist extends Template{
     * @return 
     */
    public int getProgress();
+   
+   /**
+    * 
+    * @return whether this checklist already has some tags of its own (iso of only the template tags)
+    */
+   public boolean isSpecificTagSet();
 
 }

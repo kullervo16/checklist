@@ -14,6 +14,7 @@ import kullervo16.checklist.model.persist.ChecklistPersister;
  */
 public class ChecklistDto extends TemplateDto implements Checklist{
       
+    private boolean hasSpecificTags;
     
     public ChecklistDto() {
     }
@@ -26,8 +27,9 @@ public class ChecklistDto extends TemplateDto implements Checklist{
         this(file);
         this.description = template.getDescription();
         this.displayName = template.getDisplayName();
-        this.tags = template.getTags();
-        // deep copy... we're working completely in memory here, don't want to link references...        
+        
+        // deep copy... we're working completely in memory here, don't want to link references...  
+        this.tags = new LinkedList<>(template.getTags());
         this.milestones = new LinkedList<>();
         this.steps = new LinkedList<>();
         for(StepDto step : (List<StepDto>) template.getSteps()) {
@@ -38,7 +40,7 @@ public class ChecklistDto extends TemplateDto implements Checklist{
                 this.milestones.add(newStep.getMilestone());
             }
         }
-        
+        this.hasSpecificTags = false;
         
         
     }
@@ -97,5 +99,15 @@ public class ChecklistDto extends TemplateDto implements Checklist{
     public void setProgress(int progress) {
         // ignore, progress is calculated, but otherwise JAX-RS complains (however, we want it in the JSON for our angular client).
     }
+
+    @Override
+    public boolean isSpecificTagSet() {
+        return this.hasSpecificTags;
+    }
+
+    public void setSpecificTagSet(boolean hasSpecificTags) {
+        this.hasSpecificTags = hasSpecificTags;
+    }
+        
 
 }

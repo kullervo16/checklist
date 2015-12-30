@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Step;
+import kullervo16.checklist.model.dto.ChecklistDto;
 import kullervo16.checklist.service.ChecklistRepository;
 
 /**
@@ -96,6 +97,18 @@ public class ChecklistService {
                 }
                 step.getErrors().add(error);
             }
+        }
+        return cl;
+    }
+    
+    @POST
+    @Path("/addTag")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Checklist addTag(@QueryParam("id") String checklistId, @QueryParam("tag") String tag) {        
+        ChecklistDto cl = (ChecklistDto) this.checklistRepository.getChecklist(checklistId);  
+        if(!cl.getTags().contains(tag)) {
+            cl.getTags().add(tag);
+            cl.setSpecificTagSet(true);
         }
         return cl;
     }
