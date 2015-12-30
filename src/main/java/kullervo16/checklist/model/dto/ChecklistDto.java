@@ -27,15 +27,18 @@ public class ChecklistDto extends TemplateDto implements Checklist{
         this.description = template.getDescription();
         this.displayName = template.getDisplayName();
         this.tags = template.getTags();
-        // deep copies... we're working completely in memory here, don't want to link references...
+        // deep copy... we're working completely in memory here, don't want to link references...        
         this.milestones = new LinkedList<>();
-        for(Milestone ms : template.getMilestones()) {
-            this.milestones.add(new Milestone(ms.getName(), ms.isReached()));
-        }        
         this.steps = new LinkedList<>();
         for(StepDto step : (List<StepDto>) template.getSteps()) {
-            this.steps.add(new StepDto(step));
+            StepDto newStep = new StepDto(step);
+            this.steps.add(newStep);
+            if(newStep.getMilestone() != null) {
+                // recreate the milestone list from the steps (needs to point to the same instance to allow proper update when the step is updated)
+                this.milestones.add(newStep.getMilestone());
+            }
         }
+        
         
         
     }

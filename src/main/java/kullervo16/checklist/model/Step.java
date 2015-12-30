@@ -39,4 +39,6 @@ public interface  Step {
    
     public List<String> getErrors();
     
+    public Milestone getMilestone();
+    
 }

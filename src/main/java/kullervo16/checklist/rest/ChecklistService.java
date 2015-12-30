@@ -65,6 +65,9 @@ public class ChecklistService {
             if(step.getId().equals(stepId)) {
                 if(result) {
                     step.setState(State.OK);
+                    if(step.getMilestone() != null) {
+                        step.getMilestone().setReached(true);
+                    }
                 } else {
                     step.setState(State.CHECK_FAILED_NO_COMMENT);
                 }
