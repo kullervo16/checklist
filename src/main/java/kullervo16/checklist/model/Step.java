@@ -46,4 +46,6 @@ public interface  Step {
     public String getDocumentation();
     
     public String getSubChecklist();
+    
+    public List<String> getOptions();
 }

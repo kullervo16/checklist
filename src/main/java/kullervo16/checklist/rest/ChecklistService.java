@@ -5,6 +5,7 @@
  */
 package kullervo16.checklist.rest;
 
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
@@ -104,6 +105,36 @@ public class ChecklistService {
             cl.getTags().add(tag);
             cl.setSpecificTagSet(true);
         }
+        return cl;
+    }
+    
+    @POST
+    @Path("/setStepOption")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Checklist setStepOption(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("choice") String choice) {        
+        ChecklistDto cl =getChecklist(checklistId);
+        StepDto step = getStep(cl, stepId);    
+        
+        if(step.getSelectedOption() != null && ! choice.equals(step.getSelectedOption())) {
+            throw new IllegalStateException("trying to reset the state... for step "+stepId);
+        }
+        
+        step.setSelectionOption(choice);
+        step.setState(State.OK);
+        if(step.getMilestone() != null) {
+            step.getMilestone().setReached(true);
+        }
+        
+        // now iterate all steps to update the once that depend on our choice
+        for(StepDto walker : (List<StepDto>) cl.getSteps()) {
+            if(walker.getCondition() != null) {
+                if(walker.getCondition().isConditionUnreachable()) {
+                    // this condition has become unreachable.. so set the state to not-applicable.
+                    walker.setState(State.NOT_APPLICABLE);
+                }
+            }
+        }
+        
         return cl;
     }
 

@@ -34,7 +34,7 @@ public class ChecklistDto extends TemplateDto implements Checklist{
         this.milestones = new LinkedList<>();
         this.steps = new LinkedList<>();
         for(StepDto step : (List<StepDto>) template.getSteps()) {
-            StepDto newStep = new StepDto(step);
+            StepDto newStep = new StepDto(step, this.steps);
             this.steps.add(newStep);
             if(newStep.getMilestone() != null) {
                 // recreate the milestone list from the steps (needs to point to the same instance to allow proper update when the step is updated)

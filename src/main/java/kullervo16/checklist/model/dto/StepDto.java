@@ -27,6 +27,9 @@ public class StepDto implements Step {
     protected int weight;
     protected String documentation;
     protected String subChecklist;
+    protected List<String> options;
+    protected String selectionOption;
+    protected Condition condition;
     
     public StepDto() {
     }
@@ -35,7 +38,7 @@ public class StepDto implements Step {
      * copy constructor.
      * @param step 
      */
-    StepDto(StepDto step) {
+    StepDto(StepDto step, List<StepDto> stepList) {
         this.action = step.getAction();
         this.checks = new LinkedList<>(step.getChecks());
         this.comment= step.getComment();
@@ -49,21 +52,39 @@ public class StepDto implements Step {
         this.weight = step.getWeight();
         this.documentation = step.getDocumentation();
         this.subChecklist = step.getSubChecklist();
+        this.options = step.getOptions();
+        this.selectionOption = step.getSelectedOption();
+        if(step.getCondition() != null) {
+           StepDto selectionPoint = null;
+           for(StepDto walker : stepList) {
+               if(walker.equals(step.getCondition().getStep())) {
+                   selectionPoint = walker;
+               }
+           }
+           this.condition = new Condition(selectionPoint, step.getCondition().getSelectedOption());
+        }
     }
 
     /**
      * Yaml constructor
      * @param stepMap 
+     * @param stepList list with the other steps, needed for wiring
      */
-    public StepDto(Map stepMap) {        
+    public StepDto(Map stepMap, List<StepDto> stepList) {        
         this.id = (String) stepMap.get("id");
+        for(StepDto walker : stepList) {
+            if(walker.getId().equals(this.id)) {
+                throw new IllegalStateException("Duplicate step id "+this.id);
+            }
+        }
+        
         this.responsible = (String) stepMap.get("responsible");
         this.action = (String) stepMap.get("action");
         this.checks = new LinkedList<>();
         this.executor = (String)stepMap.get("executor");
         this.documentation = (String) stepMap.get("documentation");
         this.subChecklist = (String) stepMap.get("subchecklist");
-        
+                
         this.weight   = 1;                
         if(stepMap.get("weight") != null) {
             this.weight = Integer.parseInt(stepMap.get("weight").toString());
@@ -107,6 +128,23 @@ public class StepDto implements Step {
                 ms = new Milestone(mileStoneMap.get("name"), mileStoneMap.get("reached").equals("true"));
             }
             this.milestone = ms;
+        }
+        
+        if(stepMap.containsKey("options")) {
+            this.options = new LinkedList<>((List<String>)stepMap.get("options"));            
+        }        
+        
+        if(stepMap.containsKey("condition")) {
+            StepDto selectionPoint = null;
+            for(StepDto walker : stepList) {
+                if(walker.getId().equals(((List<Map>)stepMap.get("condition")).get(0).get("selectionPoint"))) {
+                    selectionPoint = walker;
+                }
+            }
+            if(selectionPoint == null) {
+                throw new IllegalStateException("Unable to meet condition for step "+this.id);
+            }
+            this.condition = new Condition(selectionPoint, (String) ((List<Map>)stepMap.get("condition")).get(1).get("option"));
         }
     }
 
@@ -221,15 +259,7 @@ public class StepDto implements Step {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 67 * hash + Objects.hashCode(this.id);
-        hash = 67 * hash + Objects.hashCode(this.responsible);
-        hash = 67 * hash + Objects.hashCode(this.action);
-        hash = 67 * hash + Objects.hashCode(this.checks);
-        hash = 67 * hash + Objects.hashCode(this.state);
-        hash = 67 * hash + Objects.hashCode(this.executor);
-        hash = 67 * hash + Objects.hashCode(this.lastUpdate);
-        hash = 67 * hash + Objects.hashCode(this.comment);
-        hash = 67 * hash + Objects.hashCode(this.milestone);
+        hash = 97 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -248,32 +278,10 @@ public class StepDto implements Step {
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
-        if (!Objects.equals(this.responsible, other.responsible)) {
-            return false;
-        }
-        if (!Objects.equals(this.action, other.action)) {
-            return false;
-        }
-        if (!Objects.equals(this.executor, other.executor)) {
-            return false;
-        }
-        if (!Objects.equals(this.comment, other.comment)) {
-            return false;
-        }
-        if (!Objects.equals(this.milestone, other.milestone)) {
-            return false;
-        }
-        if (!Objects.equals(this.checks, other.checks)) {
-            return false;
-        }
-        if (this.state != other.state) {
-            return false;
-        }
-        if (!Objects.equals(this.lastUpdate, other.lastUpdate)) {
-            return false;
-        }
         return true;
     }
+
+    
 
     @Override
     public String toString() {
@@ -314,5 +322,32 @@ public class StepDto implements Step {
     public void setSubChecklist(String subChecklist) {
         this.subChecklist = subChecklist;
     }
+
+    @Override
+    public List<String> getOptions() {
+        return this.options;
+    }
+
+    public void setOptions(List<String> options) {
+        this.options = options;
+    }
+
+    public String getSelectedOption() {
+        return this.selectionOption;
+    }
+
+    public void setSelectionOption(String selectionOption) {
+        this.selectionOption = selectionOption;
+    }
+
+    public Condition getCondition() {
+        return condition;
+    }
+
+    public void setCondition(Condition condition) {
+        this.condition = condition;
+    }
+    
+    
     
 }

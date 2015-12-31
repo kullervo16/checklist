@@ -54,12 +54,12 @@ public class TemplatePersister  {
                 Map templateMap = (Map) reader.read();
                 if(templateMap != null) {
                     for(Map stepMap : (List<Map>)templateMap.get(STEPS)) {
-                        StepDto step = new StepDto(stepMap);
+                        StepDto step = new StepDto(stepMap, steps);
                         steps.add(step);  
                         if(step.getMilestone() != null) {
                             milestones.add(step.getMilestone());
                         }
-                    }
+                    }                    
                     
                     this.template.setDescription((String) templateMap.get(DESCRIPTION));
                     if(templateMap.get(TAGS) != null) {
@@ -73,7 +73,7 @@ public class TemplatePersister  {
                 
                 this.lastCheck = System.currentTimeMillis();
                 this.fileModifTime = file.lastModified();
-                this.template.setDisplayName(this.file.getName().substring(0,this.file.getName().lastIndexOf(".")));
+                this.template.setDisplayName(this.file.getName().substring(0,this.file.getName().lastIndexOf(".")));                
             } catch (FileNotFoundException | YamlException ex) {
                 Logger.getLogger(TemplatePersister.class.getName()).log(Level.SEVERE, null, ex);
             }
