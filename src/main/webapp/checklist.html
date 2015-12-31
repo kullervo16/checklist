@@ -76,6 +76,9 @@
                         <div ng-show="step.errors.length">
                             <h4><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;Errors:&nbsp;<span class="badge">{{step.errors.length}}</span></h4>                                
                         </div>
+                        <div ng-show="step.documentation && showActionDetails(step)" >
+                            <h4><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target = "_blank">&nbsp;&nbsp;Documentation&nbsp;</a></span></h4>                                
+                        </div>
                         <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showActionButtons(step)">
                             <p>Action result :&nbsp;&nbsp;</p>
                             <button type="button" class="btn btn-default" aria-label="ok" ng-click="updateAction(step, true);">

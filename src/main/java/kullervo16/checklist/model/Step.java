@@ -42,4 +42,6 @@ public interface  Step {
     public Milestone getMilestone();
     
     public int getWeight();
+    
+    public String getDocumentation();
 }

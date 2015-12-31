@@ -25,6 +25,7 @@ public class StepDto implements Step {
     protected Milestone milestone;
     protected List<String> errors;
     protected int weight;
+    protected String documentation;
     
     public StepDto() {
     }
@@ -45,6 +46,7 @@ public class StepDto implements Step {
         this.state  = step.getState();
         this.errors = new LinkedList<>(step.getErrors());
         this.weight = step.getWeight();
+        this.documentation = step.getDocumentation();
     }
 
     /**
@@ -61,6 +63,9 @@ public class StepDto implements Step {
         
         if(stepMap.get("weight") != null) {
             this.weight = Integer.parseInt(stepMap.get("weight").toString());
+        }
+        if(stepMap.get("documentation") != null) {
+            this.documentation = (String) stepMap.get("documentation");
         }
         
         if(stepMap.get("check") instanceof String) {
@@ -287,6 +292,15 @@ public class StepDto implements Step {
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    @Override
+    public String getDocumentation() {
+        return this.documentation;
+    }
+
+    public void setDocumentation(String documentation) {
+        this.documentation = documentation;
     }
 
     
