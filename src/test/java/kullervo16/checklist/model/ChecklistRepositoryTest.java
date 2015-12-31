@@ -5,7 +5,7 @@
  */
 package kullervo16.checklist.model;
 
-import kullervo16.checklist.service.ChecklistRepository;
+import kullervo16.checklist.repository.ChecklistRepository;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +20,9 @@ public class ChecklistRepositoryTest {
     private ChecklistRepository repository;
     
     @Before
-    public void setup() {
-        this.repository = new ChecklistRepository();
-        this.repository.loadData("./src/test/resources/data/checklists");
+    public void setup() {  
+        this.repository = ChecklistRepository.INSTANCE;
+        ChecklistRepository.loadData("./src/test/resources/data/checklists");
     }
 
     /**

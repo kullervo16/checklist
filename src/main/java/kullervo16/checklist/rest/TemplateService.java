@@ -17,8 +17,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import kullervo16.checklist.model.Template;
 import kullervo16.checklist.model.TemplateInfo;
-import kullervo16.checklist.service.ChecklistRepository;
-import kullervo16.checklist.service.TemplateRepository;
+import kullervo16.checklist.repository.ActorRepository;
+import kullervo16.checklist.repository.ChecklistRepository;
+import kullervo16.checklist.repository.TemplateRepository;
 
 /**
  * REST service to expose the templates via JSON.
@@ -29,12 +30,12 @@ import kullervo16.checklist.service.TemplateRepository;
 @Stateless
 public class TemplateService {
     
-    @EJB
-    TemplateRepository templateRepository;
+    // use singleton repository to make sure we are all working on the same backend (@Singleton does not seem to do that job like it should)    
+    TemplateRepository templateRepository = TemplateRepository.INSTANCE;
     
-    @EJB
-    ChecklistRepository checklistRepository;
-
+    
+    ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
+        
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)

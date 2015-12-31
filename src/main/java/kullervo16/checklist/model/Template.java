@@ -136,5 +136,7 @@ public class Template {
         return true;
     }
     
-        
+    public void persist() {
+        this.persister.serialize();
+    }
 }

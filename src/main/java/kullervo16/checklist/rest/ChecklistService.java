@@ -14,10 +14,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.Step;
-import kullervo16.checklist.service.ChecklistRepository;
+import kullervo16.checklist.repository.ActorRepository;
+import kullervo16.checklist.repository.ChecklistRepository;
 
 /**
  * REST service to expose the checklists via JSON.
@@ -28,11 +30,10 @@ import kullervo16.checklist.service.ChecklistRepository;
 @Stateless
 public class ChecklistService {
     
+    // use singleton repository to make sure we are all working on the same backend (@Singleton does not seem to do that job like it should)    
+    ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
     
-    @EJB
-    ChecklistRepository checklistRepository;
-    
-    
+
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
@@ -51,6 +52,7 @@ public class ChecklistService {
         } else {
             step.setState(State.EXECUTION_FAILED_NO_COMMENT);
         }
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));
         return cl;
     }
     
@@ -68,7 +70,7 @@ public class ChecklistService {
         } else {
             step.setState(State.CHECK_FAILED_NO_COMMENT);
         }
-                 
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));         
         return cl;
     }
     
@@ -90,7 +92,8 @@ public class ChecklistService {
             default:
                 throw new IllegalStateException("Current step state "+step.getState()+" does not permit adding errors");
         }
-        step.getErrors().add(error);              
+        step.getErrors().add(error);    
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));
         return cl;
     }
     
@@ -103,6 +106,7 @@ public class ChecklistService {
             cl.getTags().add(tag);
             cl.setSpecificTagSet(true);
         }
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));
         return cl;
     }
     
@@ -132,7 +136,7 @@ public class ChecklistService {
                 }
             }
         }
-        
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));
         return cl;
     }
 

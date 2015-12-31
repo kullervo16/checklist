@@ -1,7 +1,7 @@
 
 package kullervo16.checklist.model;
 
-import kullervo16.checklist.service.TemplateRepository;
+import kullervo16.checklist.repository.TemplateRepository;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class TemplateRepositoryTest {
     
     @Before
     public void setup() {
-        this.repository = new TemplateRepository();
+        this.repository = TemplateRepository.INSTANCE;
         this.repository.loadData("./src/test/resources/data/templates");
     }
         /**

@@ -5,7 +5,7 @@
  */
 package kullervo16.checklist.model;
 
-import kullervo16.checklist.service.ChecklistRepository;
+import kullervo16.checklist.repository.ChecklistRepository;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class ChecklistTest {
     
     @Before
     public void setup() {
-        this.repository = new ChecklistRepository();
+        this.repository = ChecklistRepository.INSTANCE;
         this.repository.loadData("./src/test/resources/data/checklists");
     }
     
@@ -90,19 +90,17 @@ public class ChecklistTest {
     }
     
     @Test
-    public void testSerialize() {
-        this.repository = new ChecklistRepository();
-        this.repository.loadData("./target/test-classes/data/checklists");
+    public void testSerialize() {        
+        ChecklistRepository.loadData("./target/test-classes/data/checklists");
         
         Checklist cl = (Checklist)this.repository.getChecklist("deployment_20151126.yml");
         
         // serialize cl
         cl.getPersister().serialize();
         
-        ChecklistRepository repo2 = new ChecklistRepository();
-        repo2.loadData("./target/test-classes/data/checklists");
+        ChecklistRepository.loadData("./target/test-classes/data/checklists");
 
-        Checklist cl2 = repo2.getChecklist("deployment_20151126.yml");      
+        Checklist cl2 = ChecklistRepository.INSTANCE.getChecklist("deployment_20151126.yml");      
         // trigger loading (equals on introspection does not work properly
         cl.getSteps();
         cl2.getSteps();

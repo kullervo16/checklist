@@ -24,7 +24,9 @@ import kullervo16.checklist.model.Step;
 public class TemplatePersister  {
 
     private File file;
-    private Template template;    
+    protected Template template;   
+    private boolean writing;
+    private boolean loaded;
     
     
     // variables for cache control
@@ -39,7 +41,7 @@ public class TemplatePersister  {
     
     
     public void checkAndLoadDataFromFile() {        
-        if(this.file != null && System.currentTimeMillis() - lastCheck > 1000 && this.file.lastModified() - this.fileModifTime > 0) {
+        if(!this.writing && this.file != null && System.currentTimeMillis() - lastCheck > 1000 && this.file.lastModified() - this.fileModifTime > 0) {
             YamlReader reader;
             
             try {
@@ -64,6 +66,9 @@ public class TemplatePersister  {
                     if(templateMap.get(TAGS) != null) {
                         tags.addAll((List<String>) templateMap.get(TAGS));                        
                     }
+                    if(templateMap.get("displayName") != null) {
+                        this.template.setDisplayName((String) templateMap.get("displayName"));  
+                    }
                     
                 }
                 this.template.setTags(tags);
@@ -71,10 +76,11 @@ public class TemplatePersister  {
                 this.template.setSteps(steps);
                 
                 this.lastCheck = System.currentTimeMillis();
-                this.fileModifTime = file.lastModified();
-                this.template.setDisplayName(this.file.getName().substring(0,this.file.getName().lastIndexOf(".")));                
+                this.fileModifTime = file.lastModified();                
+                this.loaded = true;
             } catch (FileNotFoundException | YamlException ex) {
                 Logger.getLogger(TemplatePersister.class.getName()).log(Level.SEVERE, null, ex);
+                this.loaded = false;
             }
             
         }
@@ -113,13 +119,34 @@ public class TemplatePersister  {
      * @param writer 
      */
     protected void serializeHeader(PrintWriter writer) {
-        ; // do nothing
+        writer.append("displayName: ").append(this.template.getDisplayName()).append("\n");
+        writer.append("description: ").append(this.template.getDescription()).append("\n");
+        
+        if(!template.getTags().isEmpty()) {
+            writer.append("tags: ").append("\n");
+            for(String tag : template.getTags()) {
+                writer.append("    - ").append(tag).append("\n");
+            }
+        }
+        if(!template.getMilestones().isEmpty()) {
+            writer.append("milestones: ").append("\n");
+            for(Milestone ms : template.getMilestones()) {
+                writer.append("    - milestone:").append("\n");
+                writer.append("        - name: ").append(ms.getName()).append("\n");
+                writer.append("        - reached: ").append(""+ms.isReached()).append("\n");
+            }
+        }
     }
     
     public void serialize() {  
-        // do this to prevent an unloaded version to be erased !
-        this.checkAndLoadDataFromFile();
+        if(!this.loaded) {
+            // do this to prevent an unloaded version to be erased !
+            this.checkAndLoadDataFromFile();
+        }
+        
+        this.writing = true;
         try(PrintWriter writer = new PrintWriter(this.file);) {
+            this.serializeHeader(writer);
             writer.append("steps:\n");
             for(Step step : this.template.getSteps()) {
                 if(step instanceof Step) {
@@ -130,6 +157,7 @@ public class TemplatePersister  {
         }catch(IOException ioe) {
             ioe.printStackTrace();
         }
+        this.writing = false;
     }
 
     @Override
