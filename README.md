@@ -64,6 +64,10 @@ It applies also some governance :
  * you need to confirm every check point
  * a comment is required for each failing step in order to gather the weaknesses in your process so you can adapt your checklists accordingly
 
+The template above is shown like this :
+
+![alt text](screenshot_example.png "checklist in progress")
+
 The Web frontend also serves 2 other purposes :
  * allow you to monitor the progress of a given checklist (f.e. on a television screen in your operations room)
  * provide statistics on usage
