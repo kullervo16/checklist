@@ -44,4 +44,6 @@ public interface  Step {
     public int getWeight();
     
     public String getDocumentation();
+    
+    public String getSubChecklist();
 }

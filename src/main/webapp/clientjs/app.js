@@ -98,6 +98,10 @@
             return step.state === 'UNKNOWN' || step.state === 'EXECUTION_FAILED';
         }
         
+        function showActionButtons(step) {
+            return showActionDetails(step) && step.action;
+        }
+        
         function showChecks(step) {
             return step.state === 'EXECUTED';
         }
@@ -107,6 +111,10 @@
                 return true; // no results yet, so definitely show
             }
             return ! (check in $scope.checkResults[step.id]); // only when no result yet for that check
+        }
+        
+        function showSubchecklist(step) {
+            return showActionDetails && step.subChecklist;
         }
         // =================================================
         // Backend update operations
@@ -165,19 +173,30 @@
             }
         }
         
+        function launchSubChecklist(step) {
+            $http.post('rest/template/createChecklist?id='+step.subChecklist+"&parent="+$location.search().id)
+                .success(function (data,status,headers,config) {
+                    $window.location.href = './checklist.html?id='+data;                      
+                }).error(function (data,status,headers,config) {
+                    console.log('Error creating new checklist');
+                });  
+        }
+        
         $scope.getClassForMilestone = getClassForMilestone;
         $scope.getClassForStep      = getClassForStep;
         
-        $scope.showActionButtons = showActionDetails;
+        $scope.showActionButtons = showActionButtons;
         $scope.showActionDetails = showActionDetails;
         $scope.showErrorDialog   = showErrorDialog;
         $scope.showChecks        = showChecks;
         $scope.showCheckButtons  = showCheckButtons;
+        $scope.showSubchecklist  = showSubchecklist;
         
         $scope.updateAction   = updateAction;
         $scope.addErrorAction = addErrorAction;
         $scope.setCheckResult = setCheckResult;
         $scope.addTag         = addTag;
+        $scope.launchSubChecklist = launchSubChecklist;
     }
     );
 

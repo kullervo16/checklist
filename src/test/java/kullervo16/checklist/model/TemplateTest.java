@@ -29,24 +29,24 @@ public class TemplateTest {
         assertNotNull(steps);
         assertEquals(3,steps.size());
         
-        assertEquals("createSecureGit", steps.get(0).getId());
+        assertEquals("createDeploymentEnvironment", steps.get(0).getId());
         assertEquals("createApplication", steps.get(1).getId());
-        assertEquals("odtInit", steps.get(2).getId());
+        assertEquals("verifyFunctioning", steps.get(2).getId());
         
-        assertEquals("middleware", steps.get(0).getResponsible());
-        assertEquals("middleware", steps.get(1).getResponsible());
-        assertEquals("middleware", steps.get(2).getResponsible());
+        assertEquals("deployer", steps.get(0).getResponsible());
+        assertEquals("deployer", steps.get(1).getResponsible());
+        assertEquals("development", steps.get(2).getResponsible());
         
-        assertEquals("request secure GIT to JDSS. Request URL", steps.get(0).getAction());
+        assertEquals("request the deployment environment", steps.get(0).getAction());
         assertEquals("create the application in the proper zone", steps.get(1).getAction());
-        assertEquals("perform odt init", steps.get(2).getAction());
+        assertNull(steps.get(2).getAction());
         
         assertEquals(1, steps.get(0).getChecks().size());
-        assertEquals("on the deployment station, perform git clone with the URL from JDSS", steps.get(0).getChecks().get(0));
+        assertEquals("log on the deployment station", steps.get(0).getChecks().get(0));
         
         assertEquals(2, steps.get(1).getChecks().size());
-        assertEquals("verify proper gear type (must match environment)", steps.get(1).getChecks().get(0));
-        assertEquals("rhc ssh <application> -n <domain>", steps.get(1).getChecks().get(1));
+        assertEquals("open webconsole in the proper zone", steps.get(1).getChecks().get(0));
+        assertEquals("application should be present and green", steps.get(1).getChecks().get(1));
         
         
     }

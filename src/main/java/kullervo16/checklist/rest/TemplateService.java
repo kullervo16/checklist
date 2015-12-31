@@ -53,12 +53,12 @@ public class TemplateService {
     @POST
     @Path("/createChecklist")
     @Produces(MediaType.TEXT_PLAIN)
-    public String createChecklist(@QueryParam("id") String id) throws URISyntaxException {    
+    public String createChecklist(@QueryParam("id") String id, @QueryParam("parent") String parent) throws URISyntaxException {    
         Template template = this.templateRepository.getTemplate(id);
         if(template == null) {
             throw new IllegalArgumentException("Unknown template "+id);
         }
         
-        return this.checklistRepository.createFromTemplate(id, template);        
+        return this.checklistRepository.createFromTemplate(id, template, parent);        
     }
 }

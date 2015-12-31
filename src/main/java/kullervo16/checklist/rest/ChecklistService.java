@@ -17,6 +17,7 @@ import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Step;
 import kullervo16.checklist.model.dto.ChecklistDto;
+import kullervo16.checklist.model.dto.StepDto;
 import kullervo16.checklist.service.ChecklistRepository;
 
 /**
@@ -44,15 +45,12 @@ public class ChecklistService {
     @Path("/setActionResult")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setActionResult(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("result") boolean result) {        
-        Checklist cl = this.checklistRepository.getChecklist(checklistId);  
-        for(Step step : cl.getSteps()) {
-            if(step.getId().equals(stepId)) {
-                if(result) {
-                    step.setState(State.EXECUTED);
-                } else {
-                    step.setState(State.EXECUTION_FAILED_NO_COMMENT);
-                }
-            }
+        ChecklistDto cl =getChecklist(checklistId);
+        StepDto step = getStep(cl, stepId);  
+        if(result) {
+            step.setState(State.EXECUTED);
+        } else {
+            step.setState(State.EXECUTION_FAILED_NO_COMMENT);
         }
         return cl;
     }
@@ -61,19 +59,17 @@ public class ChecklistService {
     @Path("/setCheckResult")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setCheckResult(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("result") boolean result) {        
-        Checklist cl = this.checklistRepository.getChecklist(checklistId);  
-        for(Step step : cl.getSteps()) {
-            if(step.getId().equals(stepId)) {
-                if(result) {
-                    step.setState(State.OK);
-                    if(step.getMilestone() != null) {
-                        step.getMilestone().setReached(true);
-                    }
-                } else {
-                    step.setState(State.CHECK_FAILED_NO_COMMENT);
-                }
+        ChecklistDto cl =getChecklist(checklistId);
+        StepDto step = getStep(cl, stepId);  
+        if(result) {
+            step.setState(State.OK);
+            if(step.getMilestone() != null) {
+                step.getMilestone().setReached(true);
             }
+        } else {
+            step.setState(State.CHECK_FAILED_NO_COMMENT);
         }
+                 
         return cl;
     }
     
@@ -82,22 +78,20 @@ public class ChecklistService {
     @Path("/addErrorToStep")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addErrorToStep(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, String error) {        
-        Checklist cl = this.checklistRepository.getChecklist(checklistId);  
-        for(Step step : cl.getSteps()) {
-            if(step.getId().equals(stepId)) {                
-                switch (step.getState()) {
-                    case EXECUTION_FAILED_NO_COMMENT:
-                        step.setState(State.EXECUTION_FAILED);
-                        break;
-                    case CHECK_FAILED_NO_COMMENT:
-                        step.setState(State.CHECK_FAILED);
-                        break;
-                    default:
-                        throw new IllegalStateException("Current step state "+step.getState()+" does not permit adding errors");
-                }
-                step.getErrors().add(error);
-            }
+        ChecklistDto cl =getChecklist(checklistId);
+        StepDto step = getStep(cl, stepId);    
+                
+        switch (step.getState()) {
+            case EXECUTION_FAILED_NO_COMMENT:
+                step.setState(State.EXECUTION_FAILED);
+                break;
+            case CHECK_FAILED_NO_COMMENT:
+                step.setState(State.CHECK_FAILED);
+                break;
+            default:
+                throw new IllegalStateException("Current step state "+step.getState()+" does not permit adding errors");
         }
+        step.getErrors().add(error);              
         return cl;
     }
     
@@ -105,11 +99,28 @@ public class ChecklistService {
     @Path("/addTag")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addTag(@QueryParam("id") String checklistId, @QueryParam("tag") String tag) {        
-        ChecklistDto cl = (ChecklistDto) this.checklistRepository.getChecklist(checklistId);  
+        ChecklistDto cl = getChecklist(checklistId);
         if(!cl.getTags().contains(tag)) {
             cl.getTags().add(tag);
             cl.setSpecificTagSet(true);
         }
         return cl;
+    }
+
+    private ChecklistDto getChecklist(String checklistId) throws IllegalArgumentException {
+        ChecklistDto cl = (ChecklistDto) this.checklistRepository.getChecklist(checklistId);
+        if(cl == null) {
+            throw new IllegalArgumentException("No checklist found with id "+checklistId);
+        }
+        return cl;
+    }
+    
+    private StepDto getStep(ChecklistDto cl, String stepId) throws IllegalArgumentException {        
+        for(Step step : cl.getSteps()) {
+            if(step.getId().equals(stepId)) {
+                return (StepDto) step;
+            }
+        }
+        throw new IllegalArgumentException("No step found with id "+stepId);
     }
 }

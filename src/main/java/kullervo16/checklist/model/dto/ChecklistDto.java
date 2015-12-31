@@ -15,6 +15,7 @@ import kullervo16.checklist.model.persist.ChecklistPersister;
 public class ChecklistDto extends TemplateDto implements Checklist{
       
     private boolean hasSpecificTags;
+    private String parent;
     
     public ChecklistDto() {
     }
@@ -23,7 +24,7 @@ public class ChecklistDto extends TemplateDto implements Checklist{
         this.persister = new ChecklistPersister(file, this);
     }
 
-    public ChecklistDto(Template template, File file) {
+    public ChecklistDto(Template template, File file, String parent) {
         this(file);
         this.description = template.getDescription();
         this.displayName = template.getDisplayName();
@@ -40,7 +41,13 @@ public class ChecklistDto extends TemplateDto implements Checklist{
                 this.milestones.add(newStep.getMilestone());
             }
         }
-        this.hasSpecificTags = false;
+        if(parent != null) {
+            this.tags.add("subchecklist");
+            this.hasSpecificTags = true;
+            this.parent = parent;
+        } else {
+            this.hasSpecificTags = false;
+        }
         
         
     }
@@ -108,6 +115,13 @@ public class ChecklistDto extends TemplateDto implements Checklist{
     public void setSpecificTagSet(boolean hasSpecificTags) {
         this.hasSpecificTags = hasSpecificTags;
     }
-        
 
+    @Override
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
+    }            
 }

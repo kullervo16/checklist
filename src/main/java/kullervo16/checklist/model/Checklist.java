@@ -28,4 +28,5 @@ public interface Checklist extends Template{
     */
    public boolean isSpecificTagSet();
 
+   public String getParent();
 }

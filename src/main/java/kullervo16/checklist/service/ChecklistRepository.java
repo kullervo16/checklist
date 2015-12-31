@@ -71,14 +71,14 @@ public class ChecklistRepository {
      * @param template
      * @return a UUID 
      */
-    public synchronized  String createFromTemplate(String templateId, Template template) {
+    public synchronized  String createFromTemplate(String templateId, Template template, String parent) {
         String uuid = UUID.randomUUID().toString();
         File subfolder = new File(this.mainFolder, templateId);
         subfolder.mkdirs();
         
-        ChecklistDto checklist = new ChecklistDto(template,new File(subfolder, uuid));
+        ChecklistDto checklist = new ChecklistDto(template,new File(subfolder, uuid), parent);
         this.data.put(uuid, checklist);
-        
+                        
         // TODO : send message to stats to signal updated content
         // TODO : send message to persistance to sync with storage backend
         return uuid;

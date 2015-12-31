@@ -72,7 +72,12 @@
                         <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showActionDetails(step)">
                             <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{step.responsible}}</h4>                            
                         </div>
-                        <h4><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>&nbsp;&nbsp;{{step.action}}</h4>
+                        <div ng-show="step.action">
+                            <h4><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>&nbsp;&nbsp;{{step.action}}</h4>
+                        </div>
+                        <div ng-show="showSubchecklist(step) ">
+                            <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" class="btn btn-default" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></h4>
+                        </div>
                         <div ng-show="step.errors.length">
                             <h4><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;Errors:&nbsp;<span class="badge">{{step.errors.length}}</span></h4>                                
                         </div>

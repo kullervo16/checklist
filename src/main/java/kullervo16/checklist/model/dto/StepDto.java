@@ -26,6 +26,7 @@ public class StepDto implements Step {
     protected List<String> errors;
     protected int weight;
     protected String documentation;
+    protected String subChecklist;
     
     public StepDto() {
     }
@@ -47,6 +48,7 @@ public class StepDto implements Step {
         this.errors = new LinkedList<>(step.getErrors());
         this.weight = step.getWeight();
         this.documentation = step.getDocumentation();
+        this.subChecklist = step.getSubChecklist();
     }
 
     /**
@@ -59,21 +61,22 @@ public class StepDto implements Step {
         this.action = (String) stepMap.get("action");
         this.checks = new LinkedList<>();
         this.executor = (String)stepMap.get("executor");
-        this.weight   = 1;
+        this.documentation = (String) stepMap.get("documentation");
+        this.subChecklist = (String) stepMap.get("subchecklist");
         
+        this.weight   = 1;                
         if(stepMap.get("weight") != null) {
             this.weight = Integer.parseInt(stepMap.get("weight").toString());
-        }
-        if(stepMap.get("documentation") != null) {
-            this.documentation = (String) stepMap.get("documentation");
-        }
+        }        
         
-        if(stepMap.get("check") instanceof String) {
-           // convert String to list (this makes it a lot easier to configure the yaml           
-           this.checks.add((String) stepMap.get("check"));
-        } else {
-            for(Map<String,String> entry : (List<Map>) stepMap.get("check")) {
-                this.checks.add(entry.get("step"));
+        if(stepMap.get("check") != null) {
+            if(stepMap.get("check") instanceof String) {
+               // convert String to list (this makes it a lot easier to configure the yaml           
+               this.checks.add((String) stepMap.get("check"));
+            } else {
+                for(Map<String,String> entry : (List<Map>) stepMap.get("check")) {
+                    this.checks.add(entry.get("step"));
+                }
             }
         }
         this.errors = new LinkedList<>();
@@ -303,5 +306,13 @@ public class StepDto implements Step {
         this.documentation = documentation;
     }
 
+    @Override
+    public String getSubChecklist() {
+        return this.subChecklist;
+    }
+
+    public void setSubChecklist(String subChecklist) {
+        this.subChecklist = subChecklist;
+    }
     
 }
