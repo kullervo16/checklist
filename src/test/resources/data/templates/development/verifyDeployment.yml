@@ -1,33 +1,35 @@
-description: Checklist to monitor a first deployment of an application
+description: Checklist to verify a deployment
 tags:
     - tag1
-    - tag2
-    - tag3
-    - tag4
-    - tag5
-    - tag6
-    - tag7
-    - tag8
-    - tag9
-    - tag10
+    - tag2    
 steps :    
     - id: step1
       responsible: resp1
-      action: action1
-      check: check1
+      options:
+          - option1
+          - option2
       milestone: milestone1
     - id: step2
       responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option1
       action: action1
       check: check1
       milestone: milestone2
     - id: step3
       responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option2
       action: action1
       check: check1
       milestone: milestone3
     - id: step4
       responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option2
       action: action1
       check: check1
       milestone: milestone4

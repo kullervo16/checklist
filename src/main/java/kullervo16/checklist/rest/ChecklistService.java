@@ -14,11 +14,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.State;
+import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.Step;
-import kullervo16.checklist.model.dto.ChecklistDto;
-import kullervo16.checklist.model.dto.StepDto;
 import kullervo16.checklist.service.ChecklistRepository;
 
 /**
@@ -46,8 +44,8 @@ public class ChecklistService {
     @Path("/setActionResult")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setActionResult(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("result") boolean result) {        
-        ChecklistDto cl =getChecklist(checklistId);
-        StepDto step = getStep(cl, stepId);  
+        Checklist cl =getChecklist(checklistId);
+        Step step = getStep(cl, stepId);  
         if(result) {
             step.setState(State.EXECUTED);
         } else {
@@ -60,8 +58,8 @@ public class ChecklistService {
     @Path("/setCheckResult")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setCheckResult(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("result") boolean result) {        
-        ChecklistDto cl =getChecklist(checklistId);
-        StepDto step = getStep(cl, stepId);  
+        Checklist cl =getChecklist(checklistId);
+        Step step = getStep(cl, stepId);  
         if(result) {
             step.setState(State.OK);
             if(step.getMilestone() != null) {
@@ -79,8 +77,8 @@ public class ChecklistService {
     @Path("/addErrorToStep")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addErrorToStep(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, String error) {        
-        ChecklistDto cl =getChecklist(checklistId);
-        StepDto step = getStep(cl, stepId);    
+        Checklist cl =getChecklist(checklistId);
+        Step step = getStep(cl, stepId);    
                 
         switch (step.getState()) {
             case EXECUTION_FAILED_NO_COMMENT:
@@ -100,7 +98,7 @@ public class ChecklistService {
     @Path("/addTag")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addTag(@QueryParam("id") String checklistId, @QueryParam("tag") String tag) {        
-        ChecklistDto cl = getChecklist(checklistId);
+        Checklist cl = getChecklist(checklistId);
         if(!cl.getTags().contains(tag)) {
             cl.getTags().add(tag);
             cl.setSpecificTagSet(true);
@@ -112,21 +110,21 @@ public class ChecklistService {
     @Path("/setStepOption")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setStepOption(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("choice") String choice) {        
-        ChecklistDto cl =getChecklist(checklistId);
-        StepDto step = getStep(cl, stepId);    
+        Checklist cl =getChecklist(checklistId);
+        Step step = getStep(cl, stepId);    
         
         if(step.getSelectedOption() != null && ! choice.equals(step.getSelectedOption())) {
             throw new IllegalStateException("trying to reset the state... for step "+stepId);
         }
         
-        step.setSelectionOption(choice);
+        step.setSelectedOption(choice);
         step.setState(State.OK);
         if(step.getMilestone() != null) {
             step.getMilestone().setReached(true);
         }
         
         // now iterate all steps to update the once that depend on our choice
-        for(StepDto walker : (List<StepDto>) cl.getSteps()) {
+        for(Step walker : (List<Step>) cl.getSteps()) {
             if(walker.getCondition() != null) {
                 if(walker.getCondition().isConditionUnreachable()) {
                     // this condition has become unreachable.. so set the state to not-applicable.
@@ -138,18 +136,18 @@ public class ChecklistService {
         return cl;
     }
 
-    private ChecklistDto getChecklist(String checklistId) throws IllegalArgumentException {
-        ChecklistDto cl = (ChecklistDto) this.checklistRepository.getChecklist(checklistId);
+    private Checklist getChecklist(String checklistId) throws IllegalArgumentException {
+        Checklist cl = (Checklist) this.checklistRepository.getChecklist(checklistId);
         if(cl == null) {
             throw new IllegalArgumentException("No checklist found with id "+checklistId);
         }
         return cl;
     }
     
-    private StepDto getStep(ChecklistDto cl, String stepId) throws IllegalArgumentException {        
+    private Step getStep(Checklist cl, String stepId) throws IllegalArgumentException {        
         for(Step step : cl.getSteps()) {
             if(step.getId().equals(stepId)) {
-                return (StepDto) step;
+                return (Step) step;
             }
         }
         throw new IllegalArgumentException("No step found with id "+stepId);

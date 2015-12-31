@@ -76,6 +76,56 @@ The Web frontend also serves 2 other purposes :
  a spot in your process where there is either something unclear, or your previous steps lack proper checks to make them less
  error prone.
 
+### Simple flow control
+There is also the option to create a simple IF function in your checklists.. This allows you to apply some simple flow control and prevents you from creating
+multiple templates that do practically the same thing (which will become a burden to keep them in synch when you want to enhance them). This is an example
+
+```yaml
+description: Checklist to verify a deployment
+tags:
+    - tag1
+    - tag2    
+steps :    
+    - id: step1
+      responsible: resp1
+      options:
+          - option1
+          - option2
+      milestone: milestone1
+    - id: step2
+      responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option1
+      action: action1
+      check: check1
+      milestone: milestone2
+    - id: step3
+      responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option2
+      action: action1
+      check: check1
+      milestone: milestone3
+    - id: step4
+      responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option2
+      action: action1
+      check: check1
+      milestone: milestone4
+    - id: step5
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone5      
+```
+In the GUI this is represented like this : the steps that are not reachable anymore based on your choices are marked in grey.
+
+![alt text](screenshot_choice.png "checklist with options")
+
 ## GIT backend (TODO)
 
 The idea is to use a file based backend with GIT as a remote synchronisation store. The backend will commit and push after each update, so that the GIT is always up to date.

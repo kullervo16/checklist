@@ -78,6 +78,25 @@
                         <div ng-show="showSubchecklist(step) ">
                             <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" class="btn btn-default" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></h4>
                         </div>
+                        <div ng-show="showOptions(step)">    
+                            <h4><span class="glyphicon glyphicon-question-sign" aria-hidden="true">&nbsp;&nbsp;Please select an option</span></h4>
+                            <div class="btn-group" uib-dropdown>                                                          
+                              <button id="split-button" type="button" class="btn">Available options</button>
+                              <button type="button" class="btn" uib-dropdown-toggle>
+                                <span class="caret"></span>
+                                <span class="sr-only">Split button!</span>
+                              </button>
+                              
+                              <ul class="uib-dropdown-menu" role="menu" aria-labelledby="split-button">
+                                <li ng-repeat="choice in step.options">
+                                  <a href ng-click="setStepOption(step,choice)">{{choice}}</a>
+                                </li>
+                              </ul>
+                            </div>
+                        </div>
+                        <div ng-show="step.selectedOption">
+                            <h4>Selected option : {{step.selectedOption}}</h4>
+                        </div>
                         <div ng-show="step.errors.length">
                             <h4><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;Errors:&nbsp;<span class="badge">{{step.errors.length}}</span></h4>                                
                         </div>

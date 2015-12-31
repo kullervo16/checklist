@@ -116,6 +116,10 @@
         function showSubchecklist(step) {
             return showActionDetails && step.subChecklist;
         }
+        
+        function showOptions(step) {
+            return step.options && !step.selectedOption;
+        }
         // =================================================
         // Backend update operations
         // =================================================
@@ -173,6 +177,15 @@
             }
         }
         
+        function setStepOption(step, choice) {
+            $http.post('rest/checklist/setStepOption?id='+$location.search().id+"&step="+step.id+"&choice="+choice)
+                .success(function (data,status,headers,config) {
+                    $scope.data = data;                      
+                }).error(function (data,status,headers,config) {
+                    console.log('Error updating step '+step.id);
+                });
+        }
+        
         function launchSubChecklist(step) {
             $http.post('rest/template/createChecklist?id='+step.subChecklist+"&parent="+$location.search().id)
                 .success(function (data,status,headers,config) {
@@ -191,11 +204,13 @@
         $scope.showChecks        = showChecks;
         $scope.showCheckButtons  = showCheckButtons;
         $scope.showSubchecklist  = showSubchecklist;
+        $scope.showOptions       = showOptions;
         
         $scope.updateAction   = updateAction;
         $scope.addErrorAction = addErrorAction;
         $scope.setCheckResult = setCheckResult;
         $scope.addTag         = addTag;
+        $scope.setStepOption  = setStepOption;
         $scope.launchSubChecklist = launchSubChecklist;
     }
     );

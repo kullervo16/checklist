@@ -14,8 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import kullervo16.checklist.model.dto.StepDto;
-import kullervo16.checklist.model.dto.TemplateDto;
+import kullervo16.checklist.model.Step;
 
 /**
  * Data object to model a template. It is backed by a YAML file.
@@ -25,14 +24,14 @@ import kullervo16.checklist.model.dto.TemplateDto;
 public class TemplatePersister  {
 
     private File file;
-    private TemplateDto template;    
+    private Template template;    
     
     
     // variables for cache control
     private long lastCheck;
     private long fileModifTime;
 
-    public TemplatePersister(File file,TemplateDto t) {
+    public TemplatePersister(File file,Template t) {
         this.file = file;
         this.template = t;
     }    
@@ -45,7 +44,7 @@ public class TemplatePersister  {
             
             try {
                 // init
-                LinkedList<StepDto> steps = new LinkedList<>();
+                LinkedList<Step> steps = new LinkedList<>();
                 LinkedList<String> tags  = new LinkedList<>();
                 LinkedList<Milestone> milestones = new LinkedList<>();    
                                 
@@ -54,7 +53,7 @@ public class TemplatePersister  {
                 Map templateMap = (Map) reader.read();
                 if(templateMap != null) {
                     for(Map stepMap : (List<Map>)templateMap.get(STEPS)) {
-                        StepDto step = new StepDto(stepMap, steps);
+                        Step step = new Step(stepMap, steps);
                         steps.add(step);  
                         if(step.getMilestone() != null) {
                             milestones.add(step.getMilestone());
@@ -82,7 +81,7 @@ public class TemplatePersister  {
     }
     
     
-    private void serializeStep(StepDto step, PrintWriter writer) {        
+    private void serializeStep(Step step, PrintWriter writer) {        
         printLine(writer,"- id",step.getId());
         printLine(writer,"  responsible",step.getResponsible());
         printLine(writer,"  action",step.getAction());
@@ -123,8 +122,8 @@ public class TemplatePersister  {
         try(PrintWriter writer = new PrintWriter(this.file);) {
             writer.append("steps:\n");
             for(Step step : this.template.getSteps()) {
-                if(step instanceof StepDto) {
-                    this.serializeStep((StepDto)step, writer);
+                if(step instanceof Step) {
+                    this.serializeStep((Step)step, writer);
                 }
             }
             writer.flush();        

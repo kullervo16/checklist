@@ -8,9 +8,8 @@ import java.util.Map;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
-import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.Template;
-import kullervo16.checklist.model.dto.ChecklistDto;
+import kullervo16.checklist.model.Checklist;
 
 
 
@@ -48,7 +47,7 @@ public class ChecklistRepository {
             if(f.isDirectory()) {
                 this.scanDirectoryForTemplates(f, newModel);
             } else {
-                newModel.put(f.getName(), new ChecklistDto(f)); 
+                newModel.put(f.getName(), new Checklist(f)); 
             }
             
         }
@@ -76,7 +75,7 @@ public class ChecklistRepository {
         File subfolder = new File(this.mainFolder, templateId);
         subfolder.mkdirs();
         
-        ChecklistDto checklist = new ChecklistDto(template,new File(subfolder, uuid), parent);
+        Checklist checklist = new Checklist(template,new File(subfolder, uuid), parent);
         this.data.put(uuid, checklist);
                         
         // TODO : send message to stats to signal updated content

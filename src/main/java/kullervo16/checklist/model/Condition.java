@@ -5,17 +5,15 @@
  */
 package kullervo16.checklist.model;
 
-import kullervo16.checklist.model.dto.StepDto;
-
 /**
  *
  * @author jef
  */
 public class Condition {
-    private final StepDto step;
+    private final Step step;
     private final String selectedOption;
 
-    public Condition(StepDto step, String selectedOption) {
+    public Condition(Step step, String selectedOption) {
         this.step = step;
         this.selectedOption = selectedOption;
     }
@@ -24,7 +22,7 @@ public class Condition {
         return this.step.getSelectedOption() != null && !this.selectedOption.equals(this.step.getSelectedOption());
     }
 
-    public StepDto getStep() {
+    public Step getStep() {
         return step;
     }
 
