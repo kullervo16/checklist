@@ -27,8 +27,8 @@ public enum TemplateRepository {
     private static Map<String,Template> data = new HashMap<>();
     
     static {
-        // TODO : fetch from config
-        loadData("/home/jef/NetBeansProjects/checklist/src/test/resources/data/templates");
+        // fixed path ... target is to work in a docker container, you can mount it via a volume to whathever you want
+        loadData("/opt/checklist/templates");        
     }
         
     /**
@@ -43,17 +43,19 @@ public enum TemplateRepository {
     }
     
     private static void scanDirectoryForTemplates(File startDir, String prefix,Map<String,Template> newModel) {
-        for(File f : startDir.listFiles()) {
-            if(f.isDirectory()) {
-                scanDirectoryForTemplates(f, prefix+"/"+f.getName(), newModel);
-            } else {
-                Template template = new Template(f);
-                String id = prefix+"/"+f.getName().substring(0,f.getName().lastIndexOf("."));
-                template.setDisplayName(id);
-                template.setId(id);
-                newModel.put(id, template); 
+        if(startDir.listFiles() != null) {
+            for(File f : startDir.listFiles()) {
+                if(f.isDirectory()) {
+                    scanDirectoryForTemplates(f, prefix+"/"+f.getName(), newModel);
+                } else {
+                    Template template = new Template(f);
+                    String id = prefix+"/"+f.getName().substring(0,f.getName().lastIndexOf("."));
+                    template.setDisplayName(id);
+                    template.setId(id);
+                    newModel.put(id, template); 
+                }
+
             }
-            
         }
     }
 

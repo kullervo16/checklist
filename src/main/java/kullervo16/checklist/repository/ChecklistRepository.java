@@ -26,8 +26,8 @@ public enum ChecklistRepository {
     private final static Object lock = new Object();
     
     static {
-        // TODO : fetch from config
-        loadData("/home/jef/NetBeansProjects/checklist/target/test-classes/data/checklists");
+        // fixed path... target is to work in a docker container, you can mount it via a volume to whathever you want
+        loadData("/opt/checklist/checklists");
     }
     
    /**
@@ -45,13 +45,14 @@ public enum ChecklistRepository {
     }
     
     private static void scanDirectoryForTemplates(File startDir, Map<String,Checklist> newModel) {
-        for(File f : startDir.listFiles()) {
-            if(f.isDirectory()) {
-                scanDirectoryForTemplates(f, newModel);
-            } else {
-                newModel.put(f.getName(), new Checklist(f)); 
+        if(startDir.listFiles() != null) {
+            for(File f : startDir.listFiles()) {
+                if(f.isDirectory()) {
+                    scanDirectoryForTemplates(f, newModel);
+                } else {
+                    newModel.put(f.getName(), new Checklist(f)); 
+                }
             }
-            
         }
     }
     
