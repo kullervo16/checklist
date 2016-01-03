@@ -9,6 +9,16 @@ It has support for both tags and milestones :
  * tags will organise your templates and checklists. You use them to retrieve them and to group the statistics
  * milestones define a status in the process the checklist supports. You reach a milestone if all checks before that milestone are ok. Via the milestone, you can see which instances of the checklists reached a given state.
 
+## Releases
+
+Current release : 0.1
+
+Here you can find the [Release notes for the different versions](./release.md).
+
+### Release target
+
+The project contains a Dockerfile. You can also find the released versions on dockerhub.
+
 ## Templates
 
 The templates are defined in  YAML. This is the syntax :
