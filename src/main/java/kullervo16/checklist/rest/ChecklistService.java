@@ -37,7 +37,7 @@ public class ChecklistService {
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist getTemplate(@QueryParam("id") String id) {        
+    public Checklist getCL(@QueryParam("id") String id) {        
         return this.checklistRepository.getChecklist(id);    
     }
     
@@ -60,12 +60,26 @@ public class ChecklistService {
     @Path("/setCheckResult")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setCheckResult(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("result") boolean result) {        
-        Checklist cl =getChecklist(checklistId);
+        Checklist cl = getChecklist(checklistId);
         Step step = getStep(cl, stepId);  
         if(result) {
             step.setState(State.OK);
             if(step.getMilestone() != null) {
                 step.getMilestone().setReached(true);
+            }
+            if(cl.getProgress() == 100) {
+                // this checklist is complete... now check whether we are a subchecklist... if so, update the parent
+                if(cl.getParent() != null) {
+                    Checklist parent = getChecklist(cl.getParent());
+                    for(Step walker : parent.getSteps()) {
+                        if(cl.getTemplate().equals(walker.getSubChecklist()) && !walker.isComplete())  {
+                            // we update the first not completed step with the proper template (this allows the same template to be used
+                            // multiple times as subchecklist in a single instance. We call it recursively because this template may also
+                            // have a parent...
+                            this.setCheckResult(cl.getParent(), walker.getId(), true);
+                        }
+                    }
+                }
             }
         } else {
             step.setState(State.CHECK_FAILED_NO_COMMENT);
@@ -79,7 +93,7 @@ public class ChecklistService {
     @Path("/addErrorToStep")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addErrorToStep(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, String error) {        
-        Checklist cl =getChecklist(checklistId);
+        Checklist cl = getChecklist(checklistId);
         Step step = getStep(cl, stepId);    
                 
         switch (step.getState()) {

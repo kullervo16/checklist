@@ -114,7 +114,7 @@
         }
         
         function showSubchecklist(step) {
-            return showActionDetails && step.subChecklist;
+            return showActionDetails(step) && step.subChecklist;
         }
         
         function showOptions(step) {
