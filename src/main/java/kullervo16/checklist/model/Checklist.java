@@ -15,6 +15,7 @@ public class Checklist extends Template{
       
     private boolean hasSpecificTags;
     private String parent;
+    private String template;
     
     public Checklist() {
     }
@@ -27,6 +28,7 @@ public class Checklist extends Template{
         this(file);
         this.description = template.getDescription();
         this.displayName = template.getDisplayName();
+        this.template    = template.getId();
         
         // deep copy... we're working completely in memory here, don't want to link references...  
         this.tags = new LinkedList<>(template.getTags());
@@ -69,7 +71,7 @@ public class Checklist extends Template{
     * @return 
     */   
    @JsonIgnore
-   public State getState() {
+   public State getState() {       
        State aggregatedState = State.UNKNOWN;
        for(Step step : this.getSteps()) {
            if(step.getState().compareTo(aggregatedState) > 0) {
@@ -112,10 +114,21 @@ public class Checklist extends Template{
     }
     
     public String getParent() {
+        this.checkAndLoadDataFromFile();
         return parent;
     }
 
     public void setParent(String parent) {
         this.parent = parent;
     }            
+
+    public String getTemplate() {
+        this.checkAndLoadDataFromFile();
+        return this.template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
+    }
+        
 }

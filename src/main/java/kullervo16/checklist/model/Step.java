@@ -122,9 +122,10 @@ public class Step {
             if(stepMap.get("milestone") instanceof String) {
                 ms = new Milestone((String) stepMap.get("milestone"), false);
             } else {
-                Map<String,String> mileStoneMap = (Map) stepMap.get("milestone");
+                String name =(String) ((List<Map>) stepMap.get("milestone")).get(0).get("name");
+                boolean reached = ((String)((List<Map>) stepMap.get("milestone")).get(1).get("reached")).equals("true");
                 
-                ms = new Milestone(mileStoneMap.get("name"), mileStoneMap.get("reached").equals("true"));
+                ms = new Milestone(name, reached);
             }
             this.milestone = ms;
         }
@@ -144,6 +145,9 @@ public class Step {
                 throw new IllegalStateException("Unable to meet condition for step "+this.id);
             }
             this.condition = new Condition(selectionPoint, (String) ((List<Map>)stepMap.get("condition")).get(1).get("option"));
+        }
+        if(stepMap.containsKey("lastUpdate")) {
+            this.lastUpdate = new Date(Long.valueOf((String)stepMap.get("lastUpdate")));
         }
     }
 

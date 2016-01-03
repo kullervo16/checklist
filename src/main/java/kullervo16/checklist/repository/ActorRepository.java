@@ -8,7 +8,6 @@ import akka.actor.Props;
 import java.util.HashMap;
 import java.util.Map;
 import kullervo16.checklist.actors.PersistenceActor;
-import kullervo16.checklist.messages.PersistenceRequest;
 
 /**
  *
@@ -25,9 +24,7 @@ public class ActorRepository {
         system = ActorSystem.create("ChecklistActors");
  
         createActor(PersistenceActor.class, "persistenceActor");
-        
-        
-                
+                                
         
     }
 

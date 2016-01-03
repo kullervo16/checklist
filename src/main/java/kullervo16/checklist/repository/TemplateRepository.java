@@ -50,6 +50,7 @@ public enum TemplateRepository {
                 Template template = new Template(f);
                 String id = prefix+"/"+f.getName().substring(0,f.getName().lastIndexOf("."));
                 template.setDisplayName(id);
+                template.setId(id);
                 newModel.put(id, template); 
             }
             

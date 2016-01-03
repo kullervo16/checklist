@@ -23,6 +23,7 @@ public class Template {
     protected List<String> tags;    
     protected TemplatePersister persister;
     protected List<Milestone> milestones;
+    private String id;
 
     
     public Template() {
@@ -34,6 +35,7 @@ public class Template {
     }
         
     public String getDisplayName() {
+        this.checkAndLoadDataFromFile();
         return displayName;
     }
        
@@ -80,7 +82,7 @@ public class Template {
         return this.steps;
     }
 
-    private void checkAndLoadDataFromFile() {
+    protected void checkAndLoadDataFromFile() {
         if(this.persister != null) {
             this.persister.checkAndLoadDataFromFile();
         }
@@ -139,4 +141,15 @@ public class Template {
     public void persist() {
         this.persister.serialize();
     }
+
+    public String getId() {
+        this.checkAndLoadDataFromFile();
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    
 }

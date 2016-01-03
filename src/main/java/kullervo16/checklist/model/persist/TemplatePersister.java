@@ -54,21 +54,7 @@ public class TemplatePersister  {
                 reader = new YamlReader(new FileReader(this.file));                
                 Map templateMap = (Map) reader.read();
                 if(templateMap != null) {
-                    for(Map stepMap : (List<Map>)templateMap.get(STEPS)) {
-                        Step step = new Step(stepMap, steps);
-                        steps.add(step);  
-                        if(step.getMilestone() != null) {
-                            milestones.add(step.getMilestone());
-                        }
-                    }                    
-                    
-                    this.template.setDescription((String) templateMap.get(DESCRIPTION));
-                    if(templateMap.get(TAGS) != null) {
-                        tags.addAll((List<String>) templateMap.get(TAGS));                        
-                    }
-                    if(templateMap.get("displayName") != null) {
-                        this.template.setDisplayName((String) templateMap.get("displayName"));  
-                    }
+                    handleData(templateMap, steps, milestones, tags);                    
                     
                 }
                 this.template.setTags(tags);
@@ -76,13 +62,34 @@ public class TemplatePersister  {
                 this.template.setSteps(steps);
                 
                 this.lastCheck = System.currentTimeMillis();
-                this.fileModifTime = file.lastModified();                
-                this.loaded = true;
+                this.fileModifTime = file.lastModified();     
+                
+                
+                
             } catch (FileNotFoundException | YamlException ex) {
                 Logger.getLogger(TemplatePersister.class.getName()).log(Level.SEVERE, null, ex);
                 this.loaded = false;
+                return;
+            }            
+        }
+        this.loaded = true;
+    }
+
+    protected void handleData(Map templateMap, LinkedList<Step> steps, LinkedList<Milestone> milestones, LinkedList<String> tags) {
+        for(Map stepMap : (List<Map>)templateMap.get(STEPS)) {
+            Step step = new Step(stepMap, steps);
+            steps.add(step);
+            if(step.getMilestone() != null) {
+                milestones.add(step.getMilestone());
             }
-            
+        }
+        
+        this.template.setDescription((String) templateMap.get(DESCRIPTION));
+        if(templateMap.get(TAGS) != null) {
+            tags.addAll((List<String>) templateMap.get(TAGS));
+        }
+        if(templateMap.get("displayName") != null) {
+            this.template.setDisplayName((String) templateMap.get("displayName"));
         }
     }
     
@@ -94,16 +101,25 @@ public class TemplatePersister  {
         printLine(writer,"  state",step.getState().toString());
         printLine(writer,"  executor",step.getExecutor());        
         printLine(writer,"  comment",step.getComment());
+        printLine(writer,"  documentation",step.getDocumentation());
+        printLine(writer,"  subchecklist", step.getSubChecklist());
+        printLine(writer,"  weight", ""+step.getWeight());
+        printLine(writer,"  selectedOption", step.getSelectedOption());
         if(step.getLastUpdate() != null) {
             printLine(writer,"  lastUpdate",""+step.getLastUpdate().getTime());
         }
         if(step.getChecks().size() == 1) {
             printLine(writer,"  check",step.getChecks().get(0));
         } else if (step.getChecks().size() > 1) {
-            writer.append("    ").append("check").append(": ").append("\n");            
+            writer.append("    ").append("check: \n");            
             for(String check : step.getChecks()) {
-                writer.append("      -").append(" step").append(": ").append(check).append("\n");
+                writer.append("      -").append(" step: ").append(check).append("\n");
             }
+        }
+        if(step.getMilestone() != null) {
+            writer.append("    ").append("milestone: \n");    
+            writer.append("    ").append("  - ").append("name: ").append(step.getMilestone().getName()).append("\n");    
+            writer.append("    ").append("  - ").append("reached: ").append(""+step.getMilestone().isReached()).append("\n");    
         }
         
     }
@@ -119,23 +135,19 @@ public class TemplatePersister  {
      * @param writer 
      */
     protected void serializeHeader(PrintWriter writer) {
-        writer.append("displayName: ").append(this.template.getDisplayName()).append("\n");
-        writer.append("description: ").append(this.template.getDescription()).append("\n");
+        if(template.getDisplayName() != null) {
+            writer.append("displayName: ").append(this.template.getDisplayName()).append("\n");
+        }
+        if(template.getDescription() != null) {
+            writer.append("description: ").append(this.template.getDescription()).append("\n");
+        }
         
         if(!template.getTags().isEmpty()) {
             writer.append("tags: ").append("\n");
             for(String tag : template.getTags()) {
                 writer.append("    - ").append(tag).append("\n");
             }
-        }
-        if(!template.getMilestones().isEmpty()) {
-            writer.append("milestones: ").append("\n");
-            for(Milestone ms : template.getMilestones()) {
-                writer.append("    - milestone:").append("\n");
-                writer.append("        - name: ").append(ms.getName()).append("\n");
-                writer.append("        - reached: ").append(""+ms.isReached()).append("\n");
-            }
-        }
+        }        
     }
     
     public void serialize() {  
@@ -157,6 +169,8 @@ public class TemplatePersister  {
         }catch(IOException ioe) {
             ioe.printStackTrace();
         }
+        this.lastCheck = System.currentTimeMillis();
+        this.fileModifTime = this.file.lastModified();
         this.writing = false;
     }
 
@@ -190,5 +204,5 @@ public class TemplatePersister  {
     private static final String STEPS = "steps";
     private static final String DESCRIPTION = "description";
     private static final String MILESTONES = "milestones";
-    private static final String TAGS = "tags";
+    private static final String TAGS = "tags";    
 }
