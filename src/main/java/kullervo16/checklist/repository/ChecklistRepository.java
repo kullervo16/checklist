@@ -84,7 +84,7 @@ public enum ChecklistRepository {
         }
                         
         // TODO : send message to stats to signal updated content        
-        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(uuid));
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(uuid), null);
         
         return uuid;
     }
