@@ -37,9 +37,12 @@
                 <!-- /.nav-collapse-->
             </div>
         </div>
-        <div role="main" class="container theme-showcase">            
-            <div class="jumbotron"><h1>Available templates</h1></div>
-            <div ng-controller="templateController as template">                
+        <div role="main" class="container theme-showcase" ng-controller="templateController as template">            
+            <div class="jumbotron">
+                <h1>Available templates</h1>
+                <h3><button data-toggle="modal" data-target="#myModal" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp; Add a new template</button></h3>                
+            </div>
+            <div>                
                 <div class="list-group" ng-repeat="t in items">                
                     <h4 class="list-group-item-heading">{{t.id}}</h4>
                     <p><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;&nbsp;{{t.description}}</p>
@@ -74,8 +77,30 @@
                         </button>
                     </div>
                 </div>
+            </div>        
+        
+            <div id="myModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select a template file to add</h4>
+                  </div>
+                  <div class="modal-body">
+                    <input type="file" name="file" onchange="angular.element(this).scope().setFile(this.files)"/>
+                    <input type="text" name="templateName" onchange="angular.element(this).scope().setTemplateName(this)"/>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="angular.element(this).scope().uploadFile()">OK</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
             </div>
-        </div>
+            </div>
 
         <!-- /container-->
         <!-- Bootstrap core JavaScript-->

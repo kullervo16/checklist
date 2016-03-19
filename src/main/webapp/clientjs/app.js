@@ -39,8 +39,38 @@
             }           
         }
         
+        function setFile(files) {
+            $scope.files = files;
+        }
+        
+        function setTemplateName(tn) {
+            $scope.templateName = tn.value;
+        }
+        
+        function uploadFile() {
+                var fd = new FormData();
+                //Take the first selected file
+                fd.append("file", $scope.files[0]);
+                
+
+                $http.post('rest/template/upload?name='+$scope.templateName, fd, {
+                    withCredentials: true,
+                    headers: {'Content-Type': undefined },
+                    transformRequest: angular.identity
+                }).success( new function() {
+                                console.log("OK");
+                                // reload the current page... may be a new one added
+                                init();
+                                }
+                          ).error( console.log("Error") );
+
+            };
+        
         $scope.createChecklist = createChecklist;
         $scope.getClassForMilestone = getClassForMilestone;
+        $scope.uploadFile = uploadFile;
+        $scope.setTemplateName = setTemplateName;
+        $scope.setFile = setFile;
         init();
     }
     );
