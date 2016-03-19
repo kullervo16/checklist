@@ -52,7 +52,7 @@ public class ChecklistService {
         } else {
             step.setState(State.EXECUTION_FAILED_NO_COMMENT);
         }
-        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         return cl;
     }
     
@@ -84,7 +84,7 @@ public class ChecklistService {
         } else {
             step.setState(State.CHECK_FAILED_NO_COMMENT);
         }
-        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));         
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId),null);         
         return cl;
     }
     
@@ -107,7 +107,7 @@ public class ChecklistService {
                 throw new IllegalStateException("Current step state "+step.getState()+" does not permit adding errors");
         }
         step.getErrors().add(error);    
-        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         return cl;
     }
     
@@ -120,7 +120,7 @@ public class ChecklistService {
             cl.getTags().add(tag);
             cl.setSpecificTagSet(true);
         }
-        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         return cl;
     }
     
@@ -150,7 +150,7 @@ public class ChecklistService {
                 }
             }
         }
-        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId));
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId),null);
         return cl;
     }
 

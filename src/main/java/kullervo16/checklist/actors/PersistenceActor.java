@@ -10,7 +10,7 @@ import kullervo16.checklist.repository.ChecklistRepository;
  * @author jef
  */
 public class PersistenceActor extends UntypedActor{
-
+    
     @Override
     public void onReceive(Object work) throws Exception {
         
@@ -24,5 +24,5 @@ public class PersistenceActor extends UntypedActor{
     private void persist(String uuid) {
         ChecklistRepository.INSTANCE.getChecklist(uuid).persist();
     }
-    
+           
 }

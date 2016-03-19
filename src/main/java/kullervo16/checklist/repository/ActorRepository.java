@@ -23,14 +23,13 @@ public class ActorRepository {
         
         system = ActorSystem.create("ChecklistActors");
  
-        createActor(PersistenceActor.class, "persistenceActor");
-                                
+        createActor(PersistenceActor.class, "persistenceActor");                 
         
     }
 
     private static ActorRef createActor(Class type, String name) {
         // create the actors
-        ActorRef ref = system.actorOf(new Props(type), name);
+        ActorRef ref = system.actorOf(Props.create(PersistenceActor.class), name);
         pathIndex.put(PersistenceActor.class, ref.path());
         return ref;
     }

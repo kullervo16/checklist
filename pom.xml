@@ -60,8 +60,8 @@
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor</artifactId>
-            <version>2.0.2</version>
+            <artifactId>akka-actor_2.11</artifactId>
+            <version>2.4.2</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
