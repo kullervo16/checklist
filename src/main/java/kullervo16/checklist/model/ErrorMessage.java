@@ -45,6 +45,11 @@ public class ErrorMessage {
         this.details = details;
     }
 
+    @Override
+    public String toString() {
+        return "ErrorMessage{" + "description=" + description + ", severity=" + severity + ", details=" + details + '}';
+    }
+
     
     
     

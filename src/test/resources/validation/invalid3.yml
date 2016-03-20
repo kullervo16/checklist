@@ -1,0 +1,9 @@
+# missing : displayName
+# missing : description
+# no :
+tags
+    - deployment
+    # incorrect tag
+    - software: miep      
+
+# missing : steps

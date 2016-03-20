@@ -1,0 +1,15 @@
+# wrong type
+displayName:
+    - someValue
+# wrong type
+description:
+    - someValue
+
+tags:
+    - deployment
+    # duplicate tag
+    - otherTag
+    - deployment
+    
+
+# missing : steps

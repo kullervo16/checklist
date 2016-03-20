@@ -1,0 +1,29 @@
+displayName: first deployment
+description: Checklist to monitor a first deployment of an application
+tags:
+    - deployment
+    - miep      
+steps :
+      # missing id
+    - idx: createDeploymentEnvironment     
+      responsible: deployer      
+      action: request the deployment environment      
+      check: log on the deployment station      
+      milestone: readyForDeployment
+      #negative weight
+      weight: -1
+    - id: createApplication
+      responsible: deployer
+      action: create the application in the proper zone      
+      check:
+          - step: open webconsole in the proper zone
+          - step: application should be present and green      
+      weight: 5
+      # duplicate ID
+    - id: createApplication
+      responsible: development      
+      documentation: https://github.com/kullervo16/checklist      
+      subchecklist: /development/verifyDeployment
+      milestone: deployed## YAML Template.
+      # non numeric weight
+      weight: boe

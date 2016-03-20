@@ -22,7 +22,7 @@ import kullervo16.checklist.model.Step;
  * @author jeve
  */
 public class TemplatePersister  {
-
+    
     private final File file;
     protected Template template;   
     private boolean writing;
@@ -88,10 +88,11 @@ public class TemplatePersister  {
         if(templateMap.get(TAGS) != null) {
             tags.addAll((List<String>) templateMap.get(TAGS));
         }
-        if(templateMap.get("displayName") != null) {
-            this.template.setDisplayName((String) templateMap.get("displayName"));
+        if(templateMap.get(DISPLAY_NAME) != null) {
+            this.template.setDisplayName((String) templateMap.get(DISPLAY_NAME));
         }
     }
+    
     
     /**
      * This method makes sure the template adheres to the proper structure
@@ -108,12 +109,134 @@ public class TemplatePersister  {
                 result.add(new ErrorMessage("Invalid YAML.",ErrorMessage.Severity.CRITICAL,"No YAML structure found."));
             }
             if(templateMap != null) {
+                // step 1 : check presence of main level tags
+                checkTag(templateMap, DISPLAY_NAME, "/", result, DataType.STRING, true);
+                checkTag(templateMap, DESCRIPTION, "/", result,DataType.STRING, true);
+                checkTag(templateMap, TAGS, "/", result,DataType.LIST, true);
+                checkTag(templateMap, STEPS, "/", result,DataType.LIST, true);
                 
+                // step 2 : check tags
+                if(templateMap.containsKey(TAGS)) {
+                    try {
+                        List<String> currentTagList = new LinkedList<>();
+                        for(String tag : (List<String>) templateMap.get(TAGS)) {
+                            if(currentTagList.contains(tag)) {
+                                result.add(new ErrorMessage("Duplicate tag : "+tag, ErrorMessage.Severity.WARNING, "You used the same tag twice in the template"));
+                            } else {
+                                currentTagList.add(tag);
+                            }
+                                    
+                        }
+                    }catch(ClassCastException cce) {
+                        result.add(new ErrorMessage("Wrong data in Tags",ErrorMessage.Severity.MAJOR,"/tags : value should be simple strings"));
+                    }
+                }
+                
+                // step 3 : check steps
+                if(templateMap.containsKey(STEPS)) {
+                    List<Map> stepList = (List<Map>) templateMap.get(STEPS);
+                    int pos = 1;
+                    List<String> currentIdList = new LinkedList<>();
+                    for(Map stepMap : stepList) {
+                        checkStep(stepMap, pos++, result);
+                        if(stepMap.containsKey("id")) {
+                            if(currentIdList.contains(stepMap.get("id"))) {
+                                result.add(new ErrorMessage("Duplicate id : "+stepMap.get("id"), ErrorMessage.Severity.MAJOR, "You used the same id twice in the template"));
+                            } else {
+                                currentIdList.add(stepMap.get("id").toString());
+                            }
+                        }
+                    }
+                }
             }
         }catch(YamlException e) {
             result.add(new ErrorMessage("Invalid YAML.",ErrorMessage.Severity.CRITICAL,e.getMessage()));
         }
         return result;
+    }
+    
+    private enum DataType  {STRING, URL, NUMBER, POSITIVE_NUMBER, MAP, LIST, STRING_OR_LIST};
+    
+    private static void checkTag(Map data, String tagName, String path,List<ErrorMessage> errorList, DataType dataType, boolean mandatory) {
+        if(!data.containsKey(tagName)) {
+            if(mandatory) {
+                errorList.add(new ErrorMessage("Missing tag : "+tagName, ErrorMessage.Severity.MAJOR, path+"/"+tagName));
+            }
+        } else {
+            switch(dataType) {
+                case STRING:
+                    try {
+                        String value = (String) data.get(tagName);
+                        value.length();
+                    }catch(ClassCastException cce) {
+                        errorList.add(new ErrorMessage("Invalid tag value: "+tagName, ErrorMessage.Severity.MAJOR, path+"/"+tagName+" should be a valid String"));
+                    }
+                    break;
+                case MAP:
+                    try {
+                        Map value = (Map) data.get(tagName);
+                        value.size();
+                    }catch(ClassCastException cce) {
+                        errorList.add(new ErrorMessage("Invalid tag value: "+tagName, ErrorMessage.Severity.MAJOR, path+"/"+tagName+" should be a valid Map"));
+                    }
+                    break;
+                case LIST:
+                    try {
+                        List value = (List) data.get(tagName);
+                        value.size();
+                    }catch(ClassCastException cce) {
+                        errorList.add(new ErrorMessage("Invalid tag value: "+tagName, ErrorMessage.Severity.MAJOR, path+"/"+tagName+" should be a valid List"));
+                    }
+                    break;
+                case STRING_OR_LIST:
+                    try {
+                        String value = (String) data.get(tagName);
+                        value.length();
+                    }catch(ClassCastException cce) {
+                        try {
+                            // second try : maybe it's a list
+                            List value = (List) data.get(tagName);
+                            value.size();
+                        } catch(ClassCastException cce2) {
+                            errorList.add(new ErrorMessage("Invalid tag value: "+tagName, ErrorMessage.Severity.MAJOR, path+"/"+tagName+" should be a valid String or List"));
+                        }
+                    }
+                    break;
+                case NUMBER:
+                    try {
+                        Integer value = Integer.valueOf(data.get(tagName).toString());                        
+                    }catch(NumberFormatException cce) {
+                        errorList.add(new ErrorMessage("Invalid tag value: "+tagName, ErrorMessage.Severity.MAJOR, path+"/"+tagName+" should be a valid Integer"));
+                    }
+                    break;
+                case POSITIVE_NUMBER:
+                    try {
+                        Integer value = Integer.valueOf(data.get(tagName).toString());    
+                        if(value<0) {
+                            errorList.add(new ErrorMessage("Invalid tag value: "+tagName, ErrorMessage.Severity.MAJOR, path+"/"+tagName+" should be a valid positive Integer"));
+                        }
+                    }catch(NumberFormatException cce) {
+                        errorList.add(new ErrorMessage("Invalid tag value: "+tagName, ErrorMessage.Severity.MAJOR, path+"/"+tagName+" should be a valid Integer"));
+                    }
+                    break;
+            }
+        }
+        
+    }
+        
+    private static void checkStep(Map stepMap, int pos, LinkedList<ErrorMessage> result) {
+        // step 1 : all mandatory/optional tags and their types
+        checkTag(stepMap, "id", "/steps/"+pos, result, DataType.STRING, true);
+        checkTag(stepMap, "responsible", "/steps/"+pos, result,DataType.STRING, true);
+        checkTag(stepMap, "options", "/steps/"+pos, result,DataType.LIST, false);
+        checkTag(stepMap, "milestone", "/steps/"+pos, result,DataType.STRING, false);
+        checkTag(stepMap, "condition", "/steps/"+pos, result,DataType.LIST, false);
+        checkTag(stepMap, "action", "/steps/"+pos, result,DataType.STRING, false);
+        checkTag(stepMap, "documentation", "/steps/"+pos, result,DataType.URL, false);
+        checkTag(stepMap, "subchecklist", "/steps/"+pos, result,DataType.STRING, false);
+        checkTag(stepMap, "check", "/steps/"+pos, result,DataType.STRING_OR_LIST, false);
+        checkTag(stepMap, "weight", "/steps/"+pos, result,DataType.POSITIVE_NUMBER, false);
+        // step 2 : either condition or action must be present
     }
                 
     private void serializeStep(Step step, PrintWriter writer) {        
@@ -227,6 +350,7 @@ public class TemplatePersister  {
     private static final String DESCRIPTION = "description";
     private static final String MILESTONES = "milestones";
     private static final String TAGS = "tags";       
+    private static final String DISPLAY_NAME = "displayName";
 
     public File getFile() {
         return this.file;
