@@ -24,16 +24,14 @@ public class ValidationTest {
     public void testInvalid1() {
         List<ErrorMessage> errors = getErrors("./src/test/resources/validation/invalid1.yml");
         System.err.println(errors);
-        assertEquals(4, errors.size());
+        assertEquals(3, errors.size());
         assertTrue(errors.get(0).getSeverity().equals(Severity.MAJOR));
         assertTrue(errors.get(1).getSeverity().equals(Severity.MAJOR));
-        assertTrue(errors.get(2).getSeverity().equals(Severity.MAJOR));
-        assertTrue(errors.get(3).getSeverity().equals(Severity.MAJOR));
-        
-        assertEquals("Missing tag : displayName",errors.get(0).getDescription());
-        assertEquals("Missing tag : description",errors.get(1).getDescription());
-        assertEquals("Missing tag : steps",errors.get(2).getDescription());
-        assertEquals("Wrong data in Tags",errors.get(3).getDescription());
+        assertTrue(errors.get(2).getSeverity().equals(Severity.MAJOR));        
+                
+        assertEquals("Missing tag : description",errors.get(0).getDescription());
+        assertEquals("Missing tag : steps",errors.get(1).getDescription());
+        assertEquals("Wrong data in Tags",errors.get(2).getDescription());
     }
     
     @Test

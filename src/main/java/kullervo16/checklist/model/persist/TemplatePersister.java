@@ -110,7 +110,7 @@ public class TemplatePersister  {
             }
             if(templateMap != null) {
                 // step 1 : check presence of main level tags
-                checkTag(templateMap, DISPLAY_NAME, "/", result, DataType.STRING, true);
+                checkTag(templateMap, DISPLAY_NAME, "/", result, DataType.STRING, false);
                 checkTag(templateMap, DESCRIPTION, "/", result,DataType.STRING, true);
                 checkTag(templateMap, TAGS, "/", result,DataType.LIST, true);
                 checkTag(templateMap, STEPS, "/", result,DataType.LIST, true);
