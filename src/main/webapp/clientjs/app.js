@@ -57,12 +57,15 @@
                     withCredentials: true,
                     headers: {'Content-Type': undefined },
                     transformRequest: angular.identity
-                }).success( new function() {
-                                console.log("OK");
-                                // reload the current page... may be a new one added
-                                init();
+                }).success( function (data,status,headers,config) {
+                                $scope.uploadValidationData = data;   
+                                if(data.length > 0) {
+                                    $('#myModal').modal('show')
+                                } else {
+                                    init();
                                 }
-                          ).error( console.log("Error") );
+                            }
+                          ).error( console.log("Error uploading file") );
 
             };
         

@@ -100,8 +100,16 @@ public class TemplatePersister  {
     public static List<ErrorMessage> validateTemplate(String content) {
         LinkedList<ErrorMessage> result = new LinkedList<>();
         try {
-            YamlReader reader = new YamlReader(content);
-            Map templateMap = (Map) reader.read();
+            YamlReader reader = new YamlReader(content);            
+            Map templateMap = null;
+            try {
+                templateMap = (Map) reader.read();
+            }catch(ClassCastException cce ) {
+                result.add(new ErrorMessage("Invalid YAML.",ErrorMessage.Severity.CRITICAL,"No YAML structure found."));
+            }
+            if(templateMap != null) {
+                
+            }
         }catch(YamlException e) {
             result.add(new ErrorMessage("Invalid YAML.",ErrorMessage.Severity.CRITICAL,e.getMessage()));
         }

@@ -89,6 +89,10 @@
                     <h4 class="modal-title">Select a template file to add</h4>
                   </div>
                   <div class="modal-body">
+                      <div ng-repeat="err in uploadValidationData">
+                          <h4>{{err.severity}}:&nbsp;&nbsp;{{err.description}}</h4>
+                          <p>{{err.details}}</p>
+                      </div>
                     <input type="file" name="file" onchange="angular.element(this).scope().setFile(this.files)"/>
                     <input type="text" name="templateName" onchange="angular.element(this).scope().setTemplateName(this)"/>
                   </div>
@@ -100,6 +104,7 @@
 
               </div>
             </div>
+            
             </div>
 
         <!-- /container-->
