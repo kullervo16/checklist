@@ -97,12 +97,17 @@ public enum TemplateRepository {
         
         List<ErrorMessage> errors = TemplatePersister.validateTemplate(content);
         
+        if("".equals(name) || "undefined".equals(name)) {
+            errors.add(new ErrorMessage("No name given", ErrorMessage.Severity.CRITICAL, "You should give a name... structure can be applied by using /"));
+        }
+        
         for(ErrorMessage err : errors) {
             if(!err.getSeverity().equals(ErrorMessage.Severity.WARNING)) {
                 // warning is the highest severity we allow and still update
                 return errors;
             }
         }
+        
         
         File targetFile;
         if(data.containsKey(name)) {
@@ -111,8 +116,18 @@ public enum TemplateRepository {
             
         } else {
             // new file
-            targetFile = new File(TEMPLATE_DIR+"/"+name);
+            String fileName = name;
+            String split[] = name.split("/");
+            if(!split[split.length-1].contains(".")) {
+                fileName += ".yml";
+            } 
+            targetFile = new File(TEMPLATE_DIR+"/"+fileName);
             
+        }
+        // now check for the parent directory
+        File parent = targetFile.getParentFile();
+        if(!parent.exists()) {
+            parent.mkdirs(); // no need to check. if creation failed, the file will be unwritable and the proper error is generated below.
         }
         try (FileOutputStream fos = new FileOutputStream(targetFile)) {
                 IOUtils.write(content, fos);                

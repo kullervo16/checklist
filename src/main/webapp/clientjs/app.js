@@ -47,7 +47,18 @@
             $scope.templateName = tn.value;
         }
         
+        function hideModal() {
+            $('#myModal').modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        }
+        
+        function showModal() {
+            $('#myModal').modal('show');
+        }
+        
         function uploadFile() {
+                hideModal();
                 var fd = new FormData();
                 //Take the first selected file
                 fd.append("file", $scope.files[0]);
@@ -59,9 +70,10 @@
                     transformRequest: angular.identity
                 }).success( function (data,status,headers,config) {
                                 $scope.uploadValidationData = data;   
-                                if(data.length > 0) {
-                                    $('#myModal').modal('show')
+                                if(data.length > 0) {                                    
+                                    showModal();
                                 } else {
+                                    hideModal();
                                     init();
                                 }
                             }
@@ -74,6 +86,8 @@
         $scope.uploadFile = uploadFile;
         $scope.setTemplateName = setTemplateName;
         $scope.setFile = setFile;
+        $scope.hideModal = hideModal;
+        $scope.showModal = showModal;
         init();
     }
     );
