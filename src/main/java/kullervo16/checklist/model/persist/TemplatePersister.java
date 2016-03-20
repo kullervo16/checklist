@@ -23,7 +23,7 @@ import kullervo16.checklist.model.Step;
  */
 public class TemplatePersister  {
 
-    private File file;
+    private final File file;
     protected Template template;   
     private boolean writing;
     private boolean loaded;
@@ -93,7 +93,21 @@ public class TemplatePersister  {
         }
     }
     
-    
+    /**
+     * This method makes sure the template adheres to the proper structure
+     * @param content
+     */
+    public static List<ErrorMessage> validateTemplate(String content) {
+        LinkedList<ErrorMessage> result = new LinkedList<>();
+        try {
+            YamlReader reader = new YamlReader(content);
+            Map templateMap = (Map) reader.read();
+        }catch(YamlException e) {
+            result.add(new ErrorMessage("Invalid YAML.",ErrorMessage.Severity.CRITICAL,e.getMessage()));
+        }
+        return result;
+    }
+                
     private void serializeStep(Step step, PrintWriter writer) {        
         printLine(writer,"- id",step.getId());
         printLine(writer,"  responsible",step.getResponsible());
@@ -204,5 +218,9 @@ public class TemplatePersister  {
     private static final String STEPS = "steps";
     private static final String DESCRIPTION = "description";
     private static final String MILESTONES = "milestones";
-    private static final String TAGS = "tags";    
+    private static final String TAGS = "tags";       
+
+    public File getFile() {
+        return this.file;
+    }
 }

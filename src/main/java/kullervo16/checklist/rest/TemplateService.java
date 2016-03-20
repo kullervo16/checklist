@@ -18,13 +18,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import kullervo16.checklist.model.ErrorMessage;
 import kullervo16.checklist.model.Template;
 import kullervo16.checklist.model.TemplateInfo;
 import kullervo16.checklist.repository.ChecklistRepository;
 import kullervo16.checklist.repository.TemplateRepository;
-import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
@@ -73,7 +71,7 @@ public class TemplateService {
     @POST
     @Path("/upload")
     @Consumes("multipart/form-data")
-    public Response uploadFile(MultipartFormDataInput input, @QueryParam("name") String fileName) {
+    public List<ErrorMessage> uploadFile(MultipartFormDataInput input, @QueryParam("name") String fileName) {
 
 
 
@@ -82,52 +80,20 @@ public class TemplateService {
 
             for (InputPart inputPart : inputParts) {
 
-             try {
+                               
 
-                    MultivaluedMap<String, String> header = inputPart.getHeaders();                    
-
-                    //convert the uploaded file to inputstream
-                    InputStream inputStream = inputPart.getBody(InputStream.class,null);
-
-                    byte [] bytes = IOUtils.toByteArray(inputStream);
-
-                    
-
-                    System.out.println("Done");
+             try (InputStream inputStream = inputPart.getBody(InputStream.class,null)) {
+                 
+                 return templateRepository.validateAndUpdate(fileName, inputStream);
 
               } catch (IOException e) {
                     e.printStackTrace();
               }
 
             }
-
-            return Response.status(200)
-                .entity("uploadFile is called, Uploaded file name : " + fileName).build();
+            throw new IllegalArgumentException("No input parts found");
 
     }
-
-    /**
-     * header sample
-     * {
-     * 	Content-Type=[image/png], 
-     * 	Content-Disposition=[form-data; name="file"; filename="filename.extension"]
-     * }
-     **/
-    //get uploaded filename, is there a easy way in RESTEasy?
-    private String getFileName(MultivaluedMap<String, String> header) {
-
-            String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
-
-            for (String filename : contentDisposition) {
-                    if ((filename.trim().startsWith("filename"))) {
-
-                            String[] name = filename.split("=");
-
-                            String finalFileName = name[1].trim().replaceAll("\"", "");
-                            return finalFileName;
-                    }
-            }
-            return "unknown";
-    }
+    
 
 }

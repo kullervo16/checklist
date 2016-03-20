@@ -1,14 +1,20 @@
 package kullervo16.checklist.repository;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import kullervo16.checklist.model.ErrorMessage;
 import kullervo16.checklist.model.Template;
 import kullervo16.checklist.model.TemplateInfo;
+import kullervo16.checklist.model.persist.TemplatePersister;
+import org.apache.commons.io.IOUtils;
 
 
 
@@ -25,10 +31,11 @@ public enum TemplateRepository {
     static ActorRepository actors = new ActorRepository();
 
     private static Map<String,Template> data = new HashMap<>();
+    private static final String TEMPLATE_DIR = "/opt/checklist/templates";
     
     static {
         // fixed path ... target is to work in a docker container, you can mount it via a volume to whathever you want
-        loadData("/opt/checklist/templates");        
+        loadData(TEMPLATE_DIR);        
     }
         
     /**
@@ -83,6 +90,38 @@ public enum TemplateRepository {
         }
         Collections.sort(result);
         return result;
+    }
+
+    public List<ErrorMessage> validateAndUpdate(String name, InputStream inputStream) throws IOException {
+        String content = IOUtils.toString(inputStream);
+        
+        List<ErrorMessage> errors = TemplatePersister.validateTemplate(content);
+        
+        for(ErrorMessage err : errors) {
+            if(!err.getSeverity().equals(ErrorMessage.Severity.WARNING)) {
+                // warning is the highest severity we allow and still update
+                return errors;
+            }
+        }
+        
+        File targetFile;
+        if(data.containsKey(name)) {
+            // update of an existing template
+            targetFile = data.get(name).getPersister().getFile();
+            
+        } else {
+            // new file
+            targetFile = new File(TEMPLATE_DIR+"/"+name);
+            
+        }
+        try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+                IOUtils.write(content, fos);                
+                data.put(name, new Template(targetFile));
+            }catch(IOException ioe) {
+                errors.add(new ErrorMessage("Cannot write template to file", ErrorMessage.Severity.CRITICAL, ioe.getMessage()));
+            }
+        
+        return errors;
     }
 
     
