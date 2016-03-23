@@ -136,6 +136,11 @@ In the GUI this is represented like this : the steps that are not reachable anym
 
 ![alt text](screenshot_choice.png "checklist with options")
 
+The system shows you the most recent active checklists for quick access (if you do not know the UUID). Color coding shows which ones are complete (green) and 
+which ones are still in progress (blue).
+
+![alt text](screenshot_overview.png "the list of checklists")
+
 ## GIT backend (TODO)
 
 The idea is to use a file based backend with GIT as a remote synchronisation store. The backend will commit and push after each update, so that the GIT is always up to date.
