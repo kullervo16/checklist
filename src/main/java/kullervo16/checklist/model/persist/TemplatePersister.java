@@ -256,18 +256,26 @@ public class TemplatePersister  {
         if(step.getChecks().size() == 1) {
             printLine(writer,"  check",step.getChecks().get(0));
         } else if (step.getChecks().size() > 1) {
-            writer.append("    ").append("check: \n");            
+            writer.append(SEPARATOR_1).append("check: \n");            
             for(String check : step.getChecks()) {
                 writer.append("      -").append(" step: ").append(check).append("\n");
             }
         }
         if(step.getMilestone() != null) {
-            writer.append("    ").append("milestone: \n");    
-            writer.append("    ").append("  - ").append("name: ").append(step.getMilestone().getName()).append("\n");    
-            writer.append("    ").append("  - ").append("reached: ").append(""+step.getMilestone().isReached()).append("\n");    
+            writer.append(SEPARATOR_1).append("milestone: \n");    
+            writer.append(SEPARATOR_1).append(SEPARATOR_2).append("name: ").append(step.getMilestone().getName()).append("\n");    
+            writer.append(SEPARATOR_1).append(SEPARATOR_2).append("reached: ").append(""+step.getMilestone().isReached()).append("\n");    
+        }
+        if(step.getOptions() != null) {
+            writer.append(SEPARATOR_1).append("options:\n");
+            for(String option : step.getOptions()) {
+                writer.append(SEPARATOR_1).append(SEPARATOR_2).append(option).append("\n");
+            }
         }
         
     }
+    private static final String SEPARATOR_2 = "  - ";
+    private static final String SEPARATOR_1 = "    ";
     
     private void printLine(PrintWriter writer, String name, String value) {
         if(value != null) {
