@@ -11,9 +11,9 @@ It has support for both tags and milestones :
 
 ## Releases
 
-Current release : 0.1
+Stable versions are release on both a branch (/release/<version>) and with a tag (<version>).
 
-Here you can find the [Release notes for the different versions](./release.md).
+Here you can find the [Release notes for the different versions](https://github.com/kullervo16/checklist/releases).
 
 ### Release target
 
