@@ -241,6 +241,25 @@
                     console.log('Error creating new checklist');
                 });  
         }
+        // =================================================
+        // overview operations
+        // =================================================
+        function getChecklists() {
+            $http.get('rest/checklist/list')
+                .success(function (data,status,headers,config) {
+                    $scope.checklists = data;                
+                }).error(function (data,status,headers,config) {
+                    console.log('Error listing checklists');
+                }); 
+        }
+        
+        function getClassForChecklist(checklist) {
+            if(checklist.complete) {
+                return "list-group-item list-group-item-success";
+            } else {
+                return "list-group-item list-group-item-info";
+            }
+        }
         
         $scope.getClassForMilestone = getClassForMilestone;
         $scope.getClassForStep      = getClassForStep;
@@ -259,6 +278,9 @@
         $scope.addTag         = addTag;
         $scope.setStepOption  = setStepOption;
         $scope.launchSubChecklist = launchSubChecklist;
+        
+        $scope.getChecklists = getChecklists;
+        $scope.getClassForChecklist = getClassForChecklist;
     }
     );
 

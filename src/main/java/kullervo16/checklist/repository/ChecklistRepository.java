@@ -1,13 +1,16 @@
 package kullervo16.checklist.repository;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.Checklist;
+import kullervo16.checklist.model.ChecklistInfo;
 import kullervo16.checklist.model.Template;
 
 
@@ -88,4 +91,18 @@ public enum ChecklistRepository {
         
         return uuid;
     }
+
+    public List<ChecklistInfo> getChecklistInformation() {
+        List<ChecklistInfo> result = new LinkedList<>();
+        synchronized (lock) {
+            for(Entry<String,Checklist> clEntry : data.entrySet()) {
+                ChecklistInfo cli = new ChecklistInfo(clEntry.getValue());
+                cli.setUuid(clEntry.getKey());
+                result.add(cli);
+            }
+        }
+        Collections.sort(result); // sort outside the lock
+        return result;
+    }
 }
+

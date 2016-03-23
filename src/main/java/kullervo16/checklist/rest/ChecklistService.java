@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package kullervo16.checklist.rest;
 
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -17,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Checklist;
+import kullervo16.checklist.model.ChecklistInfo;
 import kullervo16.checklist.model.Step;
 import kullervo16.checklist.repository.ActorRepository;
 import kullervo16.checklist.repository.ChecklistRepository;
@@ -33,6 +29,13 @@ public class ChecklistService {
     // use singleton repository to make sure we are all working on the same backend (@Singleton does not seem to do that job like it should)    
     ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
     
+    @GET
+    @Path("/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<ChecklistInfo> listTemplateNames() {                
+        return this.checklistRepository.getChecklistInformation();
+
+    }
 
     @GET
     @Path("/get")

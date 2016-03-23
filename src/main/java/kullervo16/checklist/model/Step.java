@@ -229,6 +229,9 @@ public class Step {
 
     @JsonIgnore
     public boolean isComplete() {
+        if(this.state == null) {
+            return false;
+        }
         switch(this.state) {
             case UNKNOWN:
             case ON_HOLD:    
