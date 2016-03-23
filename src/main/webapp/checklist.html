@@ -62,10 +62,10 @@
                 </p>                  
             </div>
             
-            <div class="progress">
+            <div class="progress" ng-show="showProgressBar()">
               <uib-progressbar animate="false" value="data.progress" type="success"><b>{{data.progress}}%</b></uib-progressbar>
             </div>
-            <div ng-show="data.specificTagSet">
+            <div ng-show="showMainBody()">
                 <div class="list-group" ng-repeat="step in data.steps">    
                     <div ng-class="getClassForStep(step)">
                     <h3 class="list-group-item-heading">{{step.id}}</h3>
@@ -76,7 +76,7 @@
                             <h4><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>&nbsp;&nbsp;{{step.action}}</h4>
                         </div>
                         <div ng-show="showSubchecklist(step) ">
-                            <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" class="btn btn-default" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></h4>
+                            <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" ng-class="getSubchecklistClass()" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></h4>
                         </div>
                         <div ng-show="showOptions(step)">    
                             <h4><span class="glyphicon glyphicon-question-sign" aria-hidden="true">&nbsp;&nbsp;Please select an option</span></h4>
@@ -143,14 +143,16 @@
                     
                 </div>
             </div>
-            <div ng-show="!data.specificTagSet">
-                    <h3 class="alert-danger">You should at least add a single specific tag to distinguish your new checklist from the other ones based on the same template.</h3>                                        
-                </div>
+            <div ng-show="!data.specificTagSet && mode !== 'template'">
+                <h3 class="alert-danger">You should at least add a single specific tag to distinguish your new checklist from the other ones based on the same template.</h3>                                        
+            </div>
+            <div ng-show="mode !== 'template'">
                 <h4>Add tags to your specific checklist. These tags will help you retrieve your instance later on. You can add as many as you like (at the bottom of the page)</h4>
                 <p>Good examples are a specific project name, a version, a period ....</p>
                 <input ng-model="newTag"/><button type="button" class="btn btn-default" aria-label="ok" ng-click="addTag(newTag)">
                               <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;Add</span>
                             </button>
+            </div>
         </div>
 
         <!-- /container-->

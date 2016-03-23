@@ -39,6 +39,10 @@
             }           
         }
         
+        function showTemplate(id) {
+            $window.location.href = './checklist.html?id='+id+"&mode=template";    
+        }
+        
         function setFile(files) {
             $scope.files = files;
         }
@@ -88,6 +92,7 @@
         $scope.setFile = setFile;
         $scope.hideModal = hideModal;
         $scope.showModal = showModal;
+        $scope.showTemplate = showTemplate;
         init();
     }
     );
@@ -97,13 +102,26 @@
         // =================================================
         // init stuff... get data from backend     
         // =================================================
-        $http.get('rest/checklist/get?id='+$location.search().id)
+        $scope.mode = $location.search().mode;
+        if($scope.mode === 'template') {
+            // if mode is template, we show a template in the checklist view (but in readonly)
+            $http.get('rest/template/get?id='+$location.search().id)
                 .success(function (data,status,headers,config) {
                     console.log("Data loaded");
                     $scope.data = data;                    
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/checklist/get');
-                });   
+                });
+        } else {
+            $scope.mode = 'checklist';
+            $http.get('rest/checklist/get?id='+$location.search().id)
+                .success(function (data,status,headers,config) {
+                    console.log("Data loaded");
+                    $scope.data = data;                    
+                }).error(function (data,status,headers,config) {
+                    console.log('Error getting rest/checklist/get');
+                });
+        }
         $scope.checkResults = {};
                
         // =================================================
@@ -138,22 +156,25 @@
         // =================================================        
         
         function showErrorDialog(step) {
-            return step.state === 'EXECUTION_FAILED_NO_COMMENT' || step.state === 'CHECK_FAILED_NO_COMMENT';
+            return (step.state === 'EXECUTION_FAILED_NO_COMMENT' || step.state === 'CHECK_FAILED_NO_COMMENT') && $scope.mode !== 'template';
         }
         
         function showActionDetails(step) {
-            return step.state === 'UNKNOWN' || step.state === 'EXECUTION_FAILED';
+            return step.state === 'UNKNOWN' || step.state === 'EXECUTION_FAILED' || $scope.mode === 'template';
         }
         
         function showActionButtons(step) {
-            return showActionDetails(step) && step.action;
+            return showActionDetails(step) && step.action && $scope.mode !== 'template';
         }
         
         function showChecks(step) {
-            return step.state === 'EXECUTED';
+            return step.state === 'EXECUTED' || $scope.mode === 'template';
         }
         
         function showCheckButtons(step,check) {
+            if($scope.mode === 'template') {
+                return false;
+            }
             if (! (step.id in $scope.checkResults)) {
                 return true; // no results yet, so definitely show
             }
@@ -164,8 +185,20 @@
             return showActionDetails(step) && step.subChecklist;
         }
         
+        function getSubchecklistClass() {
+            return $scope.mode === 'template'  ? "btn btn-default disabled" : "btn btn-default";          
+        }
+        
+        function showMainBody() {
+            return ($scope.data !== undefined && $scope.data.specificTagSet) || $scope.mode === 'template';
+        }
+        
+        function showProgressBar() {
+            return $scope.mode !== 'template';
+        }
+        
         function showOptions(step) {
-            return step.options && !step.selectedOption;
+            return step.options && ($scope.mode === 'template' || !step.selectedOption) ;
         }
         // =================================================
         // Backend update operations
@@ -269,8 +302,11 @@
         $scope.showErrorDialog   = showErrorDialog;
         $scope.showChecks        = showChecks;
         $scope.showCheckButtons  = showCheckButtons;
-        $scope.showSubchecklist  = showSubchecklist;
+        $scope.showSubchecklist  = showSubchecklist;        
         $scope.showOptions       = showOptions;
+        $scope.showMainBody      = showMainBody;
+        $scope.showProgressBar   = showProgressBar;
+        $scope.getSubchecklistClass = getSubchecklistClass;
         
         $scope.updateAction   = updateAction;
         $scope.addErrorAction = addErrorAction;
