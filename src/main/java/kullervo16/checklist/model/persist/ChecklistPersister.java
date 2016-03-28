@@ -39,6 +39,17 @@ public class ChecklistPersister extends TemplatePersister {
         }
         if(templateMap.containsKey("specificTagSet")) {
             cl.setSpecificTagSet(((String) templateMap.get("specificTagSet")).equals("true"));
+        }        
+    }
+
+    @Override
+    protected void serializeStep(Step step, PrintWriter writer) {
+        super.serializeStep(step, writer); 
+        if(!step.getErrors().isEmpty()) {
+            writer.append(SEPARATOR_1).append("errors:\n");
+            step.getErrors().stream().forEach((error) -> {
+                writer.append(SEPARATOR_1).append(SEPARATOR_2).append(error).append("\n");
+            });
         }
     }
 

@@ -239,7 +239,7 @@ public class TemplatePersister  {
         // step 2 : either condition or action must be present
     }
                 
-    private void serializeStep(Step step, PrintWriter writer) {        
+    protected void serializeStep(Step step, PrintWriter writer) {        
         printLine(writer,"- id",step.getId());
         printLine(writer,"  responsible",step.getResponsible());
         printLine(writer,"  action",step.getAction());
@@ -257,9 +257,9 @@ public class TemplatePersister  {
             printLine(writer,"  check",step.getChecks().get(0));
         } else if (step.getChecks().size() > 1) {
             writer.append(SEPARATOR_1).append("check: \n");            
-            for(String check : step.getChecks()) {
+            step.getChecks().stream().forEach((check) -> {
                 writer.append("      -").append(" step: ").append(check).append("\n");
-            }
+            });
         }
         if(step.getMilestone() != null) {
             writer.append(SEPARATOR_1).append("milestone: \n");    
@@ -268,14 +268,14 @@ public class TemplatePersister  {
         }
         if(step.getOptions() != null) {
             writer.append(SEPARATOR_1).append("options:\n");
-            for(String option : step.getOptions()) {
+            step.getOptions().stream().forEach((option) -> {
                 writer.append(SEPARATOR_1).append(SEPARATOR_2).append(option).append("\n");
-            }
+            });
         }
         
     }
-    private static final String SEPARATOR_2 = "  - ";
-    private static final String SEPARATOR_1 = "    ";
+    protected static final String SEPARATOR_2 = "  - ";
+    protected static final String SEPARATOR_1 = "    ";
     
     private void printLine(PrintWriter writer, String name, String value) {
         if(value != null) {
@@ -297,9 +297,9 @@ public class TemplatePersister  {
         
         if(!template.getTags().isEmpty()) {
             writer.append("tags: ").append("\n");
-            for(String tag : template.getTags()) {
+            template.getTags().stream().forEach((tag) -> {
                 writer.append("    - ").append(tag).append("\n");
-            }
+            });
         }        
     }
     
