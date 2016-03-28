@@ -106,7 +106,7 @@ public class Step {
                this.errors.add((String) stepMap.get("errors"));
             } else {
                 for(String error : (List<String>) stepMap.get("errors")) {
-                    this.checks.add(error);
+                    this.errors.add(error);
                 }
             }
         }

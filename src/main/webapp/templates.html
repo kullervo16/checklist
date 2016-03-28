@@ -72,7 +72,7 @@
                         <button type="button" class="btn btn-default" aria-label="Inspect" ng-click="showTemplate(t.id)">
                           <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                         </button>
-                        <button type="button" class="btn btn-default" aria-label="Stats">
+                        <button type="button" class="btn btn-default" aria-label="Stats" ng-click="showStats(t.id)">
                           <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -100,6 +100,35 @@
                     <button type="button" class="btn btn-default" onclick="angular.element(this).scope().uploadFile()">OK</button>
                     <button type="button" class="btn btn-default" onclick="angular.element(this).scope().hideModal()">Close</button>
                   </div>
+                </div>
+
+              </div>
+            </div>
+            
+            <div id="stats" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Statistics ({{stats.numberOfOccurrences}} times executed)</h3>
+                  </div>
+                  <div class="modal-body" style="overflow: auto">
+                      <h3>Currently active steps:</h3>
+                      <div ng-repeat="step in stats.currentStepList">
+                          <h4>{{step.name}} ({{step.numberOfOccurrences}} times completed)</h4>
+                          <div class="progress">
+                              <uib-progressbar animate="false" value="step.successRate" type="{{getClassForStep(step)}}"><b>{{step.successRate}}%</b></uib-progressbar>
+                          </div>
+                          <div ng-show="step.errors.length">
+                              <div ng-repeat="error in step.errors">
+                                  <p><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;&nbsp;{{error}}</p>                                  
+                              </div>
+                          </div>
+                      </div>
+                    
+                  </div>                  
                 </div>
 
               </div>

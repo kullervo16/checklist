@@ -109,7 +109,7 @@ public enum ChecklistRepository {
         List<Checklist> result = new LinkedList<>();
         synchronized (lock) {
             for(Entry<String,Checklist> clEntry : data.entrySet()) {
-                if(clEntry.getValue().getTemplate().equals(id)) {
+                if(id.equals(clEntry.getValue().getTemplate())) {
                     result.add(clEntry.getValue());
                 }
             }

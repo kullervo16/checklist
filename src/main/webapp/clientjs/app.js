@@ -43,6 +43,18 @@
             $window.location.href = './checklist.html?id='+id+"&mode=template";    
         }
         
+        function showStats(id) {
+            $http.get('rest/template/stats?id='+id)
+                .success(function (data,status,headers,config) {
+                    $scope.stats = data;        
+                    $('#stats').modal('show'); 
+                }).error(function (data,status,headers,config) {
+                    console.log('Error getting rest/template/list');
+                });  
+            
+        }
+                
+        
         function setFile(files) {
             $scope.files = files;
         }
@@ -84,6 +96,18 @@
                           ).error( console.log("Error uploading file") );
 
             };
+            
+        function getClassForStep(step) {
+            if(step.successRate === 100) {
+                return "success";
+            } else if (step.successRate > 90) {
+                return "warning";
+            } else if (step.successRate > 80) {
+                return "info";
+            } else {
+                return "danger";
+            }
+        }
         
         $scope.createChecklist = createChecklist;
         $scope.getClassForMilestone = getClassForMilestone;
@@ -93,6 +117,8 @@
         $scope.hideModal = hideModal;
         $scope.showModal = showModal;
         $scope.showTemplate = showTemplate;
+        $scope.showStats = showStats;      
+        $scope.getClassForStep = getClassForStep;
         init();
     }
     );
@@ -186,7 +212,7 @@
         }
         
         function getSubchecklistClass() {
-            return $scope.mode === 'template'  ? "btn btn-default disabled" : "btn btn-default";          
+            return $scope.mode !== 'template'  ? "btn btn-default disabled" : "btn btn-default";          
         }
         
         function showMainBody() {
