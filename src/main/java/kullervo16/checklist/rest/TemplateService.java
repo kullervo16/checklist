@@ -8,8 +8,11 @@ package kullervo16.checklist.rest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -18,9 +21,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.ErrorMessage;
+import kullervo16.checklist.model.Step;
+import kullervo16.checklist.model.StepStats;
 import kullervo16.checklist.model.Template;
 import kullervo16.checklist.model.TemplateInfo;
+import kullervo16.checklist.model.TemplateStats;
 import kullervo16.checklist.repository.ChecklistRepository;
 import kullervo16.checklist.repository.TemplateRepository;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -95,5 +102,48 @@ public class TemplateService {
 
     }
     
+    @GET
+    @Path("/stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    /**
+     * This method calculates the statistics for 1 given template (# of occurence, successrate per step, ...)
+     * @param id
+     * @return 
+     */
+    public TemplateStats getTemplateStats(@QueryParam("id") String id) {
+        TemplateStats result = new TemplateStats();
+        result.setId(id);
+        
+        Template currentTemplate = this.templateRepository.getTemplate(id);
+        for(Checklist cl : this.checklistRepository.getChecklistsForTemplate(id)) {
+            result.setNumberOfOccurrences(result.getNumberOfOccurrences()+1);
+            for(Step step : cl.getSteps()) {                 
+                
+                List<StepStats> ssList;
+                // The problem is that List.indexOf does not allow acustom comparator to be entered, so instead of looping... used a Lambda for it... 
+                // does the same trick in a single readable (ahum) line.
+                if(currentTemplate.getSteps().stream().filter(st -> st.getId().equals(step.getId())).iterator().hasNext()) {
+                    // present in the current template, look in the current steps 
+                    ssList = result.getCurrentStepList();
+                } else {
+                    // no longer present in the current template, look in the othersteps
+                    ssList = result.getOtherStepList();
+                }
+                
+                StepStats ss;
+                try {
+                    ss = ssList.stream().filter(walker -> walker.getName().equals(step.getId())).iterator().next();
+                }catch(NoSuchElementException nse) { 
+                    // new one
+                    ss = new StepStats();
+                    ss.setName(step.getId());
+                    ssList.add(ss);
+                }
+                ss.update(step);
+            }
+        }
+
+        return result;
+    }    
 
 }

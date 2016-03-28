@@ -104,5 +104,17 @@ public enum ChecklistRepository {
         Collections.sort(result); // sort outside the lock
         return result;
     }
+
+    public Iterable<Checklist> getChecklistsForTemplate(String id) {
+        List<Checklist> result = new LinkedList<>();
+        synchronized (lock) {
+            for(Entry<String,Checklist> clEntry : data.entrySet()) {
+                if(clEntry.getValue().getTemplate().equals(id)) {
+                    result.add(clEntry.getValue());
+                }
+            }
+        }
+        return result;
+    }
 }
 
