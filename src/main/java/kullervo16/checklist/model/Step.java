@@ -229,8 +229,7 @@ public class Step {
     public void setExecutor(String executor) {
         this.executor = executor;
     }
-
-    @JsonIgnore
+    
     public boolean isComplete() {
         if(this.state == null) {
             return false;

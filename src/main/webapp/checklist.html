@@ -68,6 +68,7 @@
             <div ng-show="showMainBody()">
                 <div class="list-group" ng-repeat="step in data.steps">    
                     <div ng-class="getClassForStep(step)">
+                        <a id="{{step.id}}" name="{{step.id}}" class="anchor"></a>
                     <h3 class="list-group-item-heading">{{step.id}}</h3>
                         <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showActionDetails(step)">
                             <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{step.responsible}}</h4>                            
@@ -154,11 +155,13 @@
                             </button>
             </div>
         </div>
+        <!-- for the case when all steps are done.. position on the bottom -->
+        <a name="complete" id="complete" class="anchor"></a>
 
         <!-- /container-->
         <!-- Bootstrap core JavaScript-->
         <!-- ==================================================-->
         <!-- Placed at the end of the document so the pages load faster-->
-        <script src="clientjs/holder.js"></script>
+        <script src="clientjs/holder.js"></script>       
     </body>
 </html>

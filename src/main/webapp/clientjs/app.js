@@ -124,7 +124,7 @@
     );
     
     
-    app.controller('checklistController', function($scope,$http,$window,$location) {
+    app.controller('checklistController', function($scope,$http,$window,$location,$anchorScroll,$interval) {
         // =================================================
         // init stuff... get data from backend     
         // =================================================
@@ -148,7 +148,7 @@
                     console.log('Error getting rest/checklist/get');
                 });
         }
-        $scope.checkResults = {};
+        $scope.checkResults = {};               
                
         // =================================================
         // CSS class calculation
@@ -225,6 +225,31 @@
         
         function showOptions(step) {
             return step.options && ($scope.mode === 'template' || !step.selectedOption) ;
+        }             
+        
+        function reposition() {
+            var activeStep = undefined;
+            // for some odd reason, the links don't work for the last 3 steps... go to complete then
+            for(var i=0;i< $scope.data.steps.length-3;i++) {
+                var step = $scope.data.steps[i];
+                if(!step.complete) {
+                    activeStep = step;
+                    break;
+                }
+            }
+            
+            if(activeStep === undefined) {
+                $window.location.hash = 'complete';     
+                console.log('Start new repositioning cycle');
+                $interval(function(){console.log('repos');$anchorScroll();},500,3);               
+            } else {
+                $window.location.hash = activeStep.id;     
+                console.log('Start new repositioning cycle');
+                $interval(function(){console.log('repos');$anchorScroll();},500,3);
+            }
+            
+            
+            
         }
         // =================================================
         // Backend update operations
@@ -235,7 +260,8 @@
         function updateAction(step, result) {
             $http.post('rest/checklist/setActionResult?id='+$location.search().id+"&step="+step.id+"&result="+result)
                 .success(function (data,status,headers,config) {
-                    $scope.data = data;                      
+                    $scope.data = data;    
+                    reposition();
                 }).error(function (data,status,headers,config) {
                     console.log('Error updating step '+step.id);
                 });  
@@ -244,7 +270,8 @@
         function addErrorAction(step, error) {
             $http.post('rest/checklist/addErrorToStep?id='+$location.search().id+"&step="+step.id, error)
                 .success(function (data,status,headers,config) {
-                    $scope.data = data;                      
+                    $scope.data = data;   
+                    reposition();
                 }).error(function (data,status,headers,config) {
                     console.log('Error updating step '+step.id);
                 });  
@@ -253,7 +280,8 @@
         function addTag(tag) {
             $http.post('rest/checklist/addTag?id='+$location.search().id+"&tag="+tag)
                 .success(function (data,status,headers,config) {
-                    $scope.data = data;                      
+                    $scope.data = data;  
+                    reposition();
                 }).error(function (data,status,headers,config) {
                     console.log('Error adding a tag '+step.id);
                 });              
@@ -276,17 +304,18 @@
                 }
                 $http.post('rest/checklist/setCheckResult?id='+$location.search().id+"&step="+step.id+"&result="+(combinedResult === 1))
                 .success(function (data,status,headers,config) {
-                    $scope.data = data;                      
+                    $scope.data = data;   
+                    reposition();
                 }).error(function (data,status,headers,config) {
                     console.log('Error updating step '+step.id);
                 });  
-            }
+            }            
         }
         
         function setStepOption(step, choice) {
             $http.post('rest/checklist/setStepOption?id='+$location.search().id+"&step="+step.id+"&choice="+choice)
                 .success(function (data,status,headers,config) {
-                    $scope.data = data;                      
+                    $scope.data = data;                        
                 }).error(function (data,status,headers,config) {
                     console.log('Error updating step '+step.id);
                 });
@@ -331,7 +360,7 @@
         $scope.showSubchecklist  = showSubchecklist;        
         $scope.showOptions       = showOptions;
         $scope.showMainBody      = showMainBody;
-        $scope.showProgressBar   = showProgressBar;
+        $scope.showProgressBar   = showProgressBar;        
         $scope.getSubchecklistClass = getSubchecklistClass;
         
         $scope.updateAction   = updateAction;
@@ -342,7 +371,7 @@
         $scope.launchSubChecklist = launchSubChecklist;
         
         $scope.getChecklists = getChecklists;
-        $scope.getClassForChecklist = getClassForChecklist;
+        $scope.getClassForChecklist = getClassForChecklist;        
     }
     );
 
