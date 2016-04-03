@@ -149,6 +149,9 @@ public class Step {
         if(stepMap.containsKey("lastUpdate")) {
             this.lastUpdate = new Date(Long.valueOf((String)stepMap.get("lastUpdate")));
         }
+        if(stepMap.containsKey("selectedOption")) {
+            this.selectionOption = (String)stepMap.get("selectedOption");
+        }
     }
 
     
