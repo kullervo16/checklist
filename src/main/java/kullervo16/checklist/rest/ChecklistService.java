@@ -51,7 +51,13 @@ public class ChecklistService {
         Checklist cl =getChecklist(checklistId);
         Step step = getStep(cl, stepId);  
         if(result) {
-            step.setState(State.EXECUTED);
+            if(step.getChecks().isEmpty()) {
+                // border case : no checks.. so immediately ok
+                step.setState(State.OK);
+            } else {
+                // normal case : checks... only mark executed, the check phase will start
+                step.setState(State.EXECUTED);
+            }
         } else {
             step.setState(State.EXECUTION_FAILED_NO_COMMENT);
         }
