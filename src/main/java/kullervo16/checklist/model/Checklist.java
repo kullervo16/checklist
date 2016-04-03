@@ -41,7 +41,7 @@ public class Checklist extends Template{
                 // recreate the milestone list from the steps (needs to point to the same instance to allow proper update when the step is updated)
                 this.milestones.add(newStep.getMilestone());
             }
-        }
+        }        
         if(parent != null) {
             this.tags.add("subchecklist");
             this.hasSpecificTags = true;

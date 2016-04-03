@@ -236,7 +236,12 @@ public class TemplatePersister  {
         checkTag(stepMap, "subchecklist", "/steps/"+pos, result,DataType.STRING, false);
         checkTag(stepMap, "check", "/steps/"+pos, result,DataType.STRING_OR_LIST, false);
         checkTag(stepMap, "weight", "/steps/"+pos, result,DataType.POSITIVE_NUMBER, false);
-        // step 2 : either condition or action must be present
+        // step 2 : either subchecklist or action must be present
+        if(!stepMap.containsKey("subchecklist") && ! stepMap.containsKey("action")) {
+            result.add(new ErrorMessage("Subchecklist or action is mandatory", ErrorMessage.Severity.MAJOR, "/steps/"+pos+" contains neither subchecklist nor action. One of the 2 is required."));
+        } else if(stepMap.containsKey("subchecklist") && stepMap.containsKey("action")) {
+            result.add(new ErrorMessage("Both subchecklist and action specified", ErrorMessage.Severity.MAJOR, "/steps/"+pos+" contains both subchecklist and action. Only one of the 2 is allowed.")); 
+        }
     }
                 
     protected void serializeStep(Step step, PrintWriter writer) {        
