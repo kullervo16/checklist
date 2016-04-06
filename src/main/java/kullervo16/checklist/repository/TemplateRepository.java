@@ -130,8 +130,10 @@ public enum TemplateRepository {
             parent.mkdirs(); // no need to check. if creation failed, the file will be unwritable and the proper error is generated below.
         }
         try (FileOutputStream fos = new FileOutputStream(targetFile)) {
-                IOUtils.write(content, fos);                
-                data.put(name, new Template(targetFile));
+                IOUtils.write(content, fos);       
+                Template t = new Template(targetFile);
+                data.put(name, t);
+                t.setId(name);
             }catch(IOException ioe) {
                 errors.add(new ErrorMessage("Cannot write template to file", ErrorMessage.Severity.CRITICAL, ioe.getMessage()));
             }
