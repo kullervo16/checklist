@@ -23,7 +23,7 @@ public class Template {
     protected List<String> tags;    
     protected TemplatePersister persister;
     protected List<Milestone> milestones;
-    private String id;
+    protected String id;
 
     
     public Template() {

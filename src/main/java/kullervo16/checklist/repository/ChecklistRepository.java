@@ -89,7 +89,7 @@ public enum ChecklistRepository {
         synchronized (lock) {
             subfolder.mkdirs();
 
-            Checklist checklist = new Checklist(template,new File(subfolder, uuid), parentCL);
+            Checklist checklist = new Checklist(uuid,template,new File(subfolder, uuid), parentCL);
             
             data.put(uuid, checklist);
         }

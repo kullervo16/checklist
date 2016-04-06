@@ -24,8 +24,9 @@ public class Checklist extends Template{
         this.persister = new ChecklistPersister(file, this);
     }
 
-    public Checklist(Template template, File file, Checklist parent) {
+    public Checklist(String uuid,Template template, File file, Checklist parent) {
         this(file);
+        this.id = uuid;
         this.description = template.getDescription();
         this.displayName = template.getDisplayName();
         this.template    = template.getId();
