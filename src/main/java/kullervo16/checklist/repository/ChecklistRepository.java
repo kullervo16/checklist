@@ -77,12 +77,20 @@ public enum ChecklistRepository {
      * @return a UUID 
      */
     public String createFromTemplate(String templateId, Template template, String parent) {
+        Checklist parentCL = null;
+        if(parent != null) {
+            parentCL = data.get(parent);
+            if(parentCL == null) {
+                throw new IllegalArgumentException(parent+" is not a known checklist... can't use it as parent");
+            }
+        }
         String uuid = UUID.randomUUID().toString();
         File subfolder = new File(mainFolder, templateId);
         synchronized (lock) {
             subfolder.mkdirs();
 
-            Checklist checklist = new Checklist(template,new File(subfolder, uuid), parent);
+            Checklist checklist = new Checklist(template,new File(subfolder, uuid), parentCL);
+            
             data.put(uuid, checklist);
         }
                         

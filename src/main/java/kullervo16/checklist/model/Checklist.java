@@ -24,7 +24,7 @@ public class Checklist extends Template{
         this.persister = new ChecklistPersister(file, this);
     }
 
-    public Checklist(Template template, File file, String parent) {
+    public Checklist(Template template, File file, Checklist parent) {
         this(file);
         this.description = template.getDescription();
         this.displayName = template.getDisplayName();
@@ -42,10 +42,15 @@ public class Checklist extends Template{
                 this.milestones.add(newStep.getMilestone());
             }
         }        
-        if(parent != null) {
+        if(parent != null) {            
             this.tags.add("subchecklist");
+            for(String parentTag : parent.getTags()) {
+                if(!this.tags.contains(parentTag)) {
+                    this.tags.add(parentTag);
+                }
+            }
             this.hasSpecificTags = true;
-            this.parent = parent;
+            this.parent = parent.getId();
         } else {
             this.hasSpecificTags = false;
         }
