@@ -212,7 +212,7 @@
         }
         
         function getSubchecklistClass() {
-            return $scope.mode !== 'template'  ? "btn btn-default disabled" : "btn btn-default";          
+            return $scope.mode === 'template'  ? "btn btn-default disabled" : "btn btn-default";          
         }
         
         function showMainBody() {
