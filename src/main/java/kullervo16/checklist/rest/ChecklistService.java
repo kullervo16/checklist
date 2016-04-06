@@ -54,6 +54,7 @@ public class ChecklistService {
             if(step.getChecks().isEmpty()) {
                 // border case : no checks.. so immediately ok
                 step.setState(State.OK);
+                verifyCompleteChecklist(cl);
             } else {
                 // normal case : checks... only mark executed, the check phase will start
                 step.setState(State.EXECUTED);
@@ -76,25 +77,29 @@ public class ChecklistService {
             if(step.getMilestone() != null) {
                 step.getMilestone().setReached(true);
             }
-            if(cl.getProgress() == 100) {
-                // this checklist is complete... now check whether we are a subchecklist... if so, update the parent
-                if(cl.getParent() != null) {
-                    Checklist parent = getChecklist(cl.getParent());
-                    for(Step walker : parent.getSteps()) {
-                        if(cl.getTemplate().equals(walker.getSubChecklist()) && !walker.isComplete())  {
-                            // we update the first not completed step with the proper template (this allows the same template to be used
-                            // multiple times as subchecklist in a single instance. We call it recursively because this template may also
-                            // have a parent...
-                            this.setCheckResult(cl.getParent(), walker.getId(), true);
-                        }
-                    }
-                }
-            }
+            verifyCompleteChecklist(cl);
         } else {
             step.setState(State.CHECK_FAILED_NO_COMMENT);
         }
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId),null);         
         return cl;
+    }
+
+    private void verifyCompleteChecklist(Checklist cl) throws IllegalArgumentException {
+        if(cl.getProgress() == 100) {
+            // this checklist is complete... now check whether we are a subchecklist... if so, update the parent
+            if(cl.getParent() != null) {
+                Checklist parent = getChecklist(cl.getParent());
+                for(Step walker : parent.getSteps()) {
+                    if(cl.getTemplate().equals(walker.getSubChecklist()) && !walker.isComplete())  {
+                        // we update the first not completed step with the proper template (this allows the same template to be used
+                        // multiple times as subchecklist in a single instance. We call it recursively because this template may also
+                        // have a parent...
+                        this.setCheckResult(cl.getParent(), walker.getId(), true);
+                    }
+                }
+            }
+        }
     }
     
     
@@ -159,6 +164,8 @@ public class ChecklistService {
                 }
             }
         }
+        // can be that the last step in a checklist is not executed... so verify as well
+        verifyCompleteChecklist(cl);
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId),null);
         return cl;
     }
