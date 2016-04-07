@@ -144,5 +144,10 @@ public enum TemplateRepository {
         return errors;
     }
 
+    public void deleteTemplate(String id) {
+        Template t = data.remove(id);
+        t.getPersister().getFile().delete();
+    }
+
        
 }

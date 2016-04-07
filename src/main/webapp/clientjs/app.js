@@ -108,6 +108,30 @@
                 return "danger";
             }
         }
+        // =================================================
+        // upload/download/delete
+        // =================================================        
+        function uploadTemplate(id) {
+            
+        }
+        
+        function downloadTemplate(id) {
+            $window.location.href = './download?id='+data;                                  
+        }
+        
+        function deleteTemplate(id) {
+            $http.post('rest/template/deleteTemplate?id='+id)
+                .success(function (data,status,headers,config) {
+                    $http.get('rest/template/list')
+                        .success(function (data,status,headers,config) {
+                            $scope.items = data;                    
+                        }).error(function (data,status,headers,config) {
+                            console.log('Error getting rest/template/list');
+                        });                  
+                }).error(function (data,status,headers,config) {
+                    console.log('Error creating new checklist');
+                });  
+        }
         
         $scope.createChecklist = createChecklist;
         $scope.getClassForMilestone = getClassForMilestone;
@@ -119,6 +143,9 @@
         $scope.showTemplate = showTemplate;
         $scope.showStats = showStats;      
         $scope.getClassForStep = getClassForStep;
+        $scope.uploadTemplate = uploadTemplate;
+        $scope.downloadTemplate = downloadTemplate;
+        $scope.deleteTemplate = deleteTemplate;
         init();
     }
     );

@@ -44,14 +44,14 @@ public class TemplatePersister  {
         if(!this.writing && this.file != null && System.currentTimeMillis() - lastCheck > 1000 && this.file.lastModified() - this.fileModifTime > 0) {
             YamlReader reader;
             
-            try {
+            try (FileReader fileReader =  new FileReader(this.file)){
                 // init
                 LinkedList<Step> steps = new LinkedList<>();
                 LinkedList<String> tags  = new LinkedList<>();
                 LinkedList<Milestone> milestones = new LinkedList<>();    
                                 
                 
-                reader = new YamlReader(new FileReader(this.file));                
+                reader = new YamlReader(fileReader);                
                 Map templateMap = (Map) reader.read();
                 if(templateMap != null) {
                     handleData(templateMap, steps, milestones, tags);                    
@@ -66,7 +66,7 @@ public class TemplatePersister  {
                 
                 
                 
-            } catch (FileNotFoundException | YamlException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(TemplatePersister.class.getName()).log(Level.SEVERE, null, ex);
                 this.loaded = false;
                 return;

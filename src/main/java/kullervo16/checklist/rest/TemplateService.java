@@ -76,6 +76,18 @@ public class TemplateService {
     }
     
     @POST
+    @Path("/deleteTemplate")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteTemplate(@QueryParam("id") String id) throws URISyntaxException {    
+        Template template = this.templateRepository.getTemplate(id);
+        if(template == null) {
+            throw new IllegalArgumentException("Unknown template "+id);
+        }
+        this.templateRepository.deleteTemplate(id);
+        return id;        
+    }
+    
+    @POST
     @Path("/upload")
     @Consumes("multipart/form-data")
     public List<ErrorMessage> uploadFile(MultipartFormDataInput input, @QueryParam("name") String fileName) {
