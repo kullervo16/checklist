@@ -357,7 +357,8 @@
                   $http.get('rest/checklist/get?id='+$location.search().id)
                 .success(function (data,status,headers,config) {
                     console.log("Data loaded");
-                    $scope.data = data;                    
+                    $scope.data = data;
+                    reposition();
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/checklist/get');
                 });
