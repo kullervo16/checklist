@@ -10,7 +10,7 @@
 
     app.controller('templateController', function($scope,$http,$window) {
         // init stuff... get data from backend
-        var init =  function () {
+        var init =  function () {            
             $http.get('rest/template/list')
                 .success(function (data,status,headers,config) {
                     $scope.items = data;                    
@@ -127,29 +127,29 @@
     app.controller('checklistController', function($scope,$http,$window,$location,$anchorScroll,$interval) {
         // =================================================
         // init stuff... get data from backend     
-        // =================================================
-        $scope.mode = $location.search().mode;
-        if($scope.mode === 'template') {
-            // if mode is template, we show a template in the checklist view (but in readonly)
-            $http.get('rest/template/get?id='+$location.search().id)
-                .success(function (data,status,headers,config) {
-                    console.log("Data loaded");
-                    $scope.data = data;                    
-                }).error(function (data,status,headers,config) {
-                    console.log('Error getting rest/checklist/get');
-                });
-        } else {
-            $scope.mode = 'checklist';
-            $http.get('rest/checklist/get?id='+$location.search().id)
-                .success(function (data,status,headers,config) {
-                    console.log("Data loaded");
-                    $scope.data = data;                    
-                }).error(function (data,status,headers,config) {
-                    console.log('Error getting rest/checklist/get');
-                });
-        }
-        $scope.checkResults = {};               
-               
+        // =================================================                                            
+            $scope.mode = $location.search().mode;
+            if($scope.mode === 'template') {
+                // if mode is template, we show a template in the checklist view (but in readonly)
+                $http.get('rest/template/get?id='+$location.search().id)
+                    .success(function (data,status,headers,config) {
+                        console.log("Data loaded");
+                        $scope.data = data;                    
+                    }).error(function (data,status,headers,config) {
+                        console.log('Error getting rest/checklist/get');
+                    });
+            } else {
+                $scope.mode = 'checklist';
+                $http.get('rest/checklist/get?id='+$location.search().id)
+                    .success(function (data,status,headers,config) {
+                        console.log("Data loaded");
+                        $scope.data = data;                    
+                    }).error(function (data,status,headers,config) {
+                        console.log('Error getting rest/checklist/get');
+                    });
+            }
+            $scope.checkResults = {};               
+                       
         // =================================================
         // CSS class calculation
         // =================================================        
@@ -348,6 +348,24 @@
                 return "list-group-item list-group-item-info";
             }
         }
+        // =================================================
+        // reload function
+        // =================================================
+        function toggleRefresh(state) {          
+          if(state) {
+              $scope.refresh = $interval(function () {
+                  $http.get('rest/checklist/get?id='+$location.search().id)
+                .success(function (data,status,headers,config) {
+                    console.log("Data loaded");
+                    $scope.data = data;                    
+                }).error(function (data,status,headers,config) {
+                    console.log('Error getting rest/checklist/get');
+                });
+              },5000);
+          } else {
+              $interval.cancel($scope.refresh);
+          }
+        }
         
         $scope.getClassForMilestone = getClassForMilestone;
         $scope.getClassForStep      = getClassForStep;
@@ -371,7 +389,9 @@
         $scope.launchSubChecklist = launchSubChecklist;
         
         $scope.getChecklists = getChecklists;
-        $scope.getClassForChecklist = getClassForChecklist;        
+        $scope.getClassForChecklist = getClassForChecklist;       
+        
+        $scope.toggleRefresh = toggleRefresh;     
     }
     );
 

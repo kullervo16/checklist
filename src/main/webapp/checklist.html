@@ -7,11 +7,11 @@
         <meta name="author" content="">        
         <title>Checklist</title>
         <script src="clientjs/jquery.min.js"></script>
-        <script src="clientjs/bootstrap.min.js"></script>
+        <script src="clientjs/bootstrap.min.js"></script>        
         <!-- Angular JS-->
         <script src="clientjs/angular.js"></script>
         <!-- Bootstrap core CSS-->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">        
         <!-- Bootstrap theme-->
         <link href="css/bootstrap-theme.min.css" rel="stylesheet">
         <link href="css/checklist.css" rel="stylesheet">
@@ -41,8 +41,11 @@
         <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">    
             <div class="jumbotron">
                 <h1>{{data.displayName}}</h1>
-                <h3>{{data.description}}</h3>                                
-            </div>
+                <h3>{{data.description}}</h3>  
+                <div style="height: 30px" ng-if="mode === 'checklist'">
+                    <p>Autorefresh : <input type="checkbox" name="autoRefresh" onchange="angular.element(this).scope().toggleRefresh(value)"></input></p>
+                </div>
+            </div>            
             <div ng-show="data.milestones.length">
                 <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> 
                     <span ng-repeat="milestone in data.milestones">
