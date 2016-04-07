@@ -100,6 +100,9 @@ public enum TemplateRepository {
         if("".equals(name) || "undefined".equals(name)) {
             errors.add(new ErrorMessage("No name given", ErrorMessage.Severity.CRITICAL, "You should give a name... structure can be applied by using /"));
         }
+        if(!name.startsWith("/")) {
+            name = "/"+name;
+        }
         
         for(ErrorMessage err : errors) {
             if(!err.getSeverity().equals(ErrorMessage.Severity.WARNING)) {
