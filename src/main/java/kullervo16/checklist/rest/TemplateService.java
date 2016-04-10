@@ -5,14 +5,14 @@
  */
 package kullervo16.checklist.rest;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -21,6 +21,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.ErrorMessage;
 import kullervo16.checklist.model.Step;
@@ -30,6 +32,7 @@ import kullervo16.checklist.model.TemplateInfo;
 import kullervo16.checklist.model.TemplateStats;
 import kullervo16.checklist.repository.ChecklistRepository;
 import kullervo16.checklist.repository.TemplateRepository;
+import org.apache.commons.io.IOUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
@@ -61,6 +64,22 @@ public class TemplateService {
     @Produces(MediaType.APPLICATION_JSON)
     public Template getTemplate(@QueryParam("id") String id) {        
         return this.templateRepository.getTemplate(id);    
+    }
+    
+    @GET
+    @Path("/download")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response downloadTemplate(@QueryParam("id") String id) {        
+        Template t =this.templateRepository.getTemplate(id);    
+        if(t == null) {
+            throw new IllegalArgumentException("Template with id "+id+" not found...");
+        }
+        StreamingOutput stream = (OutputStream os) -> {
+            try(FileInputStream fis = new FileInputStream(t.getPersister().getFile())) {
+                IOUtils.copy(fis, os);
+            }
+        };
+        return Response.ok().entity(stream).build(); 
     }
     
     @POST

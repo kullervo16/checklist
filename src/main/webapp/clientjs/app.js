@@ -116,7 +116,12 @@
         }
         
         function downloadTemplate(id) {
-            $window.location.href = './download?id='+data;                                  
+            var hiddenElement = document.createElement('a');
+
+            hiddenElement.href = './rest/template/download?id='+id;
+            hiddenElement.target = '_blank';
+            hiddenElement.download = id.substr(id.lastIndexOf('/')+1)+'.yml';
+            hiddenElement.click();                                                     
         }
         
         function deleteTemplate(id) {
