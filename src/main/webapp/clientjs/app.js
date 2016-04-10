@@ -69,7 +69,14 @@
             $('.modal-backdrop').remove();
         }
         
-        function showModal() {
+        function showModal(nameInputNeeded) {
+            if(nameInputNeeded) {
+                $('#templateName').removeAttr('disabled');
+            } else {
+                $('#templateName').attr({
+                    'disabled': 'disabled'
+                });
+            }            
             $('#myModal').modal('show');
         }
         
@@ -93,7 +100,9 @@
                                     init();
                                 }
                             }
-                          ).error( console.log("Error uploading file") );
+                          ).error( function(data,status,headers,config) {
+                                    console.log("Error uploading file") 
+                                });
 
             };
             
@@ -111,8 +120,10 @@
         // =================================================
         // upload/download/delete
         // =================================================        
-        function uploadTemplate(id) {
-            
+        function uploadTemplate(id) {   
+            $scope.templateName = id;    
+            $('#templateName').value = id;
+            showModal(false);            
         }
         
         function downloadTemplate(id) {

@@ -40,7 +40,7 @@
         <div role="main" class="container theme-showcase" ng-controller="templateController as template">            
             <div class="jumbotron">
                 <h1>Available templates</h1>
-                <h3><button onclick="angular.element(this).scope().showModal()" data-target="#myModal" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp; Add a new template</button></h3>                
+                <h3><button onclick="angular.element(this).scope().showModal(true)" data-target="#myModal" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp; Add a new template</button></h3>                
             </div>
             <div>                
                 <div class="list-group" ng-repeat="t in items">                
@@ -105,8 +105,8 @@
                           <h4>{{err.severity}}:&nbsp;&nbsp;{{err.description}}</h4>
                           <p>{{err.details}}</p>
                       </div>
-                    <input type="file" name="file" onchange="angular.element(this).scope().setFile(this.files)"/>
-                    <input type="text" name="templateName" onchange="angular.element(this).scope().setTemplateName(this)"/>
+                    <input type="file" name="file" onchange="angular.element(this).scope().setFile(this.files)"/>                    
+                    <input type="text" name="templateName" id="templateName" onchange="angular.element(this).scope().setTemplateName(this)"/>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" onclick="angular.element(this).scope().uploadFile()">OK</button>
