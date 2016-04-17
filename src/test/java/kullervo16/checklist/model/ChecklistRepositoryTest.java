@@ -50,10 +50,39 @@ public class ChecklistRepositoryTest {
     
     @Test
     public void testListChecklist() {
-        List<ChecklistInfo> cli = this.repository.getChecklistInformation();
+        List<ChecklistInfo> cli = this.repository.getChecklistInformation(null, null);
         assertEquals(3, cli.size());        
         assertNotNull(cli.get(0).getUuid());        
         assertNotNull(cli.get(0).getTags());        
+    }
+    
+    @Test
+    public void testListChecklistWithTag() {
+        List<ChecklistInfo> cli = this.repository.getChecklistInformation("odt", null);
+        assertEquals(3, cli.size());        
+        assertNotNull(cli.get(0).getUuid());        
+        assertNotNull(cli.get(0).getTags());     
+        assertEquals(1, this.repository.getChecklistInformation("cl1", null).size());
+    }
+    
+    @Test
+    public void testListChecklistWithMilestone() {
+        
+        assertEquals(1, this.repository.getChecklistInformation(null, "readyForDeployment").size());        
+        assertEquals(0, this.repository.getChecklistInformation(null, "nonExisting").size());   
+        assertEquals(0, this.repository.getChecklistInformation(null, "deployed").size());   // not yet reached
+    }
+    
+    @Test
+    public void testListChecklistWithTagAndMilestone() {
+        assertEquals(1, this.repository.getChecklistInformation("odt", "readyForDeployment").size());  
+        assertEquals(0, this.repository.getChecklistInformation("cl1", "readyForDeployment").size());        
+    }
+    
+    @Test
+    public void testGetChecklistsForTemplate() {
+        assertEquals(2, ((List)this.repository.getChecklistsForTemplate("/deployment/firstDeployment")).size());  
+        assertEquals(1, ((List)this.repository.getChecklistsForTemplate("/deployment/firstDeployment2")).size());        
     }
     
     @Test

@@ -1,3 +1,9 @@
+tags: 
+    - deployment
+    - openshift
+    - odt
+    - cl1
+template: /deployment/firstDeployment
 steps :    
     - id: createSecureGit
       responsible: middleware

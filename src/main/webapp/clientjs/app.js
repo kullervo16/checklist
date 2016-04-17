@@ -376,7 +376,13 @@
         // overview operations
         // =================================================
         function getChecklists() {
-            $http.get('rest/checklist/list')
+            var hash=window.location.hash;  
+            var url = 'rest/checklist/list'; // default, get all recent checklists
+            if(hash !== '') {
+                // add a filter, either on tag or on milestone
+                url += '?'+hash.substring(1); // strip the #
+            }
+            $http.get(url)
                 .success(function (data,status,headers,config) {
                     $scope.checklists = data;                
                 }).error(function (data,status,headers,config) {

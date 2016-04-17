@@ -11,6 +11,7 @@ import java.util.UUID;
 import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.ChecklistInfo;
+import kullervo16.checklist.model.Milestone;
 import kullervo16.checklist.model.Template;
 
 
@@ -100,10 +101,24 @@ public enum ChecklistRepository {
         return uuid;
     }
 
-    public List<ChecklistInfo> getChecklistInformation() {
+    public List<ChecklistInfo> getChecklistInformation(String tag, String milestoneName) {
         List<ChecklistInfo> result = new LinkedList<>();
+        Milestone milestone = null;
+        if(milestoneName != null) {
+            milestone = new Milestone(milestoneName, true);
+        }
         synchronized (lock) {
             for(Entry<String,Checklist> clEntry : data.entrySet()) {
+                if(tag != null) {
+                    if(!clEntry.getValue().getTags().contains(tag)) {
+                        continue;
+                    }
+                }
+                if(milestone != null) {
+                    if(!clEntry.getValue().getMilestones().contains(milestone)) {
+                        continue;
+                    }
+                }
                 ChecklistInfo cli = new ChecklistInfo(clEntry.getValue());
                 cli.setUuid(clEntry.getKey());
                 result.add(cli);

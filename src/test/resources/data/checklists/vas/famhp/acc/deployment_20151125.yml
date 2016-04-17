@@ -1,3 +1,8 @@
+tags: 
+    - deployment
+    - openshift
+    - odt
+template: /deployment/firstDeployment2
 steps :    
     - id: createSecureGit
       responsible: middleware
@@ -5,6 +10,9 @@ steps :
       check: on the deployment station, perform git clone with the URL from JDSS
       executor: ikke
       state: OK
+      milestone: 
+      - name: readyForDeployment
+      - reached: true
     - id: createApplication
       responsible: middleware
       action: create the application in the proper zone
@@ -18,4 +26,7 @@ steps :
       action: perform odt init
       check: project is on disk
       executor: ikke
+      milestone: 
+      - name: deployed
+      - reached: false
       

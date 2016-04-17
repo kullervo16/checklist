@@ -32,8 +32,8 @@ public class ChecklistService {
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ChecklistInfo> listTemplateNames() {                
-        return this.checklistRepository.getChecklistInformation();
+    public List<ChecklistInfo> listTemplateNames(@QueryParam("tag") String tag, @QueryParam("milestone") String milestone) {                
+        return this.checklistRepository.getChecklistInformation(tag, milestone);
 
     }
 
