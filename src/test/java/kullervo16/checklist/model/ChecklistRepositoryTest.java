@@ -112,4 +112,27 @@ public class ChecklistRepositoryTest {
         temp.setSteps(Arrays.asList(tempStep));        
         return new ChecklistInfo(temp);
     }
+    
+    @Test
+    public void testGetTagInfo() {
+        List<TagcloudEntry> tagInfo = this.repository.getTagInfo();
+        assertEquals(4, tagInfo.size());
+        assertEquals("openshift", tagInfo.get(0).getText());
+        assertEquals(3, tagInfo.get(0).getWeight());
+        assertEquals("cl1", tagInfo.get(1).getText());
+        assertEquals(1, tagInfo.get(1).getWeight());
+        assertEquals("odt", tagInfo.get(2).getText());
+        assertEquals(3, tagInfo.get(2).getWeight());
+        assertEquals("deployment", tagInfo.get(3).getText());
+        assertEquals(3, tagInfo.get(3).getWeight());
+    }
+    
+    @Test
+    public void testMilestoneInfo() {
+        List<TagcloudEntry> tagInfo = this.repository.getMilestoneInfo();
+        assertEquals(1, tagInfo.size());
+        assertEquals("readyForDeployment", tagInfo.get(0).getText());
+        assertEquals(1, tagInfo.get(0).getWeight());
+        
+    }
 }

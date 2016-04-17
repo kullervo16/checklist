@@ -12,6 +12,7 @@ import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.ChecklistInfo;
 import kullervo16.checklist.model.Milestone;
+import kullervo16.checklist.model.TagcloudEntry;
 import kullervo16.checklist.model.Template;
 
 
@@ -136,6 +137,49 @@ public enum ChecklistRepository {
                     result.add(clEntry.getValue());
                 }
             }
+        }
+        return result;
+    }
+
+    public List<TagcloudEntry> getTagInfo() {
+        Map<String,Integer> tagMap = new HashMap<>();
+        synchronized (lock) {
+            for(Checklist cl : data.values()) {
+                for(String tag : cl.getTags()) {
+                    if(tagMap.containsKey(tag)) {
+                        tagMap.put(tag, tagMap.get(tag)+1);
+                    } else {
+                        tagMap.put(tag,1);
+                    }
+                }
+            }
+        }
+        List<TagcloudEntry> result = new LinkedList<>();
+        for(Entry<String,Integer> tmEntry : tagMap.entrySet()) {
+            result.add(new TagcloudEntry(tmEntry.getKey(), tmEntry.getValue()));
+        }
+        return result;
+    }
+
+    public List<TagcloudEntry> getMilestoneInfo() {
+        Map<String,Integer> msMap = new HashMap<>();
+        synchronized (lock) {
+            for(Checklist cl : data.values()) {
+                for(Milestone ms : cl.getMilestones()) {
+                    if(!ms.isReached()) {
+                        continue;
+                    }
+                    if(msMap.containsKey(ms.getName())) {
+                        msMap.put(ms.getName(), msMap.get(ms.getName())+1);
+                    } else {
+                        msMap.put(ms.getName(),1);
+                    }
+                }
+            }
+        }
+        List<TagcloudEntry> result = new LinkedList<>();
+        for(Entry<String,Integer> tmEntry : msMap.entrySet()) {
+            result.add(new TagcloudEntry(tmEntry.getKey(), tmEntry.getValue()));
         }
         return result;
     }

@@ -14,6 +14,7 @@ import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.ChecklistInfo;
 import kullervo16.checklist.model.Step;
+import kullervo16.checklist.model.TagcloudEntry;
 import kullervo16.checklist.repository.ActorRepository;
 import kullervo16.checklist.repository.ChecklistRepository;
 
@@ -32,7 +33,7 @@ public class ChecklistService {
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ChecklistInfo> listTemplateNames(@QueryParam("tag") String tag, @QueryParam("milestone") String milestone) {                
+    public List<ChecklistInfo> listChecklists(@QueryParam("tag") String tag, @QueryParam("milestone") String milestone) {                
         return this.checklistRepository.getChecklistInformation(tag, milestone);
 
     }
@@ -42,6 +43,22 @@ public class ChecklistService {
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist getCL(@QueryParam("id") String id) {        
         return this.checklistRepository.getChecklist(id);    
+    }
+    
+    @GET
+    @Path("/tags/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TagcloudEntry> listTags() {                
+        return this.checklistRepository.getTagInfo();
+
+    }
+    
+    @GET
+    @Path("/milestones/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TagcloudEntry> listMilestones() {                
+        return this.checklistRepository.getMilestoneInfo();
+
     }
     
     @POST

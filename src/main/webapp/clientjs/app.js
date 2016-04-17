@@ -397,6 +397,21 @@
                 return "list-group-item list-group-item-info";
             }
         }
+        
+        function createTagClouds() {
+            $http.get('rest/checklist/tags/list')
+                .success(function (data,status,headers,config) {
+                    $('#tags').jQCloud(data);            
+                }).error(function (data,status,headers,config) {
+                    console.log('Error getting rest/checklist/tags/list');
+                });
+            $http.get('rest/checklist/milestones/list')
+                .success(function (data,status,headers,config) {
+                    $('#milestones').jQCloud(data);            
+                }).error(function (data,status,headers,config) {
+                    console.log('Error getting rest/checklist/milestones/list');
+                });
+        }
         // =================================================
         // reload function
         // =================================================
@@ -439,7 +454,8 @@
         $scope.launchSubChecklist = launchSubChecklist;
         
         $scope.getChecklists = getChecklists;
-        $scope.getClassForChecklist = getClassForChecklist;       
+        $scope.getClassForChecklist = getClassForChecklist;   
+        $scope.createTagClouds = createTagClouds;
         
         $scope.toggleRefresh = toggleRefresh;     
     }
