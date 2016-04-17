@@ -400,17 +400,36 @@
         
         function createTagClouds() {
             $http.get('rest/checklist/tags/list')
-                .success(function (data,status,headers,config) {
+                .success(function (data,status,headers,config) {                    
+                    for(var i=0;i<data.length;i++) {
+                        data[i]['handlers'] = {};
+                        data[i]['handlers']['click'] =  function() {
+                                                            angular.element('#tags').scope().openOverviewForTag(this)                          
+                        };
+                    }
                     $('#tags').jQCloud(data);            
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/checklist/tags/list');
                 });
             $http.get('rest/checklist/milestones/list')
                 .success(function (data,status,headers,config) {
+                    for(var i=0;i<data.length;i++) {
+                        data[i]['handlers'] = {};
+                        data[i]['handlers']['click'] =  function() {
+                                                            angular.element('#milestones').scope().openOverviewForMilestone(this)                          
+                        };
+                    }
                     $('#milestones').jQCloud(data);            
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/checklist/milestones/list');
                 });
+        }
+        
+        function openOverviewForTag(tag) {
+            window.open('checklistOverview.html#tag='+tag.innerText);
+        }
+        function openOverviewForMilestone(milestone) {
+            window.open('checklistOverview.html#milestone='+milestone.innerText);
         }
         // =================================================
         // reload function
@@ -456,6 +475,8 @@
         $scope.getChecklists = getChecklists;
         $scope.getClassForChecklist = getClassForChecklist;   
         $scope.createTagClouds = createTagClouds;
+        $scope.openOverviewForTag = openOverviewForTag;
+        $scope.openOverviewForMilestone = openOverviewForMilestone;
         
         $scope.toggleRefresh = toggleRefresh;     
     }

@@ -144,6 +144,9 @@ which ones are still in progress (blue).
 There is also a simple stats implemented that shows you which steps of your template fail and what kind of errors you get per step (more will come later on)
 ![alt text](screenshot_stats.png "the simple template stats")
 
+You can find your checklists based on the tags and reached milestones. They are presented in the tagcloud in the select page
+![alt text](screenshot_tagcloud.png "the tagcloud page")
+
 ## GIT backend (TODO)
 
 The idea is to use a file based backend with GIT as a remote synchronisation store. The backend will commit and push after each update, so that the GIT is always up to date.
