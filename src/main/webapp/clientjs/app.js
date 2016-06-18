@@ -268,7 +268,11 @@
         
         function showOptions(step) {
             return step.options && ($scope.mode === 'template' || !step.selectedOption) ;
-        }             
+        }           
+        
+        function showRevalidateButton(step) {
+            return step.state === 'CHECK_FAILED';
+        }
         
         function reposition() {
             var activeStep = undefined;
@@ -372,6 +376,16 @@
                     console.log('Error creating new checklist');
                 });  
         }
+        
+        function revalidate(step) {
+            $scope.checkResults[step.id] = {};
+            $http.post('rest/checklist/revalidate?id='+$location.search().id+"&step="+step.id)
+                .success(function (data,status,headers,config) {
+                    $scope.data = data;                        
+                }).error(function (data,status,headers,config) {
+                    console.log('Error updating step '+step.id);
+                });
+        }
         // =================================================
         // overview operations
         // =================================================
@@ -462,7 +476,8 @@
         $scope.showSubchecklist  = showSubchecklist;        
         $scope.showOptions       = showOptions;
         $scope.showMainBody      = showMainBody;
-        $scope.showProgressBar   = showProgressBar;        
+        $scope.showProgressBar   = showProgressBar;       
+        $scope.showRevalidateButton = showRevalidateButton;
         $scope.getSubchecklistClass = getSubchecklistClass;
         
         $scope.updateAction   = updateAction;
@@ -470,7 +485,8 @@
         $scope.setCheckResult = setCheckResult;
         $scope.addTag         = addTag;
         $scope.setStepOption  = setStepOption;
-        $scope.launchSubChecklist = launchSubChecklist;
+        $scope.revalidate     = revalidate;
+        $scope.launchSubChecklist = launchSubChecklist;        
         
         $scope.getChecklists = getChecklists;
         $scope.getClassForChecklist = getClassForChecklist;   

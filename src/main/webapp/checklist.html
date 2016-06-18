@@ -109,11 +109,16 @@
                         </div>
                         <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showActionButtons(step)">
                             <p>Action result :&nbsp;&nbsp;</p>
-                            <button type="button" class="btn btn-default" aria-label="ok" ng-click="updateAction(step, true);">
+                            <button type="button" class="btn btn-default" aria-label="ok" ng-click="updateAction(step, true);" >
                               <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
                             </button>
-                            <button type="button" class="btn btn-default" aria-label="problem" ng-click="updateAction(step, false);">
+                            <button type="button" class="btn btn-default" aria-label="problem" ng-click="updateAction(step, false);" >
                               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Problem</span>
+                            </button>                            
+                        </div>
+                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showRevalidateButton(step)">
+                            <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="revalidate(step);" >
+                              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Revalidate</span>
                             </button>
                         </div>
                         <div ng-show="showErrorDialog(step)" ng-class="unknown">

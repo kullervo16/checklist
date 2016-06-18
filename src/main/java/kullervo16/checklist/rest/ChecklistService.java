@@ -84,6 +84,21 @@ public class ChecklistService {
     }
     
     @POST
+    @Path("/revalidate")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Checklist revalidate(@QueryParam("id") String checklistId, @QueryParam("step") String stepId) {        
+        Checklist cl =getChecklist(checklistId);
+        Step step = getStep(cl, stepId);  
+        if(State.CHECK_FAILED.equals(step.getState())) {
+            // revalidate only allowed when in check failed... otherwise we ignore the request
+            step.setState(State.EXECUTED);
+            ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
+        }
+        
+        return cl;
+    }
+    
+    @POST
     @Path("/setCheckResult")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setCheckResult(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("result") boolean result) {        
