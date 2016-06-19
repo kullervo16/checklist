@@ -2,9 +2,13 @@ package kullervo16.checklist.repository;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +36,7 @@ public enum TemplateRepository {
 
     private static Map<String,Template> data = new HashMap<>();
     private static final String TEMPLATE_DIR = "/opt/checklist/templates";
+    private static final String BACKUP_DIR = "/opt/checklist/backup";
     
     static {
         // fixed path ... target is to work in a docker container, you can mount it via a volume to whathever you want
@@ -116,6 +121,15 @@ public enum TemplateRepository {
         if(data.containsKey(name)) {
             // update of an existing template
             targetFile = data.get(name).getPersister().getFile();
+            // take a backup before proceeding
+            File backupDir = new File(BACKUP_DIR);
+            if(!backupDir.exists()) {
+                backupDir.mkdirs();
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+            File backupFile = new File(backupDir, name+"."+sdf.format(new Date()));
+            new File(backupFile.getParent()).mkdirs();
+            IOUtils.copy(new FileReader(targetFile), new FileWriter(backupFile));
             
         } else {
             // new file
