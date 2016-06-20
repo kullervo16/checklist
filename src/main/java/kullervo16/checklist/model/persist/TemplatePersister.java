@@ -260,6 +260,8 @@ public class TemplatePersister  {
         printLine(writer,"  subchecklist", step.getSubChecklist());
         printLine(writer,"  weight", ""+step.getWeight());
         printLine(writer,"  selectedOption", step.getSelectedOption());
+        printLine(writer,"  question", step.getQuestion());
+        printLine(writer,"  answerType", step.getAnswerType());
         if(step.getLastUpdate() != null) {
             printLine(writer,"  lastUpdate",""+step.getLastUpdate().getTime());
         }

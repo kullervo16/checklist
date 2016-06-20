@@ -1,6 +1,5 @@
 package kullervo16.checklist.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +29,7 @@ public class Step {
     protected String selectionOption;
     protected Condition condition;
     protected String question;
+    protected String answerType;    
     
     public Step() {
     }
@@ -55,6 +55,7 @@ public class Step {
         this.options = step.getOptions();
         this.selectionOption = step.getSelectedOption();
         this.question = step.getQuestion();
+        this.answerType = step.getAnswerType();
         if(step.getCondition() != null) {
            Step selectionPoint = null;
            for(Step walker : stepList) {
@@ -86,6 +87,7 @@ public class Step {
         this.documentation = (String) stepMap.get("documentation");
         this.subChecklist = (String) stepMap.get("subchecklist");
         this.question = (String)stepMap.get("question");
+        this.answerType = (String)stepMap.get("answerType");
                 
         this.weight   = 1;                
         if(stepMap.get("weight") != null) {
@@ -353,6 +355,14 @@ public class Step {
 
     public void setQuestion(String question) {
         this.question = question;
+    }
+
+    public String getAnswerType() {
+        return answerType;
+    }
+
+    public void setAnswerType(String answerType) {
+        this.answerType = answerType;
     }
     
     
