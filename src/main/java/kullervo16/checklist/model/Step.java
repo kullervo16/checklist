@@ -29,6 +29,7 @@ public class Step {
     protected List<String> options;
     protected String selectionOption;
     protected Condition condition;
+    protected String question;
     
     public Step() {
     }
@@ -53,6 +54,7 @@ public class Step {
         this.subChecklist = step.getSubChecklist();
         this.options = step.getOptions();
         this.selectionOption = step.getSelectedOption();
+        this.question = step.getQuestion();
         if(step.getCondition() != null) {
            Step selectionPoint = null;
            for(Step walker : stepList) {
@@ -83,6 +85,7 @@ public class Step {
         this.executor = (String)stepMap.get("executor");
         this.documentation = (String) stepMap.get("documentation");
         this.subChecklist = (String) stepMap.get("subchecklist");
+        this.question = (String)stepMap.get("question");
                 
         this.weight   = 1;                
         if(stepMap.get("weight") != null) {
@@ -342,6 +345,14 @@ public class Step {
 
     public void setCondition(Condition condition) {
         this.condition = condition;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
     }
     
     

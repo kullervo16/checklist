@@ -1,0 +1,40 @@
+displayName: startProject
+# description of the procedure that the checklist will support
+description: Checklist to kickoff a new project
+# tags help you organise your checklists. The tags in the template are automatically added to all checklists that are 
+# based on this template. You can add as many as you need
+tags:
+    - development
+    - software
+# The steps represent the various parts of the procedure.
+steps :    
+      # the id must be unique within the template
+    - id: basicDocumentation
+      # who should perform this action
+      responsible: architect
+      action : this should provoke an error
+      # the question to be asked   
+      question: is the documentation up-to-date? Please add the link in the answer.
+      # you can add checks to see what you mean with "up-to-date"
+      check:
+          - step: application in the table for the domain
+          - step: development team added in the table
+          - step: link to the documentation
+      # free format answer
+      answerType: text      
+    - id: createApplication
+      responsible: deployer
+      action: create the application in the proper zone      
+      # an example with multiple checks for 1 action (when you want more than 1 action, simply create new steps)
+      check:
+          - step: open webconsole in the proper zone
+          - step: application should be present and green
+      # the weight of this step in the progress bar to get a more realistic progress if you want (if not specified : default = 1)
+      weight: 5
+    - id: verifyFunctioning
+      responsible: development
+      # the documentation tag will be rendered as a link in the webgui.. You can use it when you need to give context, add a screenshot... 
+      # you simply describe it in a document/wiki/webpage/... and point the user into that direction in your action
+      documentation: https://github.com/kullervo16/checklist      
+      milestone: deployed
+      

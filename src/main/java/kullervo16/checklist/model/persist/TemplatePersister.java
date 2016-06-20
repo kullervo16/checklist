@@ -236,11 +236,16 @@ public class TemplatePersister  {
         checkTag(stepMap, "subchecklist", "/steps/"+pos, result,DataType.STRING, false);
         checkTag(stepMap, "check", "/steps/"+pos, result,DataType.STRING_OR_LIST, false);
         checkTag(stepMap, "weight", "/steps/"+pos, result,DataType.POSITIVE_NUMBER, false);
-        // step 2 : either subchecklist or action must be present
-        if(!stepMap.containsKey("subchecklist") && ! stepMap.containsKey("action")) {
-            result.add(new ErrorMessage("Subchecklist or action is mandatory", ErrorMessage.Severity.MAJOR, "/steps/"+pos+" contains neither subchecklist nor action. One of the 2 is required."));
-        } else if(stepMap.containsKey("subchecklist") && stepMap.containsKey("action")) {
-            result.add(new ErrorMessage("Both subchecklist and action specified", ErrorMessage.Severity.MAJOR, "/steps/"+pos+" contains both subchecklist and action. Only one of the 2 is allowed.")); 
+        // step 2 : either subchecklist, question or action must be present
+        int count = 0;
+        if(stepMap.containsKey("subchecklist")) count++;
+        if(stepMap.containsKey("action")) count++;
+        if(stepMap.containsKey("question")) count++;
+        
+        if(count == 0) {
+            result.add(new ErrorMessage("Subchecklist, question or action is mandatory", ErrorMessage.Severity.MAJOR, "/steps/"+pos+" contains neither subchecklist, question nor action. One of the 2 is required."));
+        } else if(count != 1) {
+            result.add(new ErrorMessage("More than 1 of (subchecklist, question, action) specified", ErrorMessage.Severity.MAJOR, "/steps/"+pos+" contains more than 1 of (subchecklist, question,action). Only one is allowed.")); 
         }
     }
                 

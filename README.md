@@ -63,7 +63,7 @@ steps :
       
 ```
 
-## Web GUI (WIP)
+## Web GUI
 
 This simple GUI allows you to select a template and instantiate it in a checklist. The checklist is simply a copy of the YAML template
 you select where the GUI allows you to update the status. This enables people without development skills that would be distracted
@@ -135,6 +135,54 @@ steps :
 In the GUI this is represented like this : the steps that are not reachable anymore based on your choices are marked in grey.
 
 ![alt text](screenshot_choice.png "checklist with options")
+
+### Questions
+Sometimes you're not executing actions, but you want to ask a question to make sure the user is reflecting a certain issue. To allow this, you can replace
+the action step by a question. The answer to the question will be stored in the checklist. This answer can be a free-form string, or a selection from
+some values defined in the template. Here is an example
+
+```yaml
+description: Checklist to verify a deployment
+tags:
+    - tag1
+    - tag2    
+steps :    
+    - id: step1
+      responsible: resp1
+      options:
+          - option1
+          - option2
+      milestone: milestone1
+    - id: step2
+      responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option1
+      action: action1
+      check: check1
+      milestone: milestone2
+    - id: step3
+      responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option2
+      action: action1
+      check: check1
+      milestone: milestone3
+    - id: step4
+      responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option2
+      action: action1
+      check: check1
+      milestone: milestone4
+    - id: step5
+      responsible: resp1
+      action: action1
+      check: check1
+      milestone: milestone5      
+```
 
 The system shows you the most recent active checklists for quick access (if you do not know the UUID). Color coding shows which ones are complete (green) and 
 which ones are still in progress (blue).

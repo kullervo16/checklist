@@ -79,6 +79,9 @@
                         <div ng-show="step.action">
                             <h4><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>&nbsp;&nbsp;{{step.action}}</h4>
                         </div>
+                        <div ng-show="step.question">
+                            <h4><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;{{step.question}}</h4>
+                        </div>
                         <div ng-show="showSubchecklist(step) ">
                             <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" ng-class="getSubchecklistClass()" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></h4>
                         </div>

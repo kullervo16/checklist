@@ -83,6 +83,23 @@ public class ValidationTest {
         
     }
     
+    @Test
+    public void testInvalid5() {
+        List<ErrorMessage> errors = getErrors("./src/test/resources/validation/invalid5.yml");
+        System.err.println(errors);
+        assertEquals(2, errors.size());
+        assertTrue(errors.get(0).getSeverity().equals(Severity.MAJOR));  
+        assertTrue(errors.get(1).getSeverity().equals(Severity.MAJOR)); 
+        
+        assertEquals("More than 1 of (subchecklist, question, action) specified",errors.get(0).getDescription());
+        assertEquals("Subchecklist, question or action is mandatory",errors.get(1).getDescription());
+        
+        
+        assertEquals("/steps/1 contains more than 1 of (subchecklist, question,action). Only one is allowed.",errors.get(0).getDetails());
+        assertEquals("/steps/3 contains neither subchecklist, question nor action. One of the 2 is required.",errors.get(1).getDetails());
+        
+    }
+    
      @Test
     public void testBinary() {
         List<ErrorMessage> errors = getErrors("./screenshot_choice.png");
