@@ -15,9 +15,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -41,7 +43,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
  *
  * @author jef
  */
-@Path("/template")
+@Path("/templates")
 @Stateless
 public class TemplateService {
     
@@ -52,7 +54,7 @@ public class TemplateService {
     ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
         
     @GET
-    @Path("/list")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TemplateInfo> listTemplateNames() {                
         return this.templateRepository.getTemplateInformation();
@@ -60,16 +62,16 @@ public class TemplateService {
     }
     
     @GET
-    @Path("/get")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Template getTemplate(@QueryParam("id") String id) {        
+    public Template getTemplate(@PathParam("id") String id) {        
         return this.templateRepository.getTemplate(id);    
     }
     
     @GET
-    @Path("/download")
+    @Path("/{id}/content")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response downloadTemplate(@QueryParam("id") String id) {        
+    public Response downloadTemplate(@PathParam("id") String id) {        
         Template t =this.templateRepository.getTemplate(id);    
         if(t == null) {
             throw new IllegalArgumentException("Template with id "+id+" not found...");
@@ -82,22 +84,12 @@ public class TemplateService {
         return Response.ok().entity(stream).build(); 
     }
     
-    @POST
-    @Path("/createChecklist")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String createChecklist(@QueryParam("id") String id, @QueryParam("parent") String parent) throws URISyntaxException {    
-        Template template = this.templateRepository.getTemplate(id);
-        if(template == null) {
-            throw new IllegalArgumentException("Unknown template "+id);
-        }
-        
-        return this.checklistRepository.createFromTemplate(id, template, parent);        
-    }
     
-    @POST
-    @Path("/deleteTemplate")
+    
+    @DELETE
+    @Path("/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteTemplate(@QueryParam("id") String id) throws URISyntaxException {    
+    public String deleteTemplate(@PathParam("id") String id) throws URISyntaxException {    
         Template template = this.templateRepository.getTemplate(id);
         if(template == null) {
             throw new IllegalArgumentException("Unknown template "+id);
@@ -106,8 +98,9 @@ public class TemplateService {
         return id;        
     }
     
-    @POST
-    @Path("/upload")
+    
+    @PUT
+    @Path("/")
     @Consumes("multipart/form-data")
     public List<ErrorMessage> uploadFile(MultipartFormDataInput input, @QueryParam("name") String fileName) {
 
@@ -134,14 +127,14 @@ public class TemplateService {
     }
     
     @GET
-    @Path("/stats")
+    @Path("/{id}/stats")
     @Produces(MediaType.APPLICATION_JSON)
     /**
      * This method calculates the statistics for 1 given template (# of occurence, successrate per step, ...)
      * @param id
      * @return 
      */
-    public TemplateStats getTemplateStats(@QueryParam("id") String id) {
+    public TemplateStats getTemplateStats(@PathParam("id") String id) {
         TemplateStats result = new TemplateStats();
         result.setId(id);
         

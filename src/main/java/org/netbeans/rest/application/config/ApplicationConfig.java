@@ -30,6 +30,8 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(kullervo16.checklist.rest.ChecklistService.class);
+        resources.add(kullervo16.checklist.rest.MilestoneService.class);
+        resources.add(kullervo16.checklist.rest.TagService.class);
         resources.add(kullervo16.checklist.rest.TemplateService.class);
     }
     
