@@ -51,6 +51,12 @@ public class ChecklistPersister extends TemplatePersister {
                 writer.append(SEPARATOR_1).append(SEPARATOR_2).append(error).append("\n");
             });
         }
+        if(!step.getAnswers().isEmpty()) {
+            writer.append(SEPARATOR_1).append("answers:\n");
+            step.getAnswers().stream().forEach((answer) -> {
+                writer.append(SEPARATOR_1).append(SEPARATOR_2).append(answer).append("\n");
+            });
+        }
     }
 
     

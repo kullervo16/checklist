@@ -82,11 +82,16 @@
                         <div ng-show="step.question">
                             <h4><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;{{step.question}}</h4>
                             <p>Answer :</p>
-                            <p ng-if="step.answerType === 'text'">
+                            <p ng-if="showAnswerTextBox(step)">
                                 <textarea ng-model="answerText" rows="4" cols="50" ></textarea>
                                 <button type="button" class="btn btn-default" aria-label="ok" ng-click="addTextAnswer(step, answerText);">
                                   <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
                                 </button>
+                            </p>
+                            <p ng-if="!showAnswerTextBox(step)">
+                                <ul ng-repeat="answer in step.answers">
+                                    <li>{{answer}}</li>
+                                </ul>
                             </p>
                         </div>
                         <div ng-show="showSubchecklist(step) ">

@@ -158,6 +158,25 @@ public class ChecklistService {
     }
     
     @POST
+    @Path("/addAnswerToStep")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Checklist addAnwswerToStep(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, String answer) {        
+        Checklist cl = getChecklist(checklistId);
+        Step step = getStep(cl, stepId);    
+        
+        if(step.getQuestion() != null) {
+        
+            step.setState(State.EXECUTED);
+         
+            step.getAnswers().add(answer);    
+            ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
+        }
+        return cl;
+    }
+    
+    
+    
+    @POST
     @Path("/addTag")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addTag(@QueryParam("id") String checklistId, @QueryParam("tag") String tag) {        

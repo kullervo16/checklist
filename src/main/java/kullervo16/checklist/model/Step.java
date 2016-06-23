@@ -29,7 +29,8 @@ public class Step {
     protected String selectionOption;
     protected Condition condition;
     protected String question;
-    protected String answerType;    
+    protected String answerType;   
+    protected List<String> answers;
     
     public Step() {
     }
@@ -49,6 +50,7 @@ public class Step {
         this.responsible= step.getResponsible();
         this.state  = step.getState();
         this.errors = new LinkedList<>(step.getErrors());
+        this.answers = new LinkedList<>(step.getAnswers());
         this.weight = step.getWeight();
         this.documentation = step.getDocumentation();
         this.subChecklist = step.getSubChecklist();
@@ -111,6 +113,18 @@ public class Step {
                this.errors.add((String) stepMap.get("errors"));
             } else {
                 for(String error : (List<String>) stepMap.get("errors")) {
+                    this.errors.add(error);
+                }
+            }
+        }
+        
+        this.answers = new LinkedList<>();
+        if(stepMap.get("answers") != null) {
+            if(stepMap.get("answers") instanceof String) {
+               // convert String to list (this makes it a lot easier to configure the yaml           
+               this.errors.add((String) stepMap.get("answers"));
+            } else {
+                for(String error : (List<String>) stepMap.get("answers")) {
                     this.errors.add(error);
                 }
             }
@@ -363,6 +377,14 @@ public class Step {
 
     public void setAnswerType(String answerType) {
         this.answerType = answerType;
+    }
+
+    public List<String> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<String> answers) {
+        this.answers = answers;
     }
     
     

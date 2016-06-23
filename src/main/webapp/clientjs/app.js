@@ -274,6 +274,10 @@
             return step.state === 'CHECK_FAILED';
         }
         
+        function showAnswerTextBox(step) {
+            return step.answerType === 'text' && step.state === 'UNKNOWN';
+        }
+        
         function reposition() {
             var activeStep = undefined;
             // for some odd reason, the links don't work for the last 3 steps... go to complete then
@@ -322,6 +326,16 @@
                 }).error(function (data,status,headers,config) {
                     console.log('Error updating step '+step.id);
                 });  
+        }
+        
+        function addTextAnswer(step, answer) {
+            $http.post('rest/checklist/addAnswerToStep?id='+$location.search().id+"&step="+step.id, answer)
+                .success(function (data,status,headers,config) {
+                    $scope.data = data;   
+                    reposition();
+                }).error(function (data,status,headers,config) {
+                    console.log('Error updating step '+step.id);
+                }); 
         }
         
         function addTag(tag) {
@@ -477,11 +491,13 @@
         $scope.showOptions       = showOptions;
         $scope.showMainBody      = showMainBody;
         $scope.showProgressBar   = showProgressBar;       
+        $scope.showAnswerTextBox = showAnswerTextBox;
         $scope.showRevalidateButton = showRevalidateButton;
         $scope.getSubchecklistClass = getSubchecklistClass;
         
         $scope.updateAction   = updateAction;
         $scope.addErrorAction = addErrorAction;
+        $scope.addTextAnswer  = addTextAnswer;
         $scope.setCheckResult = setCheckResult;
         $scope.addTag         = addTag;
         $scope.setStepOption  = setStepOption;
