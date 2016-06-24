@@ -185,6 +185,11 @@ steps :
      
 ```
 
+This is how the template is represented :
+
+![alt text](screenshot_questions.png "a checklist with questions")
+
+### Overview
 The system shows you the most recent active checklists for quick access (if you do not know the UUID). Color coding shows which ones are complete (green) and 
 which ones are still in progress (blue).
 
@@ -196,13 +201,3 @@ There is also a simple stats implemented that shows you which steps of your temp
 You can find your checklists based on the tags and reached milestones. They are presented in the tagcloud in the select page
 ![alt text](screenshot_tagcloud.png "the tagcloud page")
 
-## GIT backend (TODO)
-
-The idea is to use a file based backend with GIT as a remote synchronisation store. The backend will commit and push after each update, so that the GIT is always up to date.
-If you loose your data (or you are using a 100% container approach and do not use persistent storage at all), the system will pull from the GIT to restore its state.
-
-
-## Testing
-
-There are minimal unit tests in this project, only to test the low level stuff. Since the in-memory backend is so fast, the actual tests are written as integration tests running against a deployed backend. 
-That way we test the real thing, and we are sure you can use the API also with rest-easy directly (so not only as an angular js client). Check out the checklistTest for more information (or as a demonstration of the API).
