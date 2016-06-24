@@ -142,46 +142,47 @@ the action step by a question. The answer to the question will be stored in the 
 some values defined in the template. Here is an example
 
 ```yaml
-description: Checklist to verify a deployment
+displayName: startProject
+# description of the procedure that the checklist will support
+description: Checklist to kickoff a new project
+# tags help you organise your checklists. The tags in the template are automatically added to all checklists that are 
+# based on this template. You can add as many as you need
 tags:
-    - tag1
-    - tag2    
+    - development
+    - software
+# The steps represent the various parts of the procedure.
 steps :    
-    - id: step1
-      responsible: resp1
+      # the id must be unique within the template
+    - id: basicDocumentation
+      # who should perform this action
+      responsible: architect
+      # the question to be asked   
+      question: is the documentation up-to-date? Please add the link in the answer.
+      # you can add checks to see what you mean with "up-to-date"
+      check:
+          - step: application in the table for the domain
+          - step: development team added in the table
+          - step: link to the documentation
+      # free format answer
+      answerType: text      
+    - id: testTools
+      responsible: architect
+      question: which testtools do you use?     
+      # this specifies that zero, 1 or more of the options should be selected
+      answerType: multiple
       options:
-          - option1
-          - option2
-      milestone: milestone1
-    - id: step2
-      responsible: resp1
-      condition:
-          - selectionPoint: step1
-          - option: option1
-      action: action1
-      check: check1
-      milestone: milestone2
-    - id: step3
-      responsible: resp1
-      condition:
-          - selectionPoint: step1
-          - option: option2
-      action: action1
-      check: check1
-      milestone: milestone3
-    - id: step4
-      responsible: resp1
-      condition:
-          - selectionPoint: step1
-          - option: option2
-      action: action1
-      check: check1
-      milestone: milestone4
-    - id: step5
-      responsible: resp1
-      action: action1
-      check: check1
-      milestone: milestone5      
+          - unitils
+          - selenium
+          - soapUI      
+    - id: dependencyInjection
+      responsible: development
+      question: which dependency injection framework do you use?
+      # this specifies that only 1 of the options should be selected
+      answerType: onlyOne
+      options:
+          - spring
+          - CDI          
+     
 ```
 
 The system shows you the most recent active checklists for quick access (if you do not know the UUID). Color coding shows which ones are complete (green) and 

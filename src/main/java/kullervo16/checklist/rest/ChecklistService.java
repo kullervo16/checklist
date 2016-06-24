@@ -165,8 +165,12 @@ public class ChecklistService {
         Step step = getStep(cl, stepId);    
         
         if(step.getQuestion() != null) {
-        
-            step.setState(State.EXECUTED);
+            if(!step.getChecks().isEmpty()) {                            
+                step.setState(State.EXECUTED);
+            } else {
+                // no checks, directly to OK
+                step.setState(State.OK);
+            }
          
             step.getAnswers().add(answer);    
             ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);

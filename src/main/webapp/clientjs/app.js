@@ -267,7 +267,7 @@
         }
         
         function showOptions(step) {
-            return step.options && ($scope.mode === 'template' || !step.selectedOption) ;
+            return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType;
         }           
         
         function showRevalidateButton(step) {
@@ -276,6 +276,10 @@
         
         function showAnswerTextBox(step) {
             return step.answerType === 'text' && step.state === 'UNKNOWN';
+        }
+        
+        function showAnswerRadioButton(step) {
+            return step.answerType === 'onlyOne' && step.state === 'UNKNOWN';
         }
         
         function reposition() {
@@ -492,6 +496,7 @@
         $scope.showMainBody      = showMainBody;
         $scope.showProgressBar   = showProgressBar;       
         $scope.showAnswerTextBox = showAnswerTextBox;
+        $scope.showAnswerRadioButton= showAnswerRadioButton;
         $scope.showRevalidateButton = showRevalidateButton;
         $scope.getSubchecklistClass = getSubchecklistClass;
         

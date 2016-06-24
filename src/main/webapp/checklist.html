@@ -88,6 +88,16 @@
                                   <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
                                 </button>
                             </p>
+                            <div ng-if="showAnswerRadioButton(step)">
+                                <p ng-repeat="option in step.options">
+                                    <label>
+                                         <input type="radio" name="option" ng-model="$parent.radioAnswer" ng-value="option" /> {{option}}
+                                     </label>                                    
+                                </p>                                
+                                <button type="button" class="btn btn-default" aria-label="ok" ng-click="addTextAnswer(step, radioAnswer);">
+                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
+                                </button>
+                            </div>
                             <p ng-if="!showAnswerTextBox(step)">
                                 <ul ng-repeat="answer in step.answers">
                                     <li>{{answer}}</li>

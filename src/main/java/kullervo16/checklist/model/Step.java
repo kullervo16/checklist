@@ -122,10 +122,10 @@ public class Step {
         if(stepMap.get("answers") != null) {
             if(stepMap.get("answers") instanceof String) {
                // convert String to list (this makes it a lot easier to configure the yaml           
-               this.errors.add((String) stepMap.get("answers"));
+               this.answers.add((String) stepMap.get("answers"));
             } else {
                 for(String error : (List<String>) stepMap.get("answers")) {
-                    this.errors.add(error);
+                    this.answers.add(error);
                 }
             }
         }
