@@ -120,16 +120,21 @@ public class Step {
         
         this.answers = new LinkedList<>();
         if(stepMap.get("answers") != null) {
-            if(stepMap.get("answers") instanceof String) {
-               // convert String to list (this makes it a lot easier to configure the yaml           
-               this.answers.add((String) stepMap.get("answers"));
-            } else {
-                for(String error : (List<String>) stepMap.get("answers")) {
-                    this.answers.add(error);
+            try {
+                if(stepMap.get("answers") instanceof String) {
+                   // convert String to list (this makes it a lot easier to configure the yaml           
+                   this.answers.add((String) stepMap.get("answers"));
+                } else {
+                    for(String error : (List<String>) stepMap.get("answers")) {
+                        this.answers.add(error);
+                    }
                 }
+            }catch(Exception e) {
+                // answers are sent as plain text... if some clever guy sends some JSON, this screws up the parsing...
+                this.answers.add(stepMap.get("answers").toString());
             }
         }
-        
+                
         if(stepMap.containsKey("state")) {
             this.state = State.valueOf((String)stepMap.get("state"));
         } else {

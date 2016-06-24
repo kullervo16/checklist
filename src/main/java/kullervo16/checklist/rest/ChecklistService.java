@@ -1,8 +1,12 @@
 
 package kullervo16.checklist.rest;
 
+import java.io.StringReader;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -162,7 +166,7 @@ public class ChecklistService {
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addAnwswerToStep(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, String answer) {        
         Checklist cl = getChecklist(checklistId);
-        Step step = getStep(cl, stepId);    
+        Step step = getStep(cl, stepId);            
         
         if(step.getQuestion() != null) {
             if(!step.getChecks().isEmpty()) {                            
@@ -171,8 +175,15 @@ public class ChecklistService {
                 // no checks, directly to OK
                 step.setState(State.OK);
             }
-         
-            step.getAnswers().add(answer);    
+            try {
+                JsonReader jsonReader = Json.createReader(new StringReader(answer));
+                JsonObject object = jsonReader.readObject();
+                step.getAnswers().addAll(object.keySet());
+                jsonReader.close();
+            }catch(Exception e) {
+                // single answer...
+                step.getAnswers().add(answer);    
+            }
             ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         }
         return cl;
