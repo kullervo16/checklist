@@ -11,7 +11,7 @@
     app.controller('templateController', function($scope,$http,$window) {
         // init stuff... get data from backend
         var init =  function () {            
-            $http.get('rest/template/list')
+            $http.get('rest/templates')
                 .success(function (data,status,headers,config) {
                     $scope.items = data;                    
                 }).error(function (data,status,headers,config) {
@@ -22,7 +22,7 @@
                
         // function definitions
         function createChecklist(templateId) {
-            $http.post('rest/template/createChecklist?id='+templateId)
+            $http.post('rest/checklists'+templateId)
                 .success(function (data,status,headers,config) {
                     $window.location.href = './checklist.html?id='+data;                      
                 }).error(function (data,status,headers,config) {
@@ -44,7 +44,7 @@
         }
         
         function showStats(id) {
-            $http.get('rest/template/stats?id='+id)
+            $http.get('rest/templates'+id+'/stats')
                 .success(function (data,status,headers,config) {
                     $scope.stats = data;        
                     $('#stats').modal('show'); 
@@ -86,8 +86,10 @@
                 //Take the first selected file
                 fd.append("file", $scope.files[0]);
                 
-
-                $http.post('rest/template/upload?name='+$scope.templateName, fd, {
+                if(!$scope.templateName.startsWith("/")) {
+                    $scope.templateName = "/"+$scope.templateName;
+                }
+                $http.put('rest/templates'+$scope.templateName, fd, {
                     withCredentials: true,
                     headers: {'Content-Type': undefined },
                     transformRequest: angular.identity
@@ -129,20 +131,20 @@
         function downloadTemplate(id) {
             var hiddenElement = document.createElement('a');
 
-            hiddenElement.href = './rest/template/download?id='+id;
+            hiddenElement.href = './rest/templates'+id+'/content';
             hiddenElement.target = '_blank';
             hiddenElement.download = id.substr(id.lastIndexOf('/')+1)+'.yml';
             hiddenElement.click();                                                     
         }
         
         function deleteTemplate(id) {
-            $http.post('rest/template/deleteTemplate?id='+id)
+            $http.delete('rest/templates'+id)
                 .success(function (data,status,headers,config) {
-                    $http.get('rest/template/list')
+                    $http.get('rest/templates')
                         .success(function (data,status,headers,config) {
                             $scope.items = data;                    
                         }).error(function (data,status,headers,config) {
-                            console.log('Error getting rest/template/list');
+                            console.log('Error getting rest/templates');
                         });                  
                 }).error(function (data,status,headers,config) {
                     console.log('Error creating new checklist');
@@ -174,7 +176,7 @@
             $scope.mode = $location.search().mode;
             if($scope.mode === 'template') {
                 // if mode is template, we show a template in the checklist view (but in readonly)
-                $http.get('rest/template/get?id='+$location.search().id)
+                $http.get('rest/templates'+$location.search().id)
                     .success(function (data,status,headers,config) {
                         console.log("Data loaded");
                         $scope.data = data;                    
@@ -183,7 +185,7 @@
                     });
             } else {
                 $scope.mode = 'checklist';
-                $http.get('rest/checklist/get?id='+$location.search().id)
+                $http.get('rest/checklists/'+$location.search().id)
                     .success(function (data,status,headers,config) {
                         console.log("Data loaded");
                         $scope.data = data;                    
@@ -317,7 +319,7 @@
          * Action result for a step, send to the backend and reload.
          */
         function updateAction(step, result) {
-            $http.post('rest/checklist/setActionResult?id='+$location.search().id+"&step="+step.id+"&result="+result)
+            $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/actionresult/"+result)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;    
                     reposition();
@@ -327,7 +329,7 @@
         }
         
         function addErrorAction(step, error) {
-            $http.post('rest/checklist/addErrorToStep?id='+$location.search().id+"&step="+step.id, error)
+            $http.post('rest/checklists/'+$location.search().id+"/"+step.id+'/error', error)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;   
                     reposition();
@@ -337,7 +339,7 @@
         }
         
         function addAnswer(step, answer) {
-            $http.post('rest/checklist/addAnswerToStep?id='+$location.search().id+"&step="+step.id, answer)
+            $http.post('rest/checklists/'+$location.search().id+"/"+step.id+'/answer', answer)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;   
                     reposition();
@@ -347,7 +349,7 @@
         }
         
         function addTag(tag) {
-            $http.post('rest/checklist/addTag?id='+$location.search().id+"&tag="+tag)
+            $http.put('rest/checklists/'+$location.search().id+"/tag/"+tag)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;  
                     reposition();
@@ -371,7 +373,7 @@
                 for(var key in $scope.checkResults[step.id]) {
                     combinedResult &= $scope.checkResults[step.id][key];
                 }
-                $http.post('rest/checklist/setCheckResult?id='+$location.search().id+"&step="+step.id+"&result="+(combinedResult === 1))
+                $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/checkresult/"+(combinedResult === 1))
                 .success(function (data,status,headers,config) {
                     $scope.data = data;   
                     reposition();
@@ -382,7 +384,7 @@
         }
         
         function setStepOption(step, choice) {
-            $http.post('rest/checklist/setStepOption?id='+$location.search().id+"&step="+step.id+"&choice="+choice)
+            $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/option/"+choice)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;                        
                 }).error(function (data,status,headers,config) {
@@ -391,7 +393,7 @@
         }
         
         function launchSubChecklist(step) {
-            $http.post('rest/template/createChecklist?id='+step.subChecklist+"&parent="+$location.search().id)
+            $http.post('rest/checklists'+step.subChecklist+'?parent='+$location.search().id)
                 .success(function (data,status,headers,config) {
                     $window.location.href = './checklist.html?id='+data;                      
                 }).error(function (data,status,headers,config) {
@@ -401,7 +403,7 @@
         
         function revalidate(step) {
             $scope.checkResults[step.id] = {};
-            $http.post('rest/checklist/revalidate?id='+$location.search().id+"&step="+step.id)
+            $http.put('rest/checklists/'+$location.search().id+"/"+step.id+'/validate')
                 .success(function (data,status,headers,config) {
                     $scope.data = data;                        
                 }).error(function (data,status,headers,config) {
@@ -413,7 +415,7 @@
         // =================================================
         function getChecklists() {
             var hash=window.location.hash;  
-            var url = 'rest/checklist/list'; // default, get all recent checklists
+            var url = 'rest/checklists'; // default, get all recent checklists
             if(hash !== '') {
                 // add a filter, either on tag or on milestone
                 url += '?'+hash.substring(1); // strip the #
@@ -435,7 +437,7 @@
         }
         
         function createTagClouds() {
-            $http.get('rest/checklist/tags/list')
+            $http.get('rest/tags')
                 .success(function (data,status,headers,config) {                    
                     for(var i=0;i<data.length;i++) {
                         data[i]['handlers'] = {};
@@ -447,7 +449,7 @@
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/checklist/tags/list');
                 });
-            $http.get('rest/checklist/milestones/list')
+            $http.get('rest/milestones')
                 .success(function (data,status,headers,config) {
                     for(var i=0;i<data.length;i++) {
                         data[i]['handlers'] = {};
@@ -473,7 +475,7 @@
         function toggleRefresh(state) {          
           if(state) {
               $scope.refresh = $interval(function () {
-                  $http.get('rest/checklist/get?id='+$location.search().id)
+                  $http.get('rest/checklists/'+$location.search().id)
                 .success(function (data,status,headers,config) {
                     console.log("Data loaded");
                     $scope.data = data;

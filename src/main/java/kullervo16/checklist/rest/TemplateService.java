@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package kullervo16.checklist.rest;
 
 import java.io.FileInputStream;
@@ -15,9 +11,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -41,7 +39,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
  *
  * @author jef
  */
-@Path("/template")
+@Path("/templates")
 @Stateless
 public class TemplateService {
     
@@ -52,7 +50,7 @@ public class TemplateService {
     ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
         
     @GET
-    @Path("/list")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public List<TemplateInfo> listTemplateNames() {                
         return this.templateRepository.getTemplateInformation();
@@ -60,19 +58,19 @@ public class TemplateService {
     }
     
     @GET
-    @Path("/get")
+    @Path("/{folder}/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Template getTemplate(@QueryParam("id") String id) {        
-        return this.templateRepository.getTemplate(id);    
+    public Template getTemplate(@PathParam("folder") String folder, @PathParam("name") String name) {        
+        return this.templateRepository.getTemplate(folder, name);    
     }
     
     @GET
-    @Path("/download")
+    @Path("/{folder}/{name}/content")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response downloadTemplate(@QueryParam("id") String id) {        
-        Template t =this.templateRepository.getTemplate(id);    
+    public Response downloadTemplate(@PathParam("folder") String folder, @PathParam("name") String name) {        
+        Template t =this.templateRepository.getTemplate(folder, name);    
         if(t == null) {
-            throw new IllegalArgumentException("Template with id "+id+" not found...");
+            throw new IllegalArgumentException("Template with id "+folder+"/"+name+" not found...");
         }
         StreamingOutput stream = (OutputStream os) -> {
             try(FileInputStream fis = new FileInputStream(t.getPersister().getFile())) {
@@ -82,34 +80,25 @@ public class TemplateService {
         return Response.ok().entity(stream).build(); 
     }
     
-    @POST
-    @Path("/createChecklist")
+    
+    
+    @DELETE
+    @Path("/{folder}/{name}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String createChecklist(@QueryParam("id") String id, @QueryParam("parent") String parent) throws URISyntaxException {    
-        Template template = this.templateRepository.getTemplate(id);
+    public String deleteTemplate(@PathParam("folder") String folder, @PathParam("name") String name) throws URISyntaxException {    
+        Template template = this.templateRepository.getTemplate(folder,name);
         if(template == null) {
-            throw new IllegalArgumentException("Unknown template "+id);
+            throw new IllegalArgumentException("Unknown template "+folder+"/"+name);
         }
-        
-        return this.checklistRepository.createFromTemplate(id, template, parent);        
+        this.templateRepository.deleteTemplate(template);
+        return template.getId();        
     }
     
-    @POST
-    @Path("/deleteTemplate")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String deleteTemplate(@QueryParam("id") String id) throws URISyntaxException {    
-        Template template = this.templateRepository.getTemplate(id);
-        if(template == null) {
-            throw new IllegalArgumentException("Unknown template "+id);
-        }
-        this.templateRepository.deleteTemplate(id);
-        return id;        
-    }
     
-    @POST
-    @Path("/upload")
+    @PUT
+    @Path("/{folder}/{name}")
     @Consumes("multipart/form-data")
-    public List<ErrorMessage> uploadFile(MultipartFormDataInput input, @QueryParam("name") String fileName) {
+    public List<ErrorMessage> uploadFile(MultipartFormDataInput input,@PathParam("folder") String folder, @PathParam("name") String name) {
 
 
 
@@ -122,7 +111,7 @@ public class TemplateService {
 
              try (InputStream inputStream = inputPart.getBody(InputStream.class,null)) {
                  
-                 return templateRepository.validateAndUpdate(fileName, inputStream);
+                 return templateRepository.validateAndUpdate("/"+folder+"/"+name, inputStream);
 
               } catch (IOException e) {
                     e.printStackTrace();
@@ -134,18 +123,20 @@ public class TemplateService {
     }
     
     @GET
-    @Path("/stats")
+    @Path("/{folder}/{name}/stats")
     @Produces(MediaType.APPLICATION_JSON)
     /**
      * This method calculates the statistics for 1 given template (# of occurence, successrate per step, ...)
      * @param id
      * @return 
      */
-    public TemplateStats getTemplateStats(@QueryParam("id") String id) {
+    public TemplateStats getTemplateStats(@PathParam("folder") String folder, @PathParam("name") String name) {
         TemplateStats result = new TemplateStats();
-        result.setId(id);
         
-        Template currentTemplate = this.templateRepository.getTemplate(id);
+        
+        Template currentTemplate = this.templateRepository.getTemplate(folder, name);
+        String id = currentTemplate.getId();
+        result.setId(id);
         for(Checklist cl : this.checklistRepository.getChecklistsForTemplate(id)) {
             result.setNumberOfOccurrences(result.getNumberOfOccurrences()+1);
             for(Step step : cl.getSteps()) {                 
