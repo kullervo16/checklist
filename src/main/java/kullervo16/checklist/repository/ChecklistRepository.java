@@ -73,6 +73,10 @@ public enum ChecklistRepository {
         return this.data.get(name);
     }
 
+    public String createFromTemplate(String folder, String templateName, Template template, String parent) {
+        return this.createFromTemplate("/"+folder+"/"+templateName, template, parent);
+    }
+    
     /**
      * This methoc creates a new checklist from an existing template.
      * @param template

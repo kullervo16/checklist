@@ -2,6 +2,7 @@
 package kullervo16.checklist.rest;
 
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.json.Json;
@@ -9,7 +10,9 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -18,24 +21,37 @@ import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.ChecklistInfo;
 import kullervo16.checklist.model.Step;
-import kullervo16.checklist.model.TagcloudEntry;
+import kullervo16.checklist.model.Template;
 import kullervo16.checklist.repository.ActorRepository;
 import kullervo16.checklist.repository.ChecklistRepository;
+import kullervo16.checklist.repository.TemplateRepository;
 
 /**
  * REST service to expose the checklists via JSON.
  *
  * @author jef
  */
-@Path("/checklist")
+@Path("/checklists")
 @Stateless
 public class ChecklistService {
     
     // use singleton repository to make sure we are all working on the same backend (@Singleton does not seem to do that job like it should)    
     ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
+    TemplateRepository templateRepository = TemplateRepository.INSTANCE;
     
-    @GET
-    @Path("/list")
+    @POST
+    @Path("/{folder}/{name}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String createChecklist(@PathParam("folder") String folder, @PathParam("name") String name,@QueryParam("parent") String parent) throws URISyntaxException {            
+        Template template = this.templateRepository.getTemplate(folder, name);
+        if(template == null) {
+            throw new IllegalArgumentException("Unknown template "+folder+"/"+name);
+        }
+        
+        return this.checklistRepository.createFromTemplate(folder, name, template, parent);        
+    }
+    
+    @GET    
     @Produces(MediaType.APPLICATION_JSON)
     public List<ChecklistInfo> listChecklists(@QueryParam("tag") String tag, @QueryParam("milestone") String milestone) {                
         return this.checklistRepository.getChecklistInformation(tag, milestone);
@@ -43,32 +59,17 @@ public class ChecklistService {
     }
 
     @GET
-    @Path("/get")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist getCL(@QueryParam("id") String id) {        
+    public Checklist getCL(@PathParam("id") String id) {        
         return this.checklistRepository.getChecklist(id);    
     }
     
-    @GET
-    @Path("/tags/list")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<TagcloudEntry> listTags() {                
-        return this.checklistRepository.getTagInfo();
-
-    }
     
-    @GET
-    @Path("/milestones/list")
+    @PUT
+    @Path("/{id}/{step}/actionresult/{result}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TagcloudEntry> listMilestones() {                
-        return this.checklistRepository.getMilestoneInfo();
-
-    }
-    
-    @POST
-    @Path("/setActionResult")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Checklist setActionResult(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("result") boolean result) {        
+    public Checklist setActionResult(@PathParam("id") String checklistId, @PathParam("step") String stepId, @PathParam("result") boolean result) {        
         Checklist cl =getChecklist(checklistId);
         Step step = getStep(cl, stepId);  
         if(result) {
@@ -87,10 +88,10 @@ public class ChecklistService {
         return cl;
     }
     
-    @POST
-    @Path("/revalidate")
+    @PUT
+    @Path("/{id}/{step}/validate")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist revalidate(@QueryParam("id") String checklistId, @QueryParam("step") String stepId) {        
+    public Checklist revalidate(@PathParam("id") String checklistId, @PathParam("step") String stepId) {        
         Checklist cl =getChecklist(checklistId);
         Step step = getStep(cl, stepId);  
         if(State.CHECK_FAILED.equals(step.getState())) {
@@ -102,10 +103,10 @@ public class ChecklistService {
         return cl;
     }
     
-    @POST
-    @Path("/setCheckResult")
+    @PUT
+    @Path("/{id}/{step}/checkresult/{result}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist setCheckResult(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("result") boolean result) {        
+    public Checklist setCheckResult(@PathParam("id") String checklistId, @PathParam("step") String stepId, @PathParam("result") boolean result) {        
         Checklist cl = getChecklist(checklistId);
         Step step = getStep(cl, stepId);  
         if(result) {
@@ -140,9 +141,9 @@ public class ChecklistService {
     
     
     @POST
-    @Path("/addErrorToStep")
+    @Path("/{id}/{step}/error")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist addErrorToStep(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, String error) {        
+    public Checklist addErrorToStep(@PathParam("id") String checklistId, @PathParam("step") String stepId, String error) {        
         Checklist cl = getChecklist(checklistId);
         Step step = getStep(cl, stepId);    
                 
@@ -162,9 +163,9 @@ public class ChecklistService {
     }
     
     @POST
-    @Path("/addAnswerToStep")
+    @Path("/{id}/{step}/answer")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist addAnwswerToStep(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, String answer) {        
+    public Checklist addAnwswerToStep(@PathParam("id") String checklistId, @PathParam("step") String stepId, String answer) {        
         Checklist cl = getChecklist(checklistId);
         Step step = getStep(cl, stepId);            
         
@@ -191,10 +192,10 @@ public class ChecklistService {
     
     
     
-    @POST
-    @Path("/addTag")
+    @PUT
+    @Path("/{id}/tag/{tag}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist addTag(@QueryParam("id") String checklistId, @QueryParam("tag") String tag) {        
+    public Checklist addTag(@PathParam("id") String checklistId, @PathParam("tag") String tag) {        
         Checklist cl = getChecklist(checklistId);
         if(!cl.getTags().contains(tag)) {
             cl.getTags().add(tag);
@@ -204,10 +205,10 @@ public class ChecklistService {
         return cl;
     }
     
-    @POST
-    @Path("/setStepOption")
+    @PUT
+    @Path("/{id}/{step}/option/{choice}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist setStepOption(@QueryParam("id") String checklistId, @QueryParam("step") String stepId, @QueryParam("choice") String choice) {        
+    public Checklist setStepOption(@PathParam("id") String checklistId, @PathParam("step") String stepId, @PathParam("choice") String choice) {        
         Checklist cl =getChecklist(checklistId);
         Step step = getStep(cl, stepId);    
         

@@ -76,9 +76,13 @@ public enum TemplateRepository {
         return names;
                 
     }
+    
+    public Template getTemplate(String folder, String templateName) {
+        return data.get("/"+folder+"/"+templateName);
+    }
 
-    public Template getTemplate(String templateName) {
-        return data.get(templateName);
+    public Template getTemplate(String fullName) {
+        return data.get(fullName);
     }
 
     public List<TemplateInfo> getTemplateInformation() {
@@ -158,9 +162,11 @@ public enum TemplateRepository {
         return errors;
     }
 
-    public void deleteTemplate(String id) {
-        Template t = data.remove(id);
-        t.getPersister().getFile().delete();
+    public void deleteTemplate(Template t) {
+        data.remove(t.getId());
+        if(t.getPersister().getFile() != null) {
+            t.getPersister().getFile().delete();
+        }
     }
 
        
