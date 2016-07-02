@@ -17,7 +17,7 @@ Here you can find the [Release notes for the different versions](https://github.
 
 ### Release target
 
-The project contains a Dockerfile. You can also find the released versions on dockerhub.
+The easiest way to use the project is by launching it in a container. You can find all released versions on <a href="https://hub.docker.com/r/kullervo16/checklist/" target="_blank">dockerhub</a>.
 
 ## Templates
 
@@ -62,29 +62,6 @@ steps :
       milestone: deployed
       
 ```
-
-## Web GUI
-
-This simple GUI allows you to select a template and instantiate it in a checklist. The checklist is simply a copy of the YAML template
-you select where the GUI allows you to update the status. This enables people without development skills that would be distracted
-by the YAML syntax to fill out the checklist.
-
-It applies also some governance : 
- * you cannot change steps marked as done
- * you need to confirm every check point
- * a comment is required for each failing step in order to gather the weaknesses in your process so you can adapt your checklists accordingly
-
-The template above is shown like this :
-
-![alt text](screenshot_example.png "checklist in progress")
-
-The Web frontend also serves 2 other purposes :
- * allow you to monitor the progress of a given checklist (f.e. on a television screen in your operations room)
- * provide statistics on usage
- 
- The statistics will help you see which templates are widely used, but also where the most errors occur. This may point to
- a spot in your process where there is either something unclear, or your previous steps lack proper checks to make them less
- error prone.
 
 ### Simple flow control
 There is also the option to create a simple IF function in your checklists.. This allows you to apply some simple flow control and prevents you from creating
@@ -184,8 +161,30 @@ steps :
           - CDI          
      
 ```
+## Web GUI
 
-This is how the template is represented :
+This simple GUI allows you to select a template and instantiate it in a checklist. The checklist is simply a copy of the YAML template
+you select where the GUI allows you to update the status. This enables people without development skills that would be distracted
+by the YAML syntax to fill out the checklist.
+
+It applies also some governance : 
+ * you cannot change steps marked as done
+ * you need to confirm every check point
+ * a comment is required for each failing step in order to gather the weaknesses in your process so you can adapt your checklists accordingly
+
+The basic template we saw above is shown like this :
+
+![alt text](screenshot_example.png "checklist in progress")
+
+The Web frontend also serves 2 other purposes :
+ * allow you to monitor the progress of a given checklist (f.e. on a television screen in your operations room)
+ * provide statistics on usage
+ 
+ The statistics will help you see which templates are widely used, but also where the most errors occur. This may point to
+ a spot in your process where there is either something unclear, or your previous steps lack proper checks to make them less
+ error prone.
+
+This is an example of a checklist with questions :
 
 ![alt text](screenshot_questions.png "a checklist with questions")
 
