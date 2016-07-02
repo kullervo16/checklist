@@ -39,7 +39,10 @@ public class ChecklistPersister extends TemplatePersister {
         }
         if(templateMap.containsKey("specificTagSet")) {
             cl.setSpecificTagSet(((String) templateMap.get("specificTagSet")).equals("true"));
-        }        
+        }    
+        if(templateMap.containsKey("parent")) {
+            cl.setParent((String)templateMap.get("parent"));
+        }
     }
 
     @Override

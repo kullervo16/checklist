@@ -16,7 +16,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import static javax.ws.rs.client.Entity.json;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import kullervo16.checklist.messages.PersistenceRequest;
@@ -45,13 +44,22 @@ public class ChecklistService {
     @POST
     @Path("/{folder}/{name}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String createChecklist(@PathParam("folder") String folder, @PathParam("name") String name,@QueryParam("parent") String parent) throws URISyntaxException {            
+    public String createChecklist(@PathParam("folder") String folder, @PathParam("name") String name,@QueryParam("parent") String parentName, @QueryParam("step") String stepName) throws URISyntaxException {            
         Template template = this.templateRepository.getTemplate(folder, name);
         if(template == null) {
             throw new IllegalArgumentException("Unknown template "+folder+"/"+name);
         }
-        
-        return this.checklistRepository.createFromTemplate(folder, name, template, parent);        
+        if(parentName != null) {
+            // update the parent step that launched the subchecklist...
+            Checklist parent = this.checklistRepository.getChecklist(parentName);
+            for(Step step : parent.getSteps()) {
+                if(step.getId().equals(stepName)) {
+                    step.setState(State.ON_HOLD);                    
+                }
+            }
+            ActorRepository.getPersistenceActor().tell(new PersistenceRequest(parentName), null);
+        }
+        return this.checklistRepository.createFromTemplate(folder, name, template, parentName);        
     }
     
     @GET    

@@ -48,7 +48,13 @@
                         &nbsp;&nbsp;&nbsp;
                         <button type="button" class="btn btn-default" title="Delete" ng-click="deleteChecklist()">
                           <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                        </button></p>
+                        </button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn-default" title="Go to parent" ng-if="data.parent" ng-click="gotoParent(data.parent)">
+                          <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+                        </button>
+                    </p>
+                        
                 </div>
             </div>            
             <div ng-show="data.milestones.length">

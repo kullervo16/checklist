@@ -61,7 +61,8 @@ public class TemplatePersister  {
                 this.template.setSteps(steps);
                 
                 this.lastCheck = System.currentTimeMillis();
-                this.fileModifTime = file.lastModified();     
+                this.fileModifTime = file.lastModified(); 
+                this.template.setCreationTime(fileModifTime);
                 
                 
                 

@@ -27,7 +27,8 @@ public class ChecklistInfo implements Comparable<ChecklistInfo>{
         this.template = cl.getTemplate();
         this.uuid = cl.getId();
         this.displayName = cl.getDisplayName();
-        this.complete = cl.isComplete();        
+        this.complete = cl.isComplete();   
+        this.lastActive = cl.getCreationTime();
         for(Step step : cl.getSteps()) {
             if(step.getLastUpdate() != null && step.getLastUpdate().getTime() > lastActive) {
                 lastActive = step.getLastUpdate().getTime();

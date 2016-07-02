@@ -25,6 +25,7 @@ public class Template {
     protected List<Milestone> milestones;
     protected String id;
     protected boolean subchecklistOnly;
+    protected long creationTime;
 
     
     public Template() {
@@ -158,6 +159,14 @@ public class Template {
 
     public void setSubchecklistOnly(boolean subchecklistOnly) {
         this.subchecklistOnly = subchecklistOnly;
+    }
+
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
     }
     
     

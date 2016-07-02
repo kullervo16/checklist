@@ -290,6 +290,10 @@
             return step.answerType === 'multiple' && step.state === 'UNKNOWN';
         }
         
+        function gotoParent(parent) {
+            $window.location='checklist.html?id='+parent;
+        }
+        
         function reposition() {
             var activeStep = undefined;
             // for some odd reason, the links don't work for the last 3 steps... go to complete then
@@ -395,7 +399,7 @@
         }
         
         function launchSubChecklist(step) {
-            $http.post('rest/checklists'+step.subChecklist+'?parent='+$location.search().id)
+            $http.post('rest/checklists'+step.subChecklist+'?parent='+$location.search().id+'&step='+step.id)
                 .success(function (data,status,headers,config) {
                     $window.location.href = './checklist.html?id='+data;                      
                 }).error(function (data,status,headers,config) {
@@ -526,7 +530,8 @@
         $scope.showOptions       = showOptions;
         $scope.showMainBody      = showMainBody;
         $scope.showProgressBar   = showProgressBar;       
-        $scope.showAnswerTextBox = showAnswerTextBox;        
+        $scope.showAnswerTextBox = showAnswerTextBox;  
+        $scope.gotoParent        = gotoParent;
         $scope.showAnswerChecklists = showAnswerChecklists;
         $scope.showAnswerRadioButton= showAnswerRadioButton;
         $scope.showRevalidateButton = showRevalidateButton;

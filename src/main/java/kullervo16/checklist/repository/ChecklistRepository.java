@@ -98,9 +98,9 @@ public enum ChecklistRepository {
             subfolder.mkdirs();
 
             Checklist checklist = new Checklist(uuid,template,new File(subfolder, uuid), parentCL);
-            
+            checklist.setCreationTime(System.currentTimeMillis());
             data.put(uuid, checklist);
-        }
+        }        
                         
         // TODO : send message to stats to signal updated content        
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(uuid), null);
