@@ -55,7 +55,9 @@ public enum ChecklistRepository {
                 if(f.isDirectory()) {
                     scanDirectoryForTemplates(f, newModel);
                 } else {
-                    newModel.put(f.getName(), new Checklist(f)); 
+                    Checklist cl = new Checklist(f);
+                    cl.setId(f.getName());
+                    newModel.put(cl.getId(), cl); 
                 }
             }
         }
@@ -186,6 +188,13 @@ public enum ChecklistRepository {
             result.add(new TagcloudEntry(tmEntry.getKey(), tmEntry.getValue()));
         }
         return result;
+    }
+
+    public void deleteChecklist(Checklist cl) {
+        data.remove(cl.getId());
+        if(cl.getPersister().getFile() != null) {
+            cl.getPersister().getFile().delete();
+        }
     }
 }
 

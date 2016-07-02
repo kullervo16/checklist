@@ -138,7 +138,8 @@
         }
         
         function deleteTemplate(id) {
-            $http.delete('rest/templates'+id)
+            if(confirm("Are you sure you want to delete template "+id+"? This action cannot be undone...")) {
+               $http.delete('rest/templates'+id)
                 .success(function (data,status,headers,config) {
                     $http.get('rest/templates')
                         .success(function (data,status,headers,config) {
@@ -148,7 +149,8 @@
                         });                  
                 }).error(function (data,status,headers,config) {
                     console.log('Error creating new checklist');
-                });  
+                }); 
+            }              
         }
         
         $scope.createChecklist = createChecklist;
@@ -410,6 +412,18 @@
                     console.log('Error updating step '+step.id);
                 });
         }
+        
+        function deleteChecklist() {
+            if(confirm("Are you sure you want to delete this checklist? This operation cannot be undone...")) {
+                $http.delete('rest/checklists/'+$location.search().id)
+                    .success(function (data,status,headers,config) {
+                        $window.location.href = './checklistOverview.html'     
+                    }).error(function (data,status,headers,config) {
+                        console.log('Error deleting checklist '+$location.search().id);
+                        $window.location.href = './checklistOverview.html';     
+                    });  
+                }
+        }
         // =================================================
         // overview operations
         // =================================================
@@ -514,8 +528,9 @@
         $scope.addTag         = addTag;
         $scope.setStepOption  = setStepOption;
         $scope.revalidate     = revalidate;
-        $scope.launchSubChecklist = launchSubChecklist;        
-        
+        $scope.deleteChecklist= deleteChecklist;
+        $scope.launchSubChecklist = launchSubChecklist;   
+                
         $scope.getChecklists = getChecklists;
         $scope.getClassForChecklist = getClassForChecklist;   
         $scope.createTagClouds = createTagClouds;

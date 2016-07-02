@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -15,7 +16,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import static javax.ws.rs.client.Entity.json;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Checklist;
@@ -63,6 +66,17 @@ public class ChecklistService {
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist getCL(@PathParam("id") String id) {        
         return this.checklistRepository.getChecklist(id);    
+    }
+    
+    @DELETE
+    @Path("/{id}")    
+    public Response deleteCL(@PathParam("id") String id) { 
+        Checklist cl = this.checklistRepository.getChecklist(id);
+        if(cl == null) {
+            return Response.status(Response.Status.GONE).build();
+        }
+        this.checklistRepository.deleteChecklist(cl);
+        return Response.ok().build();    
     }
     
     
