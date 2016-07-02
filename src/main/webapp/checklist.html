@@ -64,7 +64,7 @@
                 <p ><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 
                     <span ng-repeat="tag in data.tags">
                         &nbsp;
-                        <span class="label label-primary" >{{tag}}</span>
+                        <span class="label label-primary" ng-click="removeTagFromChecklist(tag)">{{tag}}</span>
                         &nbsp;
                     </span>
                 </p>                  

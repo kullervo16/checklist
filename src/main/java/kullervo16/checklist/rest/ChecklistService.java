@@ -81,7 +81,7 @@ public class ChecklistService {
     
     
     @PUT
-    @Path("/{id}/{step}/actionresult/{result}")
+    @Path("/{id}/{step}/actionresults/{result}")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setActionResult(@PathParam("id") String checklistId, @PathParam("step") String stepId, @PathParam("result") boolean result) {        
         Checklist cl =getChecklist(checklistId);
@@ -118,7 +118,7 @@ public class ChecklistService {
     }
     
     @PUT
-    @Path("/{id}/{step}/checkresult/{result}")
+    @Path("/{id}/{step}/checkresults/{result}")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setCheckResult(@PathParam("id") String checklistId, @PathParam("step") String stepId, @PathParam("result") boolean result) {        
         Checklist cl = getChecklist(checklistId);
@@ -155,7 +155,7 @@ public class ChecklistService {
     
     
     @POST
-    @Path("/{id}/{step}/error")
+    @Path("/{id}/{step}/errors")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addErrorToStep(@PathParam("id") String checklistId, @PathParam("step") String stepId, String error) {        
         Checklist cl = getChecklist(checklistId);
@@ -177,7 +177,7 @@ public class ChecklistService {
     }
     
     @POST
-    @Path("/{id}/{step}/answer")
+    @Path("/{id}/{step}/answers")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addAnwswerToStep(@PathParam("id") String checklistId, @PathParam("step") String stepId, String answer) {        
         Checklist cl = getChecklist(checklistId);
@@ -207,7 +207,7 @@ public class ChecklistService {
     
     
     @PUT
-    @Path("/{id}/tag/{tag}")
+    @Path("/{id}/tags/{tag}")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist addTag(@PathParam("id") String checklistId, @PathParam("tag") String tag) {        
         Checklist cl = getChecklist(checklistId);
@@ -219,8 +219,18 @@ public class ChecklistService {
         return cl;
     }
     
+    @DELETE
+    @Path("/{id}/tags/{tag}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Checklist removeTag(@PathParam("id") String checklistId, @PathParam("tag") String tag) {        
+        Checklist cl = getChecklist(checklistId);
+        cl.getTags().remove(tag);
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
+        return cl;
+    }
+    
     @PUT
-    @Path("/{id}/{step}/option/{choice}")
+    @Path("/{id}/{step}/options/{choice}")
     @Produces(MediaType.APPLICATION_JSON)
     public Checklist setStepOption(@PathParam("id") String checklistId, @PathParam("step") String stepId, @PathParam("choice") String choice) {        
         Checklist cl =getChecklist(checklistId);

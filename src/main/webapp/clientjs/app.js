@@ -321,7 +321,7 @@
          * Action result for a step, send to the backend and reload.
          */
         function updateAction(step, result) {
-            $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/actionresult/"+result)
+            $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/actionresults/"+result)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;    
                     reposition();
@@ -331,7 +331,7 @@
         }
         
         function addErrorAction(step, error) {
-            $http.post('rest/checklists/'+$location.search().id+"/"+step.id+'/error', error)
+            $http.post('rest/checklists/'+$location.search().id+"/"+step.id+'/errors', error)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;   
                     reposition();
@@ -341,7 +341,7 @@
         }
         
         function addAnswer(step, answer) {
-            $http.post('rest/checklists/'+$location.search().id+"/"+step.id+'/answer', answer)
+            $http.post('rest/checklists/'+$location.search().id+"/"+step.id+'/answers', answer)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;   
                     reposition();
@@ -351,7 +351,7 @@
         }
         
         function addTag(tag) {
-            $http.put('rest/checklists/'+$location.search().id+"/tag/"+tag)
+            $http.put('rest/checklists/'+$location.search().id+"/tags/"+tag)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;  
                     reposition();
@@ -375,7 +375,7 @@
                 for(var key in $scope.checkResults[step.id]) {
                     combinedResult &= $scope.checkResults[step.id][key];
                 }
-                $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/checkresult/"+(combinedResult === 1))
+                $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/checkresults/"+(combinedResult === 1))
                 .success(function (data,status,headers,config) {
                     $scope.data = data;   
                     reposition();
@@ -386,7 +386,7 @@
         }
         
         function setStepOption(step, choice) {
-            $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/option/"+choice)
+            $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/options/"+choice)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;                        
                 }).error(function (data,status,headers,config) {
@@ -421,6 +421,17 @@
                     }).error(function (data,status,headers,config) {
                         console.log('Error deleting checklist '+$location.search().id);
                         $window.location.href = './checklistOverview.html';     
+                    });  
+                }
+        }
+        
+        function removeTagFromChecklist(tag) {
+            if(confirm("Are you sure you want to remove tag '"+tag+"' from this checklist? You can always add it again later...")) {
+                $http.delete('rest/checklists/'+$location.search().id+'/tags/'+tag)
+                    .success(function (data,status,headers,config) {
+                        $scope.data = data;             
+                    }).error(function (data,status,headers,config) {
+                        console.log('Error removing tag '+tag+' from checklist '+$location.search().id);                        
                     });  
                 }
         }
@@ -461,7 +472,7 @@
                     }
                     $('#tags').jQCloud(data);            
                 }).error(function (data,status,headers,config) {
-                    console.log('Error getting rest/checklist/tags/list');
+                    console.log('Error getting rest/checklist/tags');
                 });
             $http.get('rest/milestones')
                 .success(function (data,status,headers,config) {
@@ -515,11 +526,12 @@
         $scope.showOptions       = showOptions;
         $scope.showMainBody      = showMainBody;
         $scope.showProgressBar   = showProgressBar;       
-        $scope.showAnswerTextBox = showAnswerTextBox;
+        $scope.showAnswerTextBox = showAnswerTextBox;        
         $scope.showAnswerChecklists = showAnswerChecklists;
         $scope.showAnswerRadioButton= showAnswerRadioButton;
         $scope.showRevalidateButton = showRevalidateButton;
         $scope.getSubchecklistClass = getSubchecklistClass;
+        $scope.removeTagFromChecklist = removeTagFromChecklist;
         
         $scope.updateAction   = updateAction;
         $scope.addErrorAction = addErrorAction;
