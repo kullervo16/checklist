@@ -57,7 +57,7 @@ steps :
       # the documentation tag will be rendered as a link in the webgui.. You can use it when you need to give context, add a screenshot... 
       # you simply describe it in a document/wiki/webpage/... and point the user into that direction in your action
       documentation: https://github.com/kullervo16/checklist
-      # this will launch a child template. This step will be marked ok when the subchecklist reaches 100%
+      # this will launch a child template. This step will be marked ok when the subchecklist reaches 100%.      
       subchecklist: /development/verifyDeployment
       milestone: deployed
       
@@ -71,7 +71,9 @@ multiple templates that do practically the same thing (which will become a burde
 description: Checklist to verify a deployment
 tags:
     - tag1
-    - tag2    
+    - tag2  
+# this flag is false per default. If you set it to true, the checklist button will not be shown in the templates page...
+subchecklistOnly: false  
 steps :    
     - id: step1
       responsible: resp1

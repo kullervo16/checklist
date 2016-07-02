@@ -24,6 +24,7 @@ public class Template {
     protected TemplatePersister persister;
     protected List<Milestone> milestones;
     protected String id;
+    protected boolean subchecklistOnly;
 
     
     public Template() {
@@ -150,6 +151,15 @@ public class Template {
     public void setId(String id) {
         this.id = id;
     }
+
+    public boolean isSubchecklistOnly() {
+        return subchecklistOnly;
+    }
+
+    public void setSubchecklistOnly(boolean subchecklistOnly) {
+        this.subchecklistOnly = subchecklistOnly;
+    }
+    
     
     
 }

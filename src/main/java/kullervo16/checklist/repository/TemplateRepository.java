@@ -95,6 +95,7 @@ public enum TemplateRepository {
             ti.setDescription(entry.getValue().getDescription());    
             ti.setMilestones(entry.getValue().getMilestones());
             ti.setTags(entry.getValue().getTags());
+            ti.setSubchecklistOnly(entry.getValue().isSubchecklistOnly());
             result.add(ti);
         }
         Collections.sort(result);

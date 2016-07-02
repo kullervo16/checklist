@@ -20,6 +20,8 @@ public class TemplateInfo implements Comparable<TemplateInfo>{
     private List<Milestone> milestones;
     
     private String id;
+    
+    private boolean subchecklistOnly;
 
     
 
@@ -54,6 +56,14 @@ public class TemplateInfo implements Comparable<TemplateInfo>{
     public void setMilestones(List<Milestone> milestones) {
         this.milestones = milestones;
     }
+
+    public boolean isSubchecklistOnly() {
+        return subchecklistOnly;
+    }
+
+    public void setSubchecklistOnly(boolean subchecklistOnly) {
+        this.subchecklistOnly = subchecklistOnly;
+    }
     
     
 
@@ -61,6 +71,11 @@ public class TemplateInfo implements Comparable<TemplateInfo>{
     public int compareTo(TemplateInfo t) {
         if(t == null) {
             return 1;
+        }
+        if(this.isSubchecklistOnly() && !t.isSubchecklistOnly()) {
+            return 1;
+        } else if (!this.isSubchecklistOnly() && t.isSubchecklistOnly()) {
+            return -1;
         }
         return this.getId().compareTo(t.getId());
     }

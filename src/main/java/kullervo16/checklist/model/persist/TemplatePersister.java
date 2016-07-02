@@ -4,7 +4,6 @@ import kullervo16.checklist.model.*;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -91,7 +90,11 @@ public class TemplatePersister  {
         if(templateMap.get(DISPLAY_NAME) != null) {
             this.template.setDisplayName((String) templateMap.get(DISPLAY_NAME));
         }
+        if(templateMap.get(SUBCHECKLIST_ONLY) != null) {
+            this.template.setSubchecklistOnly("true".equalsIgnoreCase((String)templateMap.get(SUBCHECKLIST_ONLY)));
+        }
     }
+    
     
     
     /**
@@ -367,10 +370,10 @@ public class TemplatePersister  {
     
     
     private static final String STEPS = "steps";
-    private static final String DESCRIPTION = "description";
-    private static final String MILESTONES = "milestones";
+    private static final String DESCRIPTION = "description";    
     private static final String TAGS = "tags";       
     private static final String DISPLAY_NAME = "displayName";
+    private static final String SUBCHECKLIST_ONLY = "subchecklistOnly";
 
     public File getFile() {
         return this.file;
