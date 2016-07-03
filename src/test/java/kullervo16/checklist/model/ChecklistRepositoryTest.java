@@ -58,25 +58,40 @@ public class ChecklistRepositoryTest {
     
     @Test
     public void testListChecklistWithTag() {
-        List<ChecklistInfo> cli = this.repository.getChecklistInformation("odt", null);
-        assertEquals(3, cli.size());        
+        List<String> tagList = new LinkedList<>();
+        tagList.add("odt");
+        List<ChecklistInfo> cli = this.repository.getChecklistInformation(tagList, null);
+        assertEquals(2, cli.size());        
         assertNotNull(cli.get(0).getUuid());        
-        assertNotNull(cli.get(0).getTags());     
-        assertEquals(1, this.repository.getChecklistInformation("cl1", null).size());
+        assertNotNull(cli.get(0).getTags());    
+        tagList.clear();
+        tagList.add("cl1");   
+        assertEquals(1, this.repository.getChecklistInformation(tagList, null).size());
     }
     
     @Test
-    public void testListChecklistWithMilestone() {
-        
-        assertEquals(1, this.repository.getChecklistInformation(null, "readyForDeployment").size());        
-        assertEquals(0, this.repository.getChecklistInformation(null, "nonExisting").size());   
-        assertEquals(0, this.repository.getChecklistInformation(null, "deployed").size());   // not yet reached
+    public void testListChecklistWithMilestone() {        
+        List<String> msList  = new LinkedList<>();
+        msList.add("readyForDeployment");
+        assertEquals(1, this.repository.getChecklistInformation(null, msList).size());  
+        msList.clear();
+        msList.add("nonExisting");
+        assertEquals(0, this.repository.getChecklistInformation(null, msList).size());   
+        msList.clear();
+        msList.add("deployed");
+        assertEquals(0, this.repository.getChecklistInformation(null, msList).size());   // not yet reached
     }
     
     @Test
     public void testListChecklistWithTagAndMilestone() {
-        assertEquals(1, this.repository.getChecklistInformation("odt", "readyForDeployment").size());  
-        assertEquals(0, this.repository.getChecklistInformation("cl1", "readyForDeployment").size());        
+        List<String> tagList = new LinkedList<>();
+        List<String> msList  = new LinkedList<>();
+        tagList.add("odt");
+        msList.add("readyForDeployment");
+        assertEquals(1, this.repository.getChecklistInformation(tagList, msList).size());  
+        tagList.clear();        
+        tagList.add("cl1");        
+        assertEquals(0, this.repository.getChecklistInformation(tagList, msList).size());        
     }
     
     @Test
@@ -115,21 +130,43 @@ public class ChecklistRepositoryTest {
     
     @Test
     public void testGetTagInfo() {
-        List<TagcloudEntry> tagInfo = this.repository.getTagInfo();
+        List<TagcloudEntry> tagInfo = this.repository.getTagInfo(null);
         assertEquals(4, tagInfo.size());
         assertEquals("openshift", tagInfo.get(0).getText());
         assertEquals(3, tagInfo.get(0).getWeight());
         assertEquals("cl1", tagInfo.get(1).getText());
         assertEquals(1, tagInfo.get(1).getWeight());
         assertEquals("odt", tagInfo.get(2).getText());
-        assertEquals(3, tagInfo.get(2).getWeight());
+        assertEquals(2, tagInfo.get(2).getWeight());
         assertEquals("deployment", tagInfo.get(3).getText());
         assertEquals(3, tagInfo.get(3).getWeight());
+        
+        // now with a filter
+        tagInfo = this.repository.getTagInfo("openshift");
+        assertEquals(4, tagInfo.size());
+        assertEquals("openshift", tagInfo.get(0).getText());
+        assertEquals(3, tagInfo.get(0).getWeight());
+        assertEquals("cl1", tagInfo.get(1).getText());
+        assertEquals(1, tagInfo.get(1).getWeight());
+        assertEquals("odt", tagInfo.get(2).getText());
+        assertEquals(2, tagInfo.get(2).getWeight());
+        assertEquals("deployment", tagInfo.get(3).getText());
+        assertEquals(3, tagInfo.get(3).getWeight());
+        
+        tagInfo = this.repository.getTagInfo("cl1");
+        assertEquals(3, tagInfo.size());
+        assertEquals("openshift", tagInfo.get(0).getText());
+        assertEquals(1, tagInfo.get(0).getWeight());
+        assertEquals("cl1", tagInfo.get(1).getText());
+        assertEquals(1, tagInfo.get(1).getWeight());        
+        assertEquals("deployment", tagInfo.get(2).getText());
+        assertEquals(1, tagInfo.get(2).getWeight());
+        
     }
     
     @Test
     public void testMilestoneInfo() {
-        List<TagcloudEntry> tagInfo = this.repository.getMilestoneInfo();
+        List<TagcloudEntry> tagInfo = this.repository.getMilestoneInfo(null);
         assertEquals(1, tagInfo.size());
         assertEquals("readyForDeployment", tagInfo.get(0).getText());
         assertEquals(1, tagInfo.get(0).getWeight());

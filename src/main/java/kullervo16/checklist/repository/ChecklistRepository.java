@@ -1,6 +1,7 @@
 package kullervo16.checklist.repository;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -108,23 +109,16 @@ public enum ChecklistRepository {
         return uuid;
     }
 
-    public List<ChecklistInfo> getChecklistInformation(String tag, String milestoneName) {
+    public List<ChecklistInfo> getChecklistInformation(List<String> tags, List<String> milestones) {
         List<ChecklistInfo> result = new LinkedList<>();
-        Milestone milestone = null;
-        if(milestoneName != null) {
-            milestone = new Milestone(milestoneName, true);
-        }
+        
         synchronized (lock) {
             for(Entry<String,Checklist> clEntry : data.entrySet()) {
-                if(tag != null) {
-                    if(!clEntry.getValue().getTags().contains(tag)) {
-                        continue;
-                    }
+                if(!this.matchesTag(tags, clEntry.getValue())) {
+                    continue;
                 }
-                if(milestone != null) {
-                    if(!clEntry.getValue().getMilestones().contains(milestone)) {
-                        continue;
-                    }
+                if(!this.matchesMilestone(milestones, clEntry.getValue())) {
+                    continue;
                 }
                 ChecklistInfo cli = new ChecklistInfo(clEntry.getValue());
                 cli.setUuid(clEntry.getKey());
@@ -147,10 +141,24 @@ public enum ChecklistRepository {
         return result;
     }
 
-    public List<TagcloudEntry> getTagInfo() {
+    /**
+     * Get information about the tags on the checklists
+     * @param filter If specified, only return info from checklists that contain all tags specified in this comma separated list
+     * @return 
+     */
+    public List<TagcloudEntry> getTagInfo(String filter) {
+        List<String> filterList = new LinkedList<>();
+        if(filter != null) {
+            filterList = Arrays.asList(filter.split(","));
+        }
         Map<String,Integer> tagMap = new HashMap<>();
         synchronized (lock) {
             for(Checklist cl : data.values()) {
+                if(!filterList.isEmpty()) {                    
+                    if(!matchesTag(filterList, cl)) {
+                        continue;
+                    }
+                }
                 for(String tag : cl.getTags()) {
                     if(tagMap.containsKey(tag)) {
                         tagMap.put(tag, tagMap.get(tag)+1);
@@ -167,10 +175,44 @@ public enum ChecklistRepository {
         return result;
     }
 
-    public List<TagcloudEntry> getMilestoneInfo() {
+    private boolean matchesTag(List<String> filterList, Checklist cl) {
+        if(filterList == null || filterList.isEmpty()) {
+            return true;
+        }
+        boolean match = true;
+        for(String tag : filterList) {
+            if(!tag.equals("")) {
+                match &= cl.getTags().contains(tag);
+            }
+        }
+        return match;
+    }
+    
+    private boolean matchesMilestone(List<String> filterList, Checklist cl) {
+        if(filterList == null || filterList.isEmpty()) {
+            return true;
+        }
+        boolean match = true;
+        for(String milestoneName : filterList) {
+            if(!milestoneName.equals("")) {
+                Milestone milestone = new Milestone(milestoneName, true);
+                match &= cl.getMilestones().contains(milestone);
+            }
+        }
+        return match;
+    }
+
+    public List<TagcloudEntry> getMilestoneInfo(String filter) {
+        List<String> filterList = new LinkedList<>();
+        if(filter != null) {
+            filterList = Arrays.asList(filter.split(","));
+        }
         Map<String,Integer> msMap = new HashMap<>();
         synchronized (lock) {
             for(Checklist cl : data.values()) {
+                if(!this.matchesMilestone(filterList, cl)) {
+                    continue;
+                }
                 for(Milestone ms : cl.getMilestones()) {
                     if(!ms.isReached()) {
                         continue;

@@ -176,6 +176,8 @@
         // init stuff... get data from backend     
         // =================================================                                            
             $scope.mode = $location.search().mode;
+            $scope.tagSelection = '';
+            $scope.milestoneSelection = '';
             if($scope.mode === 'template') {
                 // if mode is template, we show a template in the checklist view (but in readonly)
                 $http.get('rest/templates'+$location.search().id)
@@ -466,37 +468,75 @@
         }
         
         function createTagClouds() {
-            $http.get('rest/tags')
-                .success(function (data,status,headers,config) {                    
+            clearTagSelection();
+            clearMilestoneSelection();
+        }
+        
+        function openOverview() {
+            window.open('checklistOverview.html#tags='+$scope.tagSelection+"&milestones="+$scope.milestoneSelection);
+        }
+        
+        function addTagToSelection(tag) {
+            if($scope.tagSelection === '') {
+                $scope.tagSelection = tag.innerText;
+            } else {
+                $scope.tagSelection = $scope.tagSelection+","+tag.innerText;
+            }
+            $scope.$apply();
+            createTagCloud('rest/tags?filter='+$scope.tagSelection);
+        }
+        
+        function createTagCloud(path) {                   
+            $http.get(path)
+                .success(function (data,status,headers,config) {  
+                    $('#tags').empty();
+                    $('#tags').jQCloud('destroy');
                     for(var i=0;i<data.length;i++) {
                         data[i]['handlers'] = {};
                         data[i]['handlers']['click'] =  function() {
-                                                            angular.element('#tags').scope().openOverviewForTag(this)                          
+                                                            angular.element('#tags').scope().addTagToSelection(this)                          
                         };
                     }
                     $('#tags').jQCloud(data);            
                 }).error(function (data,status,headers,config) {
-                    console.log('Error getting rest/checklist/tags');
+                    console.log('Error getting rest/tags');
                 });
-            $http.get('rest/milestones')
-                .success(function (data,status,headers,config) {
+        }
+        function addMileStoneToSelection(milestone) {
+            if($scope.milestoneSelection === '') {
+                $scope.milestoneSelection = milestone.innerText;
+            } else {
+                $scope.milestoneSelection = $scope.milestoneSelection+","+milestone.innerText;
+            }
+            $scope.$apply();
+            createMilestoneCloud('rest/milestones?filter='+$scope.milestoneSelection);
+        }
+        
+        function createMilestoneCloud(path) {                    
+            $http.get(path)
+                .success(function (data,status,headers,config) {  
+                    $('#milestones').empty();
+                    $('#milestones').jQCloud('destroy');
                     for(var i=0;i<data.length;i++) {
                         data[i]['handlers'] = {};
                         data[i]['handlers']['click'] =  function() {
-                                                            angular.element('#milestones').scope().openOverviewForMilestone(this)                          
+                                                            angular.element('#milestones').scope().addMileStoneToSelection(this)                          
                         };
                     }
                     $('#milestones').jQCloud(data);            
                 }).error(function (data,status,headers,config) {
-                    console.log('Error getting rest/checklist/milestones/list');
+                    console.log('Error getting rest/milestones');
                 });
         }
         
-        function openOverviewForTag(tag) {
-            window.open('checklistOverview.html#tag='+tag.innerText);
+        function clearTagSelection() {
+            $scope.tagSelection = '';
+            createTagCloud('rest/tags');
         }
-        function openOverviewForMilestone(milestone) {
-            window.open('checklistOverview.html#milestone='+milestone.innerText);
+        
+        function clearMilestoneSelection() {
+            $scope.milestoneSelection = '';
+            createMilestoneCloud('rest/milestones');            
         }
         // =================================================
         // reload function
@@ -551,8 +591,11 @@
         $scope.getChecklists = getChecklists;
         $scope.getClassForChecklist = getClassForChecklist;   
         $scope.createTagClouds = createTagClouds;
-        $scope.openOverviewForTag = openOverviewForTag;
-        $scope.openOverviewForMilestone = openOverviewForMilestone;
+        $scope.clearTagSelection = clearTagSelection;
+        $scope.clearMilestoneSelection = clearMilestoneSelection;
+        $scope.openOverview = openOverview;
+        $scope.addTagToSelection = addTagToSelection;
+        $scope.addMileStoneToSelection = addMileStoneToSelection;
         
         $scope.toggleRefresh = toggleRefresh;     
     }

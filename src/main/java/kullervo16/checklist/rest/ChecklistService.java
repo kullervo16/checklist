@@ -3,6 +3,7 @@ package kullervo16.checklist.rest;
 
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.json.Json;
@@ -64,8 +65,16 @@ public class ChecklistService {
     
     @GET    
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ChecklistInfo> listChecklists(@QueryParam("tag") String tag, @QueryParam("milestone") String milestone) {                
-        return this.checklistRepository.getChecklistInformation(tag, milestone);
+    public List<ChecklistInfo> listChecklists(@QueryParam("tags") String tags, @QueryParam("milestones") String milestones) {  
+        List<String> tagList = null;
+        List<String> milestoneList = null;
+        if(tags != null) {
+            tagList = Arrays.asList(tags.split(","));
+        }
+        if(milestones != null) {
+            milestoneList = Arrays.asList(milestones.split(","));
+        }
+        return this.checklistRepository.getChecklistInformation(tagList, milestoneList);
 
     }
 

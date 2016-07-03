@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import kullervo16.checklist.model.TagcloudEntry;
 import kullervo16.checklist.repository.ChecklistRepository;
@@ -25,8 +26,8 @@ public class MilestoneService {
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TagcloudEntry> listMilestones() {                
-        return this.checklistRepository.getMilestoneInfo();
+    public List<TagcloudEntry> listMilestones(@QueryParam("filter")String filter) {                
+        return this.checklistRepository.getMilestoneInfo(filter);
 
     }
    
