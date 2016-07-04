@@ -160,6 +160,10 @@ public enum ChecklistRepository {
                     }
                 }
                 for(String tag : cl.getTags()) {
+                    if(filterList.contains(tag)) {
+                        // no need to repeat the ones in the filter (this only disturbs the tagcloud)
+                        continue;
+                    }
                     if(tagMap.containsKey(tag)) {
                         tagMap.put(tag, tagMap.get(tag)+1);
                     } else {
@@ -214,6 +218,10 @@ public enum ChecklistRepository {
                     continue;
                 }
                 for(Milestone ms : cl.getMilestones()) {
+                    if(filterList.contains(ms.getName())) {
+                        // no need to repeat the ones in the filter (this only disturbs the tagcloud)
+                        continue;
+                    }
                     if(!ms.isReached()) {
                         continue;
                     }

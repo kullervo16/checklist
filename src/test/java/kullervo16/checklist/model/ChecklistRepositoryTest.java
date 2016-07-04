@@ -143,24 +143,20 @@ public class ChecklistRepositoryTest {
         
         // now with a filter
         tagInfo = this.repository.getTagInfo("openshift");
-        assertEquals(4, tagInfo.size());
-        assertEquals("openshift", tagInfo.get(0).getText());
-        assertEquals(3, tagInfo.get(0).getWeight());
-        assertEquals("cl1", tagInfo.get(1).getText());
-        assertEquals(1, tagInfo.get(1).getWeight());
-        assertEquals("odt", tagInfo.get(2).getText());
-        assertEquals(2, tagInfo.get(2).getWeight());
-        assertEquals("deployment", tagInfo.get(3).getText());
-        assertEquals(3, tagInfo.get(3).getWeight());
+        assertEquals(3, tagInfo.size());        
+        assertEquals("cl1", tagInfo.get(0).getText());
+        assertEquals(1, tagInfo.get(0).getWeight());
+        assertEquals("odt", tagInfo.get(1).getText());
+        assertEquals(2, tagInfo.get(1).getWeight());
+        assertEquals("deployment", tagInfo.get(2).getText());
+        assertEquals(3, tagInfo.get(2).getWeight());
         
         tagInfo = this.repository.getTagInfo("cl1");
-        assertEquals(3, tagInfo.size());
+        assertEquals(2, tagInfo.size());
         assertEquals("openshift", tagInfo.get(0).getText());
-        assertEquals(1, tagInfo.get(0).getWeight());
-        assertEquals("cl1", tagInfo.get(1).getText());
-        assertEquals(1, tagInfo.get(1).getWeight());        
-        assertEquals("deployment", tagInfo.get(2).getText());
-        assertEquals(1, tagInfo.get(2).getWeight());
+        assertEquals(1, tagInfo.get(0).getWeight());        
+        assertEquals("deployment", tagInfo.get(1).getText());
+        assertEquals(1, tagInfo.get(1).getWeight());
         
     }
     

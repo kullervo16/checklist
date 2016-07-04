@@ -20,9 +20,9 @@ public class Template {
     protected String displayName;
     protected List<Step> steps = new LinkedList<>();
     protected String description;
-    protected List<String> tags;    
+    protected List<String> tags = new LinkedList<>();    
     protected TemplatePersister persister;
-    protected List<Milestone> milestones;
+    protected List<Milestone> milestones = new LinkedList<>();
     protected String id;
     protected boolean subchecklistOnly;
     protected long creationTime;
