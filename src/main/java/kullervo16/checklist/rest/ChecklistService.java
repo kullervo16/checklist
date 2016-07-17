@@ -206,6 +206,7 @@ public class ChecklistService {
             } else {
                 // no checks, directly to OK
                 step.setState(State.OK);
+                verifyCompleteChecklist(cl);
             }
             try {
                 JsonReader jsonReader = Json.createReader(new StringReader(answer));
