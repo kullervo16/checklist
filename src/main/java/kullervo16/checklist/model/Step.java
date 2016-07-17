@@ -31,6 +31,7 @@ public class Step {
     protected String question;
     protected String answerType;   
     protected List<String> answers;
+    private String child;
     
     public Step() {
     }
@@ -58,6 +59,7 @@ public class Step {
         this.selectionOption = step.getSelectedOption();
         this.question = step.getQuestion();
         this.answerType = step.getAnswerType();
+        this.child = step.getChild();
         if(step.getCondition() != null) {
            Step selectionPoint = null;
            for(Step walker : stepList) {
@@ -90,6 +92,7 @@ public class Step {
         this.subChecklist = (String) stepMap.get("subchecklist");
         this.question = (String)stepMap.get("question");
         this.answerType = (String)stepMap.get("answerType");
+        this.child = (String)stepMap.get("child");
                 
         this.weight   = 1;                
         if(stepMap.get("weight") != null) {
@@ -390,6 +393,14 @@ public class Step {
 
     public void setAnswers(List<String> answers) {
         this.answers = answers;
+    }
+
+    public void setChild(String childUUID) {
+        this.child = childUUID;
+    }
+
+    public String getChild() {
+        return child;
     }
     
     

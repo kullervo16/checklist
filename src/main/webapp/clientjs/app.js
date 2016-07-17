@@ -292,8 +292,8 @@
             return step.answerType === 'multiple' && step.state === 'UNKNOWN';
         }
         
-        function gotoParent(parent) {
-            $window.location='checklist.html?id='+parent;
+        function gotoChecklist(cl) {
+            $window.location='checklist.html?id='+cl;
         }
         
         function reposition() {
@@ -571,7 +571,7 @@
         $scope.showMainBody      = showMainBody;
         $scope.showProgressBar   = showProgressBar;       
         $scope.showAnswerTextBox = showAnswerTextBox;  
-        $scope.gotoParent        = gotoParent;
+        $scope.gotoChecklist     = gotoChecklist;
         $scope.showAnswerChecklists = showAnswerChecklists;
         $scope.showAnswerRadioButton= showAnswerRadioButton;
         $scope.showRevalidateButton = showRevalidateButton;

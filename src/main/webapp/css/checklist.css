@@ -1,8 +1,4 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
+
 /* 
     Created on : Dec 28, 2015, 12:57:15 PM
     Author     : jef
@@ -15,11 +11,21 @@ div.ok {
     padding-bottom:10px;
 }
 
+div.ok a {
+    color:white;    
+    text-decoration: underline;
+}
+
 div.executed {
     color:white;
     background-color: lightseagreen;
     padding-left:10px;
     padding-bottom:10px;
+}
+
+div.executed a {
+    color:white;    
+    text-decoration: underline;
 }
 
 div.unknown {
@@ -29,11 +35,21 @@ div.unknown {
     padding-bottom:10px;
 }
 
+div.unknown a {
+    color:black;    
+    text-decoration: underline;
+}
+
 div.onHold {
     color:black;
     background-color: wheat;
     padding-left:10px;
     padding-bottom:10px;
+}
+
+div.onHold a {
+    color:black;    
+    text-decoration: underline;
 }
 
 div.nok {
@@ -43,11 +59,21 @@ div.nok {
     padding-bottom:10px;
 }
 
+div.nok a {
+    color:white;    
+    text-decoration: underline;
+}
+
 div.notApplicable {
     color:black;
     background-color: lightgray;
     padding-left:10px;
     padding-bottom:10px;
+}
+
+div.notApplicable a {
+    color:black;    
+    text-decoration: underline;
 }
 
 textarea {

@@ -266,6 +266,7 @@ public class TemplatePersister  {
         printLine(writer,"  selectedOption", step.getSelectedOption());
         printLine(writer,"  question", step.getQuestion());
         printLine(writer,"  answerType", step.getAnswerType());
+        printLine(writer,"  child",step.getChild());
         if(step.getLastUpdate() != null) {
             printLine(writer,"  lastUpdate",""+step.getLastUpdate().getTime());
         }

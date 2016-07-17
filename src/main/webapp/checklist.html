@@ -50,7 +50,7 @@
                           <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                         </button>
                         &nbsp;&nbsp;&nbsp;
-                        <button type="button" class="btn btn-default" title="Go to parent" ng-if="data.parent" ng-click="gotoParent(data.parent)">
+                        <button type="button" class="btn btn-default" title="Go to parent" ng-if="data.parent" ng-click="gotoChecklist(data.parent)">
                           <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
                         </button>
                     </p>
@@ -82,14 +82,22 @@
             <div ng-show="showMainBody()">
                 <div class="list-group" ng-repeat="step in data.steps">    
                     <div ng-class="getClassForStep(step)">
+                        <!-- put an anchor for the auto-focus -->
                         <a id="{{step.id}}" name="{{step.id}}" class="anchor"></a>
-                    <h3 class="list-group-item-heading">{{step.id}}</h3>
+                    
+                        <!-- if the step links to a subchecklist, create a link. Otherwise just a title. -->
+                        <h3 class="list-group-item-heading" ng-if="!step.child">{{step.id}}</h3>                        
+                        <h3 class="list-group-item-heading" ng-if="step.child"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h3>                        
+                        
+                        
                         <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showActionDetails(step)">
                             <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{step.responsible}}</h4>                            
                         </div>
+                        
                         <div ng-show="step.action">
                             <h4><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>&nbsp;&nbsp;{{step.action}}</h4>
                         </div>
+                        
                         <div ng-show="step.question">
                             <h4><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;{{step.question}}</h4>
                             <p>Answer :</p>
@@ -125,6 +133,7 @@
                                 </ul>
                             </p>
                         </div>
+                        
                         <div ng-show="showSubchecklist(step) ">
                             <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" ng-class="getSubchecklistClass()" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></h4>
                         </div>

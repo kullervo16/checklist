@@ -50,17 +50,19 @@ public class ChecklistService {
         if(template == null) {
             throw new IllegalArgumentException("Unknown template "+folder+"/"+name);
         }
+        String childUUID = this.checklistRepository.createFromTemplate(folder, name, template, parentName);
         if(parentName != null) {
             // update the parent step that launched the subchecklist...
             Checklist parent = this.checklistRepository.getChecklist(parentName);
             for(Step step : parent.getSteps()) {
                 if(step.getId().equals(stepName)) {
-                    step.setState(State.ON_HOLD);                    
+                    step.setState(State.ON_HOLD);  
+                    step.setChild(childUUID);
                 }
             }
             ActorRepository.getPersistenceActor().tell(new PersistenceRequest(parentName), null);
         }
-        return this.checklistRepository.createFromTemplate(folder, name, template, parentName);        
+        return childUUID;     
     }
     
     @GET    
