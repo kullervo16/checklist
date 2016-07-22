@@ -67,7 +67,7 @@ public class TemplatePersister  {
                 
                 
             } catch (IOException ex) {
-                Logger.getLogger(TemplatePersister.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(TemplatePersister.class.getName()).log(Level.SEVERE, "Error while parsing "+this.file, ex);
                 this.loaded = false;
                 return;
             }            
@@ -87,6 +87,17 @@ public class TemplatePersister  {
         this.template.setDescription((String) templateMap.get(DESCRIPTION));
         if(templateMap.get(TAGS) != null) {
             tags.addAll((List<String>) templateMap.get(TAGS));
+            // sanity check... sometimes people code stuff that gets interpreted as yaml... if a tag is not a string, convert it to one
+            List removeList = new LinkedList();
+            for(Object o : tags) {
+                if(!o.getClass().equals(String.class)) {
+                    removeList.add(o);
+                }
+            }
+            for(Object toBeRemoved : removeList) {
+                tags.remove(toBeRemoved);
+                tags.add(toBeRemoved.toString());
+            }
         }
         if(templateMap.get(DISPLAY_NAME) != null) {
             this.template.setDisplayName((String) templateMap.get(DISPLAY_NAME));
