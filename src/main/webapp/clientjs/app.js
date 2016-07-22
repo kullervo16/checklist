@@ -89,22 +89,26 @@
                 if(!$scope.templateName.startsWith("/")) {
                     $scope.templateName = "/"+$scope.templateName;
                 }
-                $http.put('rest/templates'+$scope.templateName, fd, {
-                    withCredentials: true,
-                    headers: {'Content-Type': undefined },
-                    transformRequest: angular.identity
-                }).success( function (data,status,headers,config) {
-                                $scope.uploadValidationData = data;   
-                                if(data.length > 0) {                                    
-                                    showModal();
-                                } else {
-                                    hideModal();
-                                    init();
+                if($scope.templateName.split("/").length !== 3) {
+                    alert("Current layout requires a single grouping folder and a template name.");
+                } else {
+                    $http.put('rest/templates'+$scope.templateName, fd, {
+                        withCredentials: true,
+                        headers: {'Content-Type': undefined },
+                        transformRequest: angular.identity
+                    }).success( function (data,status,headers,config) {
+                                    $scope.uploadValidationData = data;   
+                                    if(data.length > 0) {                                    
+                                        showModal();
+                                    } else {
+                                        hideModal();
+                                        init();
+                                    }
                                 }
-                            }
-                          ).error( function(data,status,headers,config) {
-                                    console.log("Error uploading file") 
-                                });
+                              ).error( function(data,status,headers,config) {
+                                        console.log("Error uploading file") 
+                                    });
+                }
 
             };
             
