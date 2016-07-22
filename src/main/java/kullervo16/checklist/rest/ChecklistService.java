@@ -198,7 +198,10 @@ public class ChecklistService {
     @POST
     @Path("/{id}/{step}/answers")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist addAnwswerToStep(@PathParam("id") String checklistId, @PathParam("step") String stepId, String answer) {        
+    public Checklist addAnwswerToStep(@PathParam("id") String checklistId, @PathParam("step") String stepId, String answer) { 
+        if(answer == null || "".equals(answer)) {
+            throw new IllegalArgumentException("The answer should be non-empty");
+        }
         Checklist cl = getChecklist(checklistId);
         Step step = getStep(cl, stepId);            
         
