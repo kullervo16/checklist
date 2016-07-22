@@ -182,6 +182,7 @@
             $scope.mode = $location.search().mode;
             $scope.tagSelection = '';
             $scope.milestoneSelection = '';
+            $scope.hideClosedChecklists = false;
             if($scope.mode === 'template') {
                 // if mode is template, we show a template in the checklist view (but in readonly)
                 $http.get('rest/templates'+$location.search().id)
@@ -457,10 +458,27 @@
             }
             $http.get(url)
                 .success(function (data,status,headers,config) {
-                    $scope.checklists = data;                
+                    $scope.rawchecklists = data;  
+                    toggleClosedFilter($scope.hideClosedChecklists);
                 }).error(function (data,status,headers,config) {
                     console.log('Error listing checklists');
                 }); 
+        }
+        
+        function toggleClosedFilter(hide) {           
+            if(hide) {
+                $scope.hideClosedChecklists = true;
+                $scope.checklists = [];
+                for(var i=0;i<$scope.rawchecklists.length;i++) {
+                    if(!$scope.rawchecklists[i].complete) {
+                        $scope.checklists.push($scope.rawchecklists[i]);
+                    }
+                }
+            } else {
+                $scope.hideClosedChecklists = false;
+                $scope.checklists = $scope.rawchecklists;                
+            }  
+            $scope.$apply();
         }
         
         function getClassForChecklist(checklist) {
@@ -580,7 +598,8 @@
         $scope.showAnswerRadioButton= showAnswerRadioButton;
         $scope.showRevalidateButton = showRevalidateButton;
         $scope.getSubchecklistClass = getSubchecklistClass;
-        $scope.removeTagFromChecklist = removeTagFromChecklist;
+        $scope.toggleClosedFilter   = toggleClosedFilter;
+        $scope.removeTagFromChecklist = removeTagFromChecklist;        
         
         $scope.updateAction   = updateAction;
         $scope.addErrorAction = addErrorAction;
