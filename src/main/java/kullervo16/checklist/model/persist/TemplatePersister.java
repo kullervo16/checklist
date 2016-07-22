@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import kullervo16.checklist.model.Step;
+import kullervo16.checklist.repository.TemplateRepository;
 
 /**
  * Data object to model a template. It is backed by a YAML file.
@@ -112,6 +113,7 @@ public class TemplatePersister  {
     /**
      * This method makes sure the template adheres to the proper structure
      * @param content
+     * @return a list of warnings and errors
      */
     public static List<ErrorMessage> validateTemplate(String content) {
         LinkedList<ErrorMessage> result = new LinkedList<>();
@@ -162,7 +164,7 @@ public class TemplatePersister  {
                             }
                         }
                     }
-                }
+                }                
             }
         }catch(YamlException e) {
             result.add(new ErrorMessage("Invalid YAML.",ErrorMessage.Severity.CRITICAL,e.getMessage()));
@@ -248,12 +250,12 @@ public class TemplatePersister  {
         checkTag(stepMap, "condition", "/steps/"+pos, result,DataType.LIST, false);
         checkTag(stepMap, "action", "/steps/"+pos, result,DataType.STRING, false);
         checkTag(stepMap, "documentation", "/steps/"+pos, result,DataType.URL, false);
-        checkTag(stepMap, "subchecklist", "/steps/"+pos, result,DataType.STRING, false);
+        checkTag(stepMap, SUBCHECKLIST, "/steps/"+pos, result,DataType.STRING, false);
         checkTag(stepMap, "check", "/steps/"+pos, result,DataType.STRING_OR_LIST, false);
         checkTag(stepMap, "weight", "/steps/"+pos, result,DataType.POSITIVE_NUMBER, false);
         // step 2 : either subchecklist, question or action must be present
         int count = 0;
-        if(stepMap.containsKey("subchecklist")) count++;
+        if(stepMap.containsKey(SUBCHECKLIST)) count++;
         if(stepMap.containsKey("action")) count++;
         if(stepMap.containsKey("question")) count++;
         
@@ -262,7 +264,15 @@ public class TemplatePersister  {
         } else if(count != 1) {
             result.add(new ErrorMessage("More than 1 of (subchecklist, question, action) specified", ErrorMessage.Severity.MAJOR, "/steps/"+pos+" contains more than 1 of (subchecklist, question,action). Only one is allowed.")); 
         }
+        // step 3 : if subchecklist, see if it exists
+        if(stepMap.containsKey(SUBCHECKLIST)) {
+            String subchecklist = (String) stepMap.get(SUBCHECKLIST);
+            if(TemplateRepository.INSTANCE.getTemplate(subchecklist) == null) {
+                result.add(new ErrorMessage("Referenced subchecklist "+subchecklist+" does not (yet) exist", ErrorMessage.Severity.WARNING, "/steps/"+pos+" Unless you add this subchecklist, instantiation will fail at runtime."));
+            }
+        }
     }
+    private static final String SUBCHECKLIST = "subchecklist";
                 
     protected void serializeStep(Step step, PrintWriter writer) {        
         printLine(writer,"- id",step.getId());

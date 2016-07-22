@@ -65,21 +65,25 @@ public class ValidationTest {
     public void testInvalid4() {
         List<ErrorMessage> errors = getErrors("./src/test/resources/validation/invalid4.yml");
         System.err.println(errors);
-        assertEquals(4, errors.size());
+        assertEquals(5, errors.size());
         assertTrue(errors.get(0).getSeverity().equals(Severity.MAJOR)); 
         assertTrue(errors.get(1).getSeverity().equals(Severity.MAJOR)); 
         assertTrue(errors.get(2).getSeverity().equals(Severity.MAJOR)); 
-        assertTrue(errors.get(3).getSeverity().equals(Severity.MAJOR));  
+        assertTrue(errors.get(3).getSeverity().equals(Severity.WARNING)); 
+        assertTrue(errors.get(4).getSeverity().equals(Severity.MAJOR));  
         
         assertEquals("Missing tag : id",errors.get(0).getDescription());
         assertEquals("Invalid tag value: weight",errors.get(1).getDescription());
-        assertEquals("Duplicate id : createApplication",errors.get(3).getDescription());
         assertEquals("Invalid tag value: weight",errors.get(2).getDescription());
+        assertEquals("Referenced subchecklist /development/verifyDeployment does not (yet) exist",errors.get(3).getDescription());
+        assertEquals("Duplicate id : createApplication",errors.get(4).getDescription());
+        
         
         assertEquals("/steps/1/id",errors.get(0).getDetails());
         assertEquals("/steps/1/weight should be a valid positive Integer",errors.get(1).getDetails());
         assertEquals("/steps/3/weight should be a valid Integer",errors.get(2).getDetails());
-        assertEquals("You used the same id twice in the template",errors.get(3).getDetails());
+        assertEquals("/steps/3 Unless you add this subchecklist, instantiation will fail at runtime.",errors.get(3).getDetails());
+        assertEquals("You used the same id twice in the template",errors.get(4).getDetails());
         
     }
     
