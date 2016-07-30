@@ -10,14 +10,34 @@
 
     app.controller('templateController', function($scope,$http,$window) {
         // init stuff... get data from backend
-        var init =  function () {            
+        var init =  function () {     
+            if($scope.subCLshown === undefined) {
+                $scope.subCLshown = false;
+            }
             $http.get('rest/templates')
                 .success(function (data,status,headers,config) {
-                    $scope.items = data;                    
+                    $scope.rawItems = data;     
+                        toggleShowSubchecklists($scope.subCLshown);
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/template/list');
                 });  
         };
+        
+        function toggleShowSubchecklists(show) {
+            if(show) {
+                $scope.items = $scope.rawItems;
+                $scope.subCLshown = true;
+            } else {
+                $scope.subCLshown = false;
+                $scope.items = [];
+                for(var i=0;i<$scope.rawItems.length;i++) {
+                    if(!$scope.rawItems[i].subchecklistOnly) {
+                        $scope.items.push($scope.rawItems[i]);
+                    }
+                }
+            }
+            $scope.$apply();
+        }
          
                
         // function definitions
@@ -147,7 +167,8 @@
                 .success(function (data,status,headers,config) {
                     $http.get('rest/templates')
                         .success(function (data,status,headers,config) {
-                            $scope.items = data;                    
+                            $scope.rawItems = data;  
+                            toggleShowSubchecklists($scope.subCLshown);
                         }).error(function (data,status,headers,config) {
                             console.log('Error getting rest/templates');
                         });                  
@@ -170,6 +191,7 @@
         $scope.uploadTemplate = uploadTemplate;
         $scope.downloadTemplate = downloadTemplate;
         $scope.deleteTemplate = deleteTemplate;
+        $scope.toggleShowSubchecklists = toggleShowSubchecklists;
         init();
     }
     );

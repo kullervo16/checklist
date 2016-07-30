@@ -41,6 +41,7 @@
         <div role="main" class="container theme-showcase" ng-controller="templateController as template">            
             <div class="jumbotron">
                 <h1>Available templates</h1>
+                <p>Show subchecklists : <input type="checkbox" name="showSubchecklists" onchange="angular.element(this).scope().toggleShowSubchecklists(this.checked)"/></p>
                 <h3><button onclick="angular.element(this).scope().showModal(true)" data-target="#myModal" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp; Add a new template</button></h3>                
             </div>
             <div>                
