@@ -24,6 +24,7 @@ import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.ChecklistInfo;
 import kullervo16.checklist.model.Step;
+import kullervo16.checklist.model.TagcloudEntry;
 import kullervo16.checklist.model.Template;
 import kullervo16.checklist.repository.ActorRepository;
 import kullervo16.checklist.repository.ChecklistRepository;
@@ -232,7 +233,15 @@ public class ChecklistService {
     @PUT
     @Path("/{id}/tags/{tag}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist addTag(@PathParam("id") String checklistId, @PathParam("tag") String tag) {        
+    public Checklist addTag(@PathParam("id") String checklistId, @PathParam("tag") String tagCandidate) {   
+        // see if a similar tag already exists.. if so, replace it with that tag to get more matches (and better tagclouds)
+        String tag = tagCandidate;
+        for(TagcloudEntry te : this.checklistRepository.getTagInfo(null)) {
+            if(te.getText().equalsIgnoreCase(tagCandidate)) {
+                tag = te.getText();
+            }
+        }
+        
         Checklist cl = getChecklist(checklistId);
         if(!cl.getTags().contains(tag)) {
             cl.getTags().add(tag);
