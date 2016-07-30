@@ -442,6 +442,7 @@
                     .success(function (data,status,headers,config) {
                         $scope.data = data;             
                     }).error(function (data,status,headers,config) {
+                        alert(data.error);
                         console.log('Error removing tag '+tag+' from checklist '+$location.search().id);                        
                     });  
                 }

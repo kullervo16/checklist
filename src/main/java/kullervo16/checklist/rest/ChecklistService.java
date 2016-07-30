@@ -254,11 +254,17 @@ public class ChecklistService {
     @DELETE
     @Path("/{id}/tags/{tag}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist removeTag(@PathParam("id") String checklistId, @PathParam("tag") String tag) {        
+    public Response removeTag(@PathParam("id") String checklistId, @PathParam("tag") String tag) {        
         Checklist cl = getChecklist(checklistId);
+        // check that the tag is checklist specific, don't delete tags from the template...
+        Template template = this.templateRepository.getTemplate(cl.getTemplate());
+        if(template.getTags().contains(tag)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"error\":\"You cannot delete a tag defined by the template\"}").build();
+        }
+        
         cl.getTags().remove(tag);
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
-        return cl;
+        return Response.status(Response.Status.OK).entity(cl).build();        
     }
     
     @PUT
