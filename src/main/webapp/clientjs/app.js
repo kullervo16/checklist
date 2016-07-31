@@ -219,13 +219,16 @@
                 $http.get('rest/checklists/'+$location.search().id)
                     .success(function (data,status,headers,config) {
                         console.log("Data loaded");
-                        $scope.data = data;                    
+                        $scope.data = data;  
+                        if(!data.specificTagSet || !data.uniqueTagcombination) {                        
+                            showModal();
+                        }
                     }).error(function (data,status,headers,config) {
                         console.log('Error getting rest/checklist/get');
                     });
             }
-            $scope.checkResults = {};               
-                       
+            $scope.checkResults = {}; 
+                                   
         // =================================================
         // CSS class calculation
         // =================================================        
@@ -323,6 +326,16 @@
             $window.location='checklist.html?id='+cl;
         }
         
+        function hideModal() {
+            $('#tagModal').modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        }
+        
+        function showModal() {                  
+            $('#tagModal').modal('show');
+        }
+        
         function reposition() {
             var activeStep = undefined;
             // for some odd reason, the links don't work for the last 3 steps... go to complete then
@@ -384,10 +397,14 @@
         }
         
         function addTag(tag) {
+            hideModal();
             $http.put('rest/checklists/'+$location.search().id+"/tags/"+tag)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;  
                     reposition();
+                    if(!data.specificTagSet || !data.uniqueTagcombination) {                        
+                        showModal();
+                    }
                 }).error(function (data,status,headers,config) {
                     console.log('Error adding a tag '+step.id);
                 });              
@@ -462,7 +479,10 @@
             if(confirm("Are you sure you want to remove tag '"+tag+"' from this checklist? You can always add it again later...")) {
                 $http.delete('rest/checklists/'+$location.search().id+'/tags/'+tag)
                     .success(function (data,status,headers,config) {
-                        $scope.data = data;             
+                        $scope.data = data; 
+                        if(!data.specificTagSet || !data.uniqueTagcombination) {                        
+                            showModal();
+                        }
                     }).error(function (data,status,headers,config) {
                         alert(data.error);
                         console.log('Error removing tag '+tag+' from checklist '+$location.search().id);                        
@@ -617,6 +637,8 @@
         $scope.showProgressBar   = showProgressBar;       
         $scope.showAnswerTextBox = showAnswerTextBox;  
         $scope.gotoChecklist     = gotoChecklist;
+        $scope.showModal         = showModal;
+        $scope.hideModal         = hideModal;
         $scope.showAnswerChecklists = showAnswerChecklists;
         $scope.showAnswerRadioButton= showAnswerRadioButton;
         $scope.showRevalidateButton = showRevalidateButton;

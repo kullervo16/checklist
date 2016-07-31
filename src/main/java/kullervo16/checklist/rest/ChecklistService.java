@@ -4,6 +4,7 @@ package kullervo16.checklist.rest;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.json.Json;
@@ -244,8 +245,11 @@ public class ChecklistService {
         
         Checklist cl = getChecklist(checklistId);
         if(!cl.getTags().contains(tag)) {
+            List<String> newTagList = new LinkedList<>(cl.getTags());
+            newTagList.add(tag);
+            cl.setUniqueTagcombination(this.checklistRepository.isTagCombinationUnique(newTagList));
             cl.getTags().add(tag);
-            cl.setSpecificTagSet(true);
+            cl.setSpecificTagSet(true);            
         }
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         return cl;
@@ -261,6 +265,10 @@ public class ChecklistService {
         if(template.getTags().contains(tag)) {
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"error\":\"You cannot delete a tag defined by the template\"}").build();
         }
+        
+        List<String> newTagList = new LinkedList<>(cl.getTags());
+        newTagList.remove(tag);
+        cl.setUniqueTagcombination(this.checklistRepository.isTagCombinationUnique(newTagList));
         
         cl.getTags().remove(tag);
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);

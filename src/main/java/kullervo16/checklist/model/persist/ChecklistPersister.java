@@ -28,6 +28,7 @@ public class ChecklistPersister extends TemplatePersister {
         }
         writer.append("template: ").append(cl.getTemplate()).append("\n");
         writer.append("specificTagSet: ").append(""+cl.isSpecificTagSet()).append("\n");
+        writer.append("uniqueTagcombination: ").append(""+cl.isUniqueTagcombination()).append("\n");
     }
 
     @Override
@@ -42,6 +43,12 @@ public class ChecklistPersister extends TemplatePersister {
         }    
         if(templateMap.containsKey("parent")) {
             cl.setParent((String)templateMap.get("parent"));
+        }
+        if(templateMap.containsKey("uniqueTagcombination")) {
+            cl.setUniqueTagcombination("true".equalsIgnoreCase((String)templateMap.get("uniqueTagcombination")));
+        } else {
+            // backwards compatibility : if not set, say true...
+            cl.setUniqueTagcombination(true);
         }
     }
 

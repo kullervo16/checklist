@@ -16,6 +16,7 @@ public class Checklist extends Template{
     private boolean hasSpecificTags;
     private String parent;
     private String template;
+    private boolean uniqueTagcombination;
     
     public Checklist() {
     }
@@ -136,5 +137,14 @@ public class Checklist extends Template{
     public void setTemplate(String template) {
         this.template = template;
     }
+
+    public void setUniqueTagcombination(boolean tagCombinationUnique) {
+        this.uniqueTagcombination = tagCombinationUnique;
+    }
+
+    public boolean isUniqueTagcombination() {
+        return uniqueTagcombination;
+    }
         
+    
 }

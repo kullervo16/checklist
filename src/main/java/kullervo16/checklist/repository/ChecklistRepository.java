@@ -246,5 +246,24 @@ public enum ChecklistRepository {
             cl.getPersister().getFile().delete();
         }
     }
+    
+    public boolean isTagCombinationUnique(List<String> tags) {
+        synchronized (lock) {
+            for(Checklist clWalker : this.data.values()) {
+                boolean different = false;
+                for(String tagWalker : tags) {
+                    if(!clWalker.getTags().contains(tagWalker)) {
+                        // tag is not in, so no need to test further
+                        different = true;
+                        break;
+                    } 
+                }
+                if(!different) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
 

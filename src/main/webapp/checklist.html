@@ -73,6 +73,9 @@
                         <span class="label label-primary" ng-click="removeTagFromChecklist(tag)">{{tag}}</span>
                         &nbsp;
                     </span>
+                    <button type="button" class="btn btn-default btn-sm" title="Add tag" ng-click="showModal()">
+                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
                 </p>                  
             </div>
             
@@ -212,15 +215,26 @@
                     
                 </div>
             </div>
-            <div ng-show="!data.specificTagSet && mode !== 'template'">
-                <h3 class="alert-danger">You should at least add a single specific tag to distinguish your new checklist from the other ones based on the same template.</h3>                                        
-            </div>
-            <div ng-show="mode !== 'template'">
-                <h4>Add tags to your specific checklist. These tags will help you retrieve your instance later on. You can add as many as you like (at the bottom of the page)</h4>
-                <p>Good examples are a specific project name, a version, a period ....</p>
-                <input ng-model="newTag"/><button type="button" class="btn btn-default" aria-label="ok" ng-click="addTag(newTag)">
-                              <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;Add</span>
-                            </button>
+            <div id="tagModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add a tag</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div ng-show="!data.uniqueTagcombination && mode !== 'template'">
+                        <h3 class="alert-danger">You should add specific tags to distinguish your new checklist from the other ones based on the same template. This dialog wil dissappear when the combination is unique.</h3>                                        
+                    </div>
+                    <div ng-show="mode !== 'template'">
+                        <h4>Add tags to your specific checklist. These tags will help you retrieve your instance later on. You can add as many as you like</h4>
+                        <p>Good examples are a specific project name, a version, a period ....</p>
+                        <input ng-model="newTag"/><button type="button" class="btn btn-default" aria-label="ok" ng-click="addTag(newTag)">
+                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;Add</span>
+                                </button>
+                    </div>
+                  </div>
+              </div>
             </div>
         </div>
         <!-- for the case when all steps are done.. position on the bottom -->
