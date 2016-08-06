@@ -204,7 +204,7 @@
             $scope.mode = $location.search().mode;
             $scope.tagSelection = '';
             $scope.milestoneSelection = '';
-            $scope.hideClosedChecklists = false;
+            $scope.hideClosedChecklists = false;            
             if($scope.mode === 'template') {
                 // if mode is template, we show a template in the checklist view (but in readonly)
                 $http.get('rest/templates'+$location.search().id)
@@ -221,7 +221,7 @@
                         console.log("Data loaded");
                         $scope.data = data;  
                         if(!data.specificTagSet || !data.uniqueTagcombination) {                        
-                            showModal();
+                            showModal('#tagModal');
                         }
                     }).error(function (data,status,headers,config) {
                         console.log('Error getting rest/checklist/get');
@@ -326,14 +326,19 @@
             $window.location='checklist.html?id='+cl;
         }
         
-        function hideModal() {
-            $('#tagModal').modal('hide');
+        function hideModal(modalId) {
+            $(modalId).modal('hide');
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
         }
         
-        function showModal() {                  
-            $('#tagModal').modal('show');
+        function showModal(modalId) {                  
+            $(modalId).modal('show');
+        }
+        
+        function showErrors(step) {
+            $scope.shownStep = step;            
+            showModal('#errorModal');
         }
         
         function reposition() {
@@ -397,13 +402,13 @@
         }
         
         function addTag(tag) {
-            hideModal();
+            hideModal('#tagModal');
             $http.put('rest/checklists/'+$location.search().id+"/tags/"+tag)
                 .success(function (data,status,headers,config) {
                     $scope.data = data;  
                     reposition();
                     if(!data.specificTagSet || !data.uniqueTagcombination) {                        
-                        showModal();
+                        showModal('#tagModal');
                     }
                 }).error(function (data,status,headers,config) {
                     console.log('Error adding a tag '+step.id);
@@ -481,7 +486,7 @@
                     .success(function (data,status,headers,config) {
                         $scope.data = data; 
                         if(!data.specificTagSet || !data.uniqueTagcombination) {                        
-                            showModal();
+                            showModal('#tagModal');
                         }
                     }).error(function (data,status,headers,config) {
                         alert(data.error);
@@ -639,6 +644,7 @@
         $scope.gotoChecklist     = gotoChecklist;
         $scope.showModal         = showModal;
         $scope.hideModal         = hideModal;
+        $scope.showErrors        = showErrors;
         $scope.showAnswerChecklists = showAnswerChecklists;
         $scope.showAnswerRadioButton= showAnswerRadioButton;
         $scope.showRevalidateButton = showRevalidateButton;

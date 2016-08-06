@@ -160,7 +160,13 @@
                             <h4>Selected option : {{step.selectedOption}}</h4>
                         </div>
                         <div ng-show="step.errors.length">
-                            <h4><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;Errors:&nbsp;<span class="badge">{{step.errors.length}}</span></h4>                                
+                            <h4>
+                                <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;Errors:&nbsp;<span class="badge">{{step.errors.length}}</span> 
+                                <button type="button" class="btn btn-xs" aria-label="details" ng-click="showErrors(step);" >
+                                  <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                                </button>
+                            </h4>  
+                            
                         </div>
                         <div ng-show="step.documentation && showActionDetails(step)" >
                             <h4><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target = "_blank">&nbsp;&nbsp;Documentation&nbsp;</a></span></h4>                                
@@ -234,9 +240,23 @@
                                 </button>
                     </div>
                   </div>
+                </div>
+              </div>            
+            </div>
+            <div id="errorModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Errors for {{shownStep.id}}:</h4>
+                  </div>
+                  <div class="modal-body">                      
+                      <ul ng-repeat="error in shownStep.errors">
+                          <li>{{error}}</li>
+                      </ul>
+                  </div>
               </div>
             </div>
-        </div>
         <!-- for the case when all steps are done.. position on the bottom -->
         <a name="complete" id="complete" class="anchor"></a>
 
