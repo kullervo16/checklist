@@ -317,8 +317,12 @@ public class TemplatePersister  {
     
     private void printLine(PrintWriter writer, String name, String value) {
         if(value != null) {
-            writer.append("  ").append(name).append(": ").append(value.replaceAll("\n","##NEWLINE##")).append("\n");
+            appendEscaped(writer.append("  ").append(name).append(": "),value.replaceAll("\n","##NEWLINE##")).append("\n");
         }
+    }
+    
+    protected PrintWriter appendEscaped(PrintWriter writer,String content) {
+        return writer.append("\"").append(content).append("\"");
     }
             
     /**
@@ -327,16 +331,16 @@ public class TemplatePersister  {
      */
     protected void serializeHeader(PrintWriter writer) {
         if(template.getDisplayName() != null) {
-            writer.append("displayName: ").append(this.template.getDisplayName()).append("\n");
+            appendEscaped(writer.append("displayName: "),this.template.getDisplayName()).append("\n");
         }
         if(template.getDescription() != null) {
-            writer.append("description: ").append(this.template.getDescription()).append("\n");
+            appendEscaped(writer.append("description: "),this.template.getDescription()).append("\n");
         }
         
         if(!template.getTags().isEmpty()) {
             writer.append("tags: ").append("\n");
             template.getTags().stream().forEach((tag) -> {
-                writer.append("    - ").append(tag).append("\n");
+                appendEscaped(writer.append("    - "),tag).append("\n");
             });
         }        
     }

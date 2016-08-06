@@ -58,13 +58,13 @@ public class ChecklistPersister extends TemplatePersister {
         if(!step.getErrors().isEmpty()) {
             writer.append(SEPARATOR_1).append("errors:\n");
             step.getErrors().stream().forEach((error) -> {
-                writer.append(SEPARATOR_1).append(SEPARATOR_2).append(error).append("\n");
+                appendEscaped(writer.append(SEPARATOR_1).append(SEPARATOR_2),error).append("\n");
             });
         }
         if(!step.getAnswers().isEmpty()) {
             writer.append(SEPARATOR_1).append("answers:\n");
             step.getAnswers().stream().forEach((answer) -> {
-                writer.append(SEPARATOR_1).append(SEPARATOR_2).append(answer).append("\n");
+                appendEscaped(writer.append(SEPARATOR_1).append(SEPARATOR_2),answer).append("\n");
             });
         }
     }

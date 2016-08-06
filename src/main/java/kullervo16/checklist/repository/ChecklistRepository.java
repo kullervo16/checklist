@@ -15,6 +15,7 @@ import kullervo16.checklist.model.ChecklistInfo;
 import kullervo16.checklist.model.Milestone;
 import kullervo16.checklist.model.TagcloudEntry;
 import kullervo16.checklist.model.Template;
+import org.jboss.resteasy.logging.Logger;
 
 
 
@@ -53,12 +54,16 @@ public enum ChecklistRepository {
     private static void scanDirectoryForTemplates(File startDir, Map<String,Checklist> newModel) {
         if(startDir.listFiles() != null) {
             for(File f : startDir.listFiles()) {
-                if(f.isDirectory()) {
-                    scanDirectoryForTemplates(f, newModel);
-                } else {
-                    Checklist cl = new Checklist(f);
-                    cl.setId(f.getName());
-                    newModel.put(cl.getId(), cl); 
+                try {
+                    if(f.isDirectory()) {
+                        scanDirectoryForTemplates(f, newModel);
+                    } else {
+                        Checklist cl = new Checklist(f);
+                        cl.setId(f.getName());
+                        newModel.put(cl.getId(), cl); 
+                    }
+                }catch(Exception e) {
+                    Logger.getLogger(ChecklistRepository.class).error("Error during loading "+f.getName(),e);
                 }
             }
         }
