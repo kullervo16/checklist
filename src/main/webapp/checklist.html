@@ -50,6 +50,10 @@
                           <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                         </button>
                         &nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn-default" title="Close" ng-click="closeChecklist()" ng-if="data.progress < 100">
+                          <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                        </button>
+                        &nbsp;&nbsp;&nbsp;
                         <button type="button" class="btn btn-default" title="Go to parent" ng-if="data.parent" ng-click="gotoChecklist(data.parent)">
                           <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
                         </button>

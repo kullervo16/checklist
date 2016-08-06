@@ -35,6 +35,13 @@ div.unknown {
     padding-bottom:10px;
 }
 
+div.closed {
+    color:white;
+    background-color: purple;
+    padding-left:10px;
+    padding-bottom:10px;
+}
+
 div.unknown a {
     color:black;    
     text-decoration: underline;

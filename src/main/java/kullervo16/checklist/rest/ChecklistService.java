@@ -100,6 +100,20 @@ public class ChecklistService {
         return Response.ok().build();    
     }
     
+    @POST
+    @Path("/{id}/actions/close")    
+    public Response closeCL(@PathParam("id") String id) { 
+        Checklist cl = this.checklistRepository.getChecklist(id);
+        for(Step step : cl.getSteps()) {
+            if(step.getState().equals(State.UNKNOWN) || step.getState().equals(State.ON_HOLD)) {
+                step.setState(State.CLOSED);
+            }
+        }
+        verifyCompleteChecklist(cl);
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(id), null);
+        return Response.ok().build();    
+    }
+    
     
     @PUT
     @Path("/{id}/{step}/actionresults/{result}")

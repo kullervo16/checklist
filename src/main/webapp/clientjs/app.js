@@ -248,6 +248,8 @@
                 return "onHold";
             } else if(step.state === 'NOT_APPLICABLE') {
                 return "notApplicable";
+            } else if(step.state === 'CLOSED') {
+                return "closed";
             } else if(step.state === 'EXECUTION_FAILED' 
                    || step.state === 'CHECK_FAILED' 
                    || step.state === 'CHECK_FAILED_NO_COMMENT' 
@@ -303,7 +305,7 @@
         }
         
         function showOptions(step) {
-            return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType;
+            return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType && !step.state === 'CLOSED';
         }           
         
         function showRevalidateButton(step) {
@@ -475,6 +477,18 @@
                         $window.location.href = './checklistOverview.html'     
                     }).error(function (data,status,headers,config) {
                         console.log('Error deleting checklist '+$location.search().id);
+                        $window.location.href = './checklistOverview.html';     
+                    });  
+                }
+        }
+        
+        function closeChecklist() {
+            if(confirm("Are you sure you want to close this checklist? All unfinished steps will be set to closed. This operation cannot be undone...")) {
+                $http.post('rest/checklists/'+$location.search().id+'/actions/close')
+                    .success(function (data,status,headers,config) {
+                        $window.location.href = './checklistOverview.html'     
+                    }).error(function (data,status,headers,config) {
+                        console.log('Error closing checklist '+$location.search().id);
                         $window.location.href = './checklistOverview.html';     
                     });  
                 }
@@ -660,6 +674,7 @@
         $scope.setStepOption  = setStepOption;
         $scope.revalidate     = revalidate;
         $scope.deleteChecklist= deleteChecklist;
+        $scope.closeChecklist = closeChecklist;
         $scope.launchSubChecklist = launchSubChecklist;   
                 
         $scope.getChecklists = getChecklists;
