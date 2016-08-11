@@ -67,7 +67,7 @@ public class TemplatePersister  {
                 
                 
                 
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(TemplatePersister.class.getName()).log(Level.SEVERE, "Error while parsing "+this.file, ex);
                 this.loaded = false;
                 return;
@@ -251,7 +251,7 @@ public class TemplatePersister  {
         checkTag(stepMap, "action", "/steps/"+pos, result,DataType.STRING, false);
         checkTag(stepMap, "documentation", "/steps/"+pos, result,DataType.URL, false);
         checkTag(stepMap, SUBCHECKLIST, "/steps/"+pos, result,DataType.STRING, false);
-        checkTag(stepMap, "check", "/steps/"+pos, result,DataType.STRING_OR_LIST, false);
+        checkTag(stepMap, CHECK, "/steps/"+pos, result,DataType.STRING_OR_LIST, false);
         checkTag(stepMap, "weight", "/steps/"+pos, result,DataType.POSITIVE_NUMBER, false);
         // step 2 : either subchecklist, question or action must be present
         int count = 0;
@@ -271,7 +271,27 @@ public class TemplatePersister  {
                 result.add(new ErrorMessage("Referenced subchecklist "+subchecklist+" does not (yet) exist", ErrorMessage.Severity.WARNING, "/steps/"+pos+" Unless you add this subchecklist, instantiation will fail at runtime."));
             }
         }
+        // step 4 : check for checks
+        if(stepMap.containsKey(CHECK)) {
+            if(stepMap.get(CHECK) instanceof String) {
+                // ok, we support string.. no further checks needed
+            } else if(stepMap.get(CHECK) instanceof List) {
+                // check elements are map entries with a step key
+                for(Object o : (List)stepMap.get(CHECK)) {
+                    if(o instanceof Map) {
+                        if(!((Map)o).containsKey("step")) {
+                            result.add(new ErrorMessage("Invalid check message", ErrorMessage.Severity.CRITICAL, "/steps/"+pos+" Check is invalid. Either a simple string or a list of step elements should be present."));
+                        }
+                    } else {
+                        result.add(new ErrorMessage("Invalid check message", ErrorMessage.Severity.CRITICAL, "/steps/"+pos+" Check is invalid. Either a simple string or a list of step elements should be present."));
+                    }
+                }
+            } else {
+                result.add(new ErrorMessage("Invalid check message", ErrorMessage.Severity.CRITICAL, "/steps/"+pos+" Check is invalid. Either a simple string or a list of step elements should be present."));
+            }
+        }
     }
+    private static final String CHECK = "check";
     private static final String SUBCHECKLIST = "subchecklist";
                 
     protected void serializeStep(Step step, PrintWriter writer) {        
