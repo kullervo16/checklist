@@ -228,6 +228,9 @@ public class ChecklistService {
                 // no checks, directly to OK
                 step.setState(State.OK);
                 verifyCompleteChecklist(cl);
+                if(step.getMilestone() != null) {
+                    step.getMilestone().setReached(true);
+                }
             }
             try {
                 JsonReader jsonReader = Json.createReader(new StringReader(answer));
