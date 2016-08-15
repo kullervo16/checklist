@@ -305,7 +305,7 @@
         }
         
         function showOptions(step) {
-            return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType && !step.state === 'CLOSED';
+            return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType && !(step.state === 'CLOSED');
         }           
         
         function showRevalidateButton(step) {
