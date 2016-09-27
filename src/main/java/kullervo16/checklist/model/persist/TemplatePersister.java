@@ -337,12 +337,12 @@ public class TemplatePersister  {
     
     private void printLine(PrintWriter writer, String name, String value) {
         if(value != null) {
-            appendEscaped(writer.append("  ").append(name).append(": "),value.replaceAll("\n","##NEWLINE##")).append("\n");
+            appendEscaped(writer.append("  ").append(name).append(": "),value.replaceAll("\n","##NEWLINE##").replaceAll("\"", "'")).append("\n");
         }
     }
     
     protected PrintWriter appendEscaped(PrintWriter writer,String content) {
-        return writer.append("\"").append(content).append("\"");
+        return writer.append("\"").append(content.replaceAll("\"", "'")).append("\"");
     }
             
     /**
