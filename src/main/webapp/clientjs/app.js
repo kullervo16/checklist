@@ -271,7 +271,7 @@
         }
         
         function showActionButtons(step) {
-            return showActionDetails(step) && step.action && $scope.mode !== 'template';
+            return showActionDetails(step) && step.action && $scope.mode !== 'template' && !step.options;
         }
         
         function showChecks(step) {
