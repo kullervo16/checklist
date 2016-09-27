@@ -202,6 +202,11 @@
         // init stuff... get data from backend     
         // =================================================                                            
             $scope.mode = $location.search().mode;
+            $scope.refreshState = false;
+            if ($location.search().refresh !== undefined) {
+                toggleRefresh($location.search().refresh);                
+            }
+                    
             $scope.tagSelection = '';
             $scope.milestoneSelection = '';
             $scope.hideClosedChecklists = false;            
@@ -640,6 +645,7 @@
           } else {
               $interval.cancel($scope.refresh);
           }
+          $scope.refreshState = state;
         }
         
         $scope.getClassForMilestone = getClassForMilestone;
