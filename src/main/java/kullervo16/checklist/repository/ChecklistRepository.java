@@ -105,9 +105,10 @@ public enum ChecklistRepository {
 
             Checklist checklist = new Checklist(uuid,template,new File(subfolder, uuid), parentCL);
             checklist.setCreationTime(System.currentTimeMillis());
+            checklist.setUniqueTagcombination(this.isTagCombinationUnique(checklist.getTags()));
             data.put(uuid, checklist);
         }        
-                        
+          
         // TODO : send message to stats to signal updated content        
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(uuid), null);
         
