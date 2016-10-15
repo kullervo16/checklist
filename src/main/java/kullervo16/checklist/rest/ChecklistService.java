@@ -264,7 +264,7 @@ public class ChecklistService {
         if(!cl.getTags().contains(tag)) {
             List<String> newTagList = new LinkedList<>(cl.getTags());
             newTagList.add(tag);
-            cl.setUniqueTagcombination(this.checklistRepository.isTagCombinationUnique(newTagList));
+            cl.setUniqueTagcombination(this.checklistRepository.isTagCombinationUnique(newTagList, cl.getId()));
             cl.getTags().add(tag);
             cl.setSpecificTagSet(true);            
         }
@@ -285,7 +285,7 @@ public class ChecklistService {
         
         List<String> newTagList = new LinkedList<>(cl.getTags());
         newTagList.remove(tag);
-        cl.setUniqueTagcombination(this.checklistRepository.isTagCombinationUnique(newTagList));
+        cl.setUniqueTagcombination(this.checklistRepository.isTagCombinationUnique(newTagList, cl.getId()));
         
         cl.getTags().remove(tag);
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
