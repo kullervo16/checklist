@@ -241,9 +241,10 @@
                     <div ng-show="mode !== 'template'">
                         <h4>Add tags to your specific checklist. These tags will help you retrieve your instance later on. You can add as many as you like</h4>
                         <p>Good examples are a specific project name, a version, a period ....</p>
-                        <input ng-model="newTag"/><button type="button" class="btn btn-default" aria-label="ok" ng-click="addTag(newTag)">
-                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;Add</span>
-                                </button>
+                        <input ng-model="newTag" ng-enter="addTag(newTag)"/>
+                        <button type="button" class="btn btn-default" aria-label="ok" ng-click="addTag(newTag)" >
+                          <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;Add</span>
+                        </button>
                     </div>
                   </div>
                 </div>

@@ -8,6 +8,20 @@
             });
     }]);
 
+    app.directive('ngEnter', function () {
+        return function (scope, element, attrs) {
+            element.bind("keydown keypress", function (event) {
+                if(event.which === 13) {
+                    scope.$apply(function (){
+                        scope.$eval(attrs.ngEnter);
+                    });
+
+                    event.preventDefault();
+                }
+            });
+        };
+    });
+
     app.controller('templateController', function($scope,$http,$window) {
         // init stuff... get data from backend
         var init =  function () {     
@@ -421,7 +435,8 @@
                     }
                 }).error(function (data,status,headers,config) {
                     console.log('Error adding a tag '+step.id);
-                });              
+                }); 
+            $scope.newTag=''
         }
         
         function setCheckResult(step, check, result) {
