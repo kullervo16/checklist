@@ -318,7 +318,7 @@
         }
         
         function showMainBody() {
-            return ($scope.data !== undefined && $scope.data.specificTagSet) || $scope.mode === 'template';
+            return ($scope.data !== undefined && $scope.data.specificTagSet && $scope.data.uniqueTagcombination) || $scope.mode === 'template';
         }
         
         function showProgressBar() {
@@ -355,7 +355,7 @@
             $('.modal-backdrop').remove();
         }
         
-        function showModal(modalId) {                  
+        function showModal(modalId) {              
             $(modalId).modal('show');
         }
         
@@ -424,19 +424,20 @@
                 }); 
         }
         
-        function addTag(tag) {
-            hideModal('#tagModal');
+        function addTag(tag) {                        
             $http.put('rest/checklists/'+$location.search().id+"/tags/"+tag)
                 .success(function (data,status,headers,config) {
-                    $scope.data = data;  
-                    reposition();
+                    $scope.newTag='';
+                    $scope.data = data;                      
                     if(!data.specificTagSet || !data.uniqueTagcombination) {                        
                         showModal('#tagModal');
+                    } else {
+                        hideModal('#tagModal');
+                        reposition();
                     }
                 }).error(function (data,status,headers,config) {
                     console.log('Error adding a tag '+step.id);
-                }); 
-            $scope.newTag=''
+                });             
         }
         
         function setCheckResult(step, check, result) {
