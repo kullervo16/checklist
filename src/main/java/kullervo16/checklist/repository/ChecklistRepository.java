@@ -105,7 +105,7 @@ public enum ChecklistRepository {
 
             Checklist checklist = new Checklist(uuid,template,new File(subfolder, uuid), parentCL);
             checklist.setCreationTime(System.currentTimeMillis());
-            checklist.setUniqueTagcombination(this.isTagCombinationUnique(checklist.getTags()));
+            checklist.setUniqueTagcombination(this.isTagCombinationUnique(checklist.getTags(), null));
             data.put(uuid, checklist);
         }        
           
@@ -253,9 +253,19 @@ public enum ChecklistRepository {
         }
     }
     
-    public boolean isTagCombinationUnique(List<String> tags) {
+    /**
+     * Checks if a tag combination is unique
+     * @param tags
+     * @param id the id of the checklist in question (is not taken into account during comparison)
+     * @return 
+     */
+    public boolean isTagCombinationUnique(List<String> tags, String id) {
         synchronized (lock) {
             for(Checklist clWalker : this.data.values()) {
+                if(clWalker.getId().equals(id)) {
+                    // only if id specified and equal to the candidate we would want to check
+                    continue;
+                }
                 boolean different = false;
                 for(String tagWalker : tags) {
                     if(!clWalker.getTags().contains(tagWalker)) {
