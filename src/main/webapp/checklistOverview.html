@@ -44,7 +44,7 @@
                 <h1>Checklist overview</h1>                                              
             </div>
             <h2>Most recent active checklists : </h2>
-            <p>Hide closed checklists : <input type="checkbox" name="hideClosed" onchange="angular.element(this).scope().toggleClosedFilter(this.checked)"/></p>
+            <p>Hide closed checklists : <input type="checkbox" name="hideClosed" onchange="angular.element(this).scope().toggleClosedFilter(this.checked, true)"/></p>
             <div ng-repeat="checklist in checklists" class="list-group">                
                 <a ng-class="getClassForChecklist(checklist)" href="checklist.html?id={{checklist.uuid}}" target="_blank">{{checklist.lastActive | date:'yyyy-MM-dd HH:mm'}}: {{checklist.displayName}} &nbsp;&nbsp;
                     <div class="pull-right">

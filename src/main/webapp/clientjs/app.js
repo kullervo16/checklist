@@ -17,13 +17,13 @@
             $http.get('rest/templates')
                 .success(function (data,status,headers,config) {
                     $scope.rawItems = data;     
-                        toggleShowSubchecklists($scope.subCLshown);
+                        toggleShowSubchecklists($scope.subCLshown, false);
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/template/list');
                 });  
         };
         
-        function toggleShowSubchecklists(show) {
+        function toggleShowSubchecklists(show, apply) {
             if(show) {
                 $scope.items = $scope.rawItems;
                 $scope.subCLshown = true;
@@ -36,7 +36,9 @@
                     }
                 }
             }
-            $scope.$apply();
+            if(apply) {
+                $scope.$apply();
+            }
         }
          
                
@@ -168,7 +170,7 @@
                     $http.get('rest/templates')
                         .success(function (data,status,headers,config) {
                             $scope.rawItems = data;  
-                            toggleShowSubchecklists($scope.subCLshown);
+                            toggleShowSubchecklists($scope.subCLshown, false);
                         }).error(function (data,status,headers,config) {
                             console.log('Error getting rest/templates');
                         });                  
@@ -526,13 +528,13 @@
             $http.get(url)
                 .success(function (data,status,headers,config) {
                     $scope.rawchecklists = data;  
-                    toggleClosedFilter($scope.hideClosedChecklists);
+                    toggleClosedFilter($scope.hideClosedChecklists, false);
                 }).error(function (data,status,headers,config) {
                     console.log('Error listing checklists');
                 }); 
         }
         
-        function toggleClosedFilter(hide) {           
+        function toggleClosedFilter(hide, apply) {           
             if(hide) {
                 $scope.hideClosedChecklists = true;
                 $scope.checklists = [];
@@ -545,7 +547,9 @@
                 $scope.hideClosedChecklists = false;
                 $scope.checklists = $scope.rawchecklists;                
             }  
-            $scope.$apply();
+            if(apply) {
+                $scope.$apply();
+            }
         }
         
         function getClassForChecklist(checklist) {
