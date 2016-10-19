@@ -113,7 +113,7 @@ steps :
 ```
 In the GUI this is represented like this : the steps that are not reachable anymore based on your choices are marked in grey.
 
-![alt text](screenshot_choice.png "checklist with options")
+![alt text](doc/screenshot_choice.png "checklist with options")
 
 ### Questions
 Sometimes you're not executing actions, but you want to ask a question to make sure the user is reflecting a certain issue. To allow this, you can replace
@@ -176,7 +176,7 @@ It applies also some governance :
 
 The basic template we saw above is shown like this :
 
-![alt text](screenshot_example.png "checklist in progress")
+![alt text](doc/screenshot_example.png "checklist in progress")
 
 The Web frontend also serves 2 other purposes :
  * allow you to monitor the progress of a given checklist (f.e. on a television screen in your operations room)
@@ -188,17 +188,17 @@ The Web frontend also serves 2 other purposes :
 
 This is an example of a checklist with questions :
 
-![alt text](screenshot_questions.png "a checklist with questions")
+![alt text](doc/screenshot_questions.png "a checklist with questions")
 
 ### Overview
 The system shows you the most recent active checklists for quick access (if you do not know the UUID). Color coding shows which ones are complete (green) and 
 which ones are still in progress (blue).
 
-![alt text](screenshot_overview.png "the list of checklists")
+![alt text](doc/screenshot_overview.png "the list of checklists")
 
 There is also a simple stats implemented that shows you which steps of your template fail and what kind of errors you get per step (more will come later on)
-![alt text](screenshot_stats.png "the simple template stats")
+![alt text](doc/screenshot_stats.png "the simple template stats")
 
 You can find your checklists based on the tags and reached milestones. They are presented in the tagcloud in the select page
-![alt text](screenshot_tagcloud.png "the tagcloud page")
+![alt text](doc/screenshot_tagcloud.png "the tagcloud page")
 

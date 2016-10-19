@@ -106,7 +106,7 @@ public class ValidationTest {
     
      @Test
     public void testBinary() {
-        List<ErrorMessage> errors = getErrors("./screenshot_choice.png");
+        List<ErrorMessage> errors = getErrors("./doc/screenshot_choice.png");
         System.err.println(errors);
         assertEquals(1, errors.size());
         assertTrue(errors.get(0).getSeverity().equals(Severity.CRITICAL));        
