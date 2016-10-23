@@ -7,20 +7,20 @@ package kullervo16.checklist.messages;
  * modifications per message... that's no problem (otherwise we should be transporting a clone
  * which seems overkill, especially with the expected amount of traffic.. which in general
  * will still result in 1 save action per update).
- * 
+ *
  * @author jef
  */
 public class PersistenceRequest {
-    
+
     private final String uuid;
 
-    public PersistenceRequest(String uuid) {
+
+    public PersistenceRequest(final String uuid) {
         this.uuid = uuid;
     }
+
 
     public String getUuid() {
         return uuid;
     }
-    
-    
 }

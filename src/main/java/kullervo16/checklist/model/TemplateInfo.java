@@ -9,76 +9,86 @@ import java.util.List;
 
 /**
  * Data object specifying the info for a template
+ *
  * @author jef
  */
-public class TemplateInfo implements Comparable<TemplateInfo>{
-    
+public class TemplateInfo implements Comparable<TemplateInfo> {
+
     private String description;
-    
+
     private List<String> tags;
-    
+
     private List<Milestone> milestones;
-    
+
     private String id;
-    
+
     private boolean subchecklistOnly;
 
-    
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+
+    public void setId(final String id) {
         this.id = id;
     }
+
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+
+    public void setDescription(final String description) {
         this.description = description;
     }
+
 
     public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+
+    public void setTags(final List<String> tags) {
         this.tags = tags;
     }
+
 
     public List<Milestone> getMilestones() {
         return milestones;
     }
 
-    public void setMilestones(List<Milestone> milestones) {
+
+    public void setMilestones(final List<Milestone> milestones) {
         this.milestones = milestones;
     }
+
 
     public boolean isSubchecklistOnly() {
         return subchecklistOnly;
     }
 
-    public void setSubchecklistOnly(boolean subchecklistOnly) {
+
+    public void setSubchecklistOnly(final boolean subchecklistOnly) {
         this.subchecklistOnly = subchecklistOnly;
     }
-    
-    
+
 
     @Override
-    public int compareTo(TemplateInfo t) {
-        if(t == null) {
+    public int compareTo(final TemplateInfo t) {
+
+        if (t == null) {
             return 1;
         }
-        if(this.isSubchecklistOnly() && !t.isSubchecklistOnly()) {
+
+        if (isSubchecklistOnly() && !t.isSubchecklistOnly()) {
             return 1;
-        } else if (!this.isSubchecklistOnly() && t.isSubchecklistOnly()) {
+        } else if (!isSubchecklistOnly() && t.isSubchecklistOnly()) {
             return -1;
         }
-        return this.getId().compareTo(t.getId());
+
+        return getId().compareTo(t.getId());
     }
-    
-    
+
 }

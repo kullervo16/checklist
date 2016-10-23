@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.ws.rs.core.Application;
 
 /**
- *
  * @author jef
  */
 @javax.ws.rs.ApplicationPath("webresources")
@@ -17,10 +16,14 @@ public class ApplicationConfig extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        Set<Class<?>> resources = new java.util.HashSet<>();
+
+        final Set<Class<?>> resources = new java.util.HashSet<>();
+
         addRestResourceClasses(resources);
+
         return resources;
     }
+
 
     /**
      * Do not modify addRestResourceClasses() method.
@@ -28,11 +31,11 @@ public class ApplicationConfig extends Application {
      * all resources defined in the project.
      * If required, comment out calling this method in getClasses().
      */
-    private void addRestResourceClasses(Set<Class<?>> resources) {
+    private static void addRestResourceClasses(final Set<Class<?>> resources) {
         resources.add(kullervo16.checklist.rest.ChecklistService.class);
         resources.add(kullervo16.checklist.rest.MilestoneService.class);
         resources.add(kullervo16.checklist.rest.TagService.class);
         resources.add(kullervo16.checklist.rest.TemplateService.class);
     }
-    
+
 }

@@ -6,106 +6,123 @@ import java.util.Objects;
 
 /**
  * Info object for checklists. It's natural ordering is on the last activity.
- * 
+ *
  * @author jef
  */
-public class ChecklistInfo implements Comparable<ChecklistInfo>{
+public class ChecklistInfo implements Comparable<ChecklistInfo> {
 
     private final String template;
-    
+
     private String uuid;
-    
+
     private final String displayName;
-    
+
     private final boolean complete;
-    
+
     private long lastActive;
-    
+
     private final List<String> tags;
 
-    public ChecklistInfo(Checklist cl) {
-        this.template = cl.getTemplate();
-        this.uuid = cl.getId();
-        this.displayName = cl.getDisplayName();
-        this.complete = cl.isComplete();   
-        this.lastActive = cl.getCreationTime();
-        for(Step step : cl.getSteps()) {
-            if(step.getLastUpdate() != null && step.getLastUpdate().getTime() > lastActive) {
+
+    public ChecklistInfo(final Checklist cl) {
+
+        template = cl.getTemplate();
+        uuid = cl.getId();
+        displayName = cl.getDisplayName();
+        complete = cl.isComplete();
+        lastActive = cl.getCreationTime();
+        tags = cl.getTags();
+
+        for (final Step step : cl.getSteps()) {
+
+            if (step.getLastUpdate() != null && step.getLastUpdate().getTime() > lastActive) {
                 lastActive = step.getLastUpdate().getTime();
             }
         }
-        this.tags = cl.getTags();
     }
 
-    public void setUuid(String uuid) {
+
+    public void setUuid(final String uuid) {
         this.uuid = uuid;
     }
 
-    
+
     public String getTemplate() {
         return template;
     }
+
 
     public String getUuid() {
         return uuid;
     }
 
+
     public String getDisplayName() {
         return displayName;
     }
+
 
     public boolean isComplete() {
         return complete;
     }
 
+
     public long getLastActive() {
         return lastActive;
     }
 
+
     public List<String> getTags() {
         return tags;
     }
-    
-    
-    
+
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 29 * hash + Objects.hashCode(this.uuid);
+        hash = 29 * hash + Objects.hashCode(uuid);
         return hash;
     }
 
+
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
+
         if (this == obj) {
             return true;
         }
+
         if (obj == null) {
             return false;
         }
+
         if (getClass() != obj.getClass()) {
             return false;
         }
+
         final ChecklistInfo other = (ChecklistInfo) obj;
-        if (!Objects.equals(this.uuid, other.uuid)) {
+
+        if (!Objects.equals(uuid, other.uuid)) {
             return false;
         }
+
         return true;
     }
 
-    @Override
+
     /**
      * Sort most recent first.
      */
-    public int compareTo(ChecklistInfo t) {
-        if(t == null) {            
+    @Override
+    public int compareTo(final ChecklistInfo t) {
+
+        if (t == null) {
             return 1;
         }
+
         // cannot use minus, because when the difference is too big (f.e. "now" - 0) the int wraps around
         // and messes up the ordering.
-        return Long.valueOf(t.getLastActive()).compareTo(Long.valueOf(this.lastActive));
+        return Long.valueOf(t.getLastActive()).compareTo(lastActive);
     }
-    
-    
+
 }
