@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import kullervo16.checklist.model.persist.ChecklistPersister;
 
@@ -14,6 +15,8 @@ import kullervo16.checklist.model.persist.ChecklistPersister;
  * @author jeve
  */
 public class Checklist extends Template {
+
+    private static final Pattern SLASH_PATTERN = Pattern.compile("/");
 
     private boolean hasSpecificTags;
 
@@ -43,7 +46,24 @@ public class Checklist extends Template {
         this.template = template.getId();
 
         // deep copy... we're working completely in memory here, don't want to link references...  
+
+        // Add the tags from the template
         tags = new LinkedList<>(template.getTags());
+
+        // Add the template ID to the tag list if it is not yet a tag
+        {
+            // Remove the leading '/' split id based on '/'
+            final String[] templateIdTags = SLASH_PATTERN.split(this.template.substring(1));
+
+            if (!tags.contains(templateIdTags[0])) {
+                tags.add(templateIdTags[0]);
+            }
+
+            if (!tags.contains(templateIdTags[1])) {
+                tags.add(templateIdTags[1]);
+            }
+        }
+
         milestones = new LinkedList<>();
         steps = new LinkedList<>();
 
@@ -61,10 +81,18 @@ public class Checklist extends Template {
 
         if (parent != null) {
 
+            // Add the subchecklist tag to identify sub-checklists
             tags.add("subchecklist");
 
+            // Remove the leading '/' split id based on '/'
+            final String[] parentTtemplateIdTags = SLASH_PATTERN.split(parent.template.substring(1));
+
+            // Add parent's tags to the sub-checklist
             for (final String parentTag : parent.getTags()) {
-                if (!tags.contains(parentTag)) {
+
+                // Do not add existing tags
+                // Do not add the tag generated tags based on the template ID to keep tags set unique
+                if (!tags.contains(parentTag) && !parentTag.equals(parentTtemplateIdTags[0]) && !parentTag.equals(parentTtemplateIdTags[1])) {
                     tags.add(parentTag);
                 }
             }
