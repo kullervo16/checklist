@@ -6,112 +6,138 @@
 package kullervo16.checklist.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+
 import kullervo16.checklist.model.persist.TemplatePersister;
 
 /**
  * DTO object for a template. Contains all data, no logic.
+ *
  * @author jef
  */
 public class Template {
+
     protected String displayName;
+
     protected List<Step> steps = new LinkedList<>();
+
     protected String description;
-    protected List<String> tags = new LinkedList<>();    
+
+    protected List<String> tags = new LinkedList<>();
+
     protected TemplatePersister persister;
+
     protected List<Milestone> milestones = new LinkedList<>();
+
     protected String id;
+
     protected boolean subchecklistOnly;
+
     protected long creationTime;
 
-    
+
     public Template() {
-        
+
     }
-    
-    public Template(File f) {
-        this.persister = new TemplatePersister(f, this);
+
+
+    public Template(final File f) {
+        persister = new TemplatePersister(f, this);
     }
-        
+
+
     public String getDisplayName() {
-        this.checkAndLoadDataFromFile();
+        checkAndLoadDataFromFile();
         return displayName;
     }
-       
 
-    public void setDisplayName(String displayName) {
+
+    public void setDisplayName(final String displayName) {
         this.displayName = displayName;
     }
+
 
     @Override
     public String toString() {
         return "TemplateDto{" + "displayName=" + displayName + ", steps=" + steps + '}';
     }
-    
 
-    public void setDescription(String description) {
+
+    public void setDescription(final String description) {
         this.description = description;
     }
 
-    public void setTags(List<String> tags) {
+
+    public void setTags(final List<String> tags) {
         this.tags = tags;
     }
 
-    public void setMilestones(List<Milestone> milestones) {
+
+    public void setMilestones(final List<Milestone> milestones) {
         this.milestones = milestones;
     }
-    
+
+
     public String getDescription() {
-        this.checkAndLoadDataFromFile();
-        return this.description;
+        checkAndLoadDataFromFile();
+        return description;
     }
+
 
     public List<Milestone> getMilestones() {
-        this.checkAndLoadDataFromFile();        
-        return this.milestones;
+        checkAndLoadDataFromFile();
+        return milestones;
     }
+
 
     public List<String> getTags() {
-        this.checkAndLoadDataFromFile();
-        return this.tags;
-    }
-    
-    public List<? extends Step> getSteps() {
-        this.checkAndLoadDataFromFile();
-        return this.steps;
+        checkAndLoadDataFromFile();
+        return tags;
     }
 
+
+    public List<? extends Step> getSteps() {
+        checkAndLoadDataFromFile();
+        return steps;
+    }
+
+
     protected void checkAndLoadDataFromFile() {
-        if(this.persister != null) {
-            this.persister.checkAndLoadDataFromFile();
+        if (persister != null) {
+            persister.checkAndLoadDataFromFile();
         }
     }
 
-    public void setSteps(List<Step> steps) {
+
+    public void setSteps(final List<Step> steps) {
         this.steps = steps;
     }
-    
+
+
     @JsonIgnore
     public TemplatePersister getPersister() {
-        return this.persister;
+        return persister;
     }
+
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 31 * hash + Objects.hashCode(this.displayName);
-        hash = 31 * hash + Objects.hashCode(this.steps);
-        hash = 31 * hash + Objects.hashCode(this.description);
-        hash = 31 * hash + Objects.hashCode(this.tags);
-        hash = 31 * hash + Objects.hashCode(this.milestones);
+        hash = 31 * hash + Objects.hashCode(displayName);
+        hash = 31 * hash + Objects.hashCode(steps);
+        hash = 31 * hash + Objects.hashCode(description);
+        hash = 31 * hash + Objects.hashCode(tags);
+        hash = 31 * hash + Objects.hashCode(milestones);
         return hash;
     }
 
+
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -122,53 +148,57 @@ public class Template {
             return false;
         }
         final Template other = (Template) obj;
-        if (!Objects.equals(this.displayName, other.displayName)) {
+        if (!Objects.equals(displayName, other.displayName)) {
             return false;
         }
-        if (!Objects.equals(this.description, other.description)) {
+        if (!Objects.equals(description, other.description)) {
             return false;
         }
-        if (!Objects.equals(this.steps, other.steps)) {
+        if (!Objects.equals(steps, other.steps)) {
             return false;
         }
-        if (!Objects.equals(this.tags, other.tags)) {
+        if (!Objects.equals(tags, other.tags)) {
             return false;
         }
-        if (!Objects.equals(this.milestones, other.milestones)) {
+        if (!Objects.equals(milestones, other.milestones)) {
             return false;
         }
         return true;
     }
-    
+
+
     public void persist() {
-        this.persister.serialize();
+        persister.serialize();
     }
+
 
     public String getId() {
-        this.checkAndLoadDataFromFile();
-        return this.id;
+        checkAndLoadDataFromFile();
+        return id;
     }
 
-    public void setId(String id) {
+
+    public void setId(final String id) {
         this.id = id;
     }
+
 
     public boolean isSubchecklistOnly() {
         return subchecklistOnly;
     }
 
-    public void setSubchecklistOnly(boolean subchecklistOnly) {
+
+    public void setSubchecklistOnly(final boolean subchecklistOnly) {
         this.subchecklistOnly = subchecklistOnly;
     }
+
 
     public long getCreationTime() {
         return creationTime;
     }
 
-    public void setCreationTime(long creationTime) {
+
+    public void setCreationTime(final long creationTime) {
         this.creationTime = creationTime;
     }
-    
-    
-    
 }

@@ -21,15 +21,12 @@ import kullervo16.checklist.repository.ChecklistRepository;
 public class MilestoneService {
     
     // use singleton repository to make sure we are all working on the same backend (@Singleton does not seem to do that job like it should)    
-    ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
+    private final ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
        
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TagcloudEntry> listMilestones(@QueryParam("filter")String filter) {                
-        return this.checklistRepository.getMilestoneInfo(filter);
-
+    public List<TagcloudEntry> listMilestones(@QueryParam("filter") final String filter) {
+        return checklistRepository.getMilestoneInfo(filter);
     }
-   
-        
 }

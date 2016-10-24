@@ -6,29 +6,32 @@
 package kullervo16.checklist.model;
 
 /**
- *
  * @author jef
  */
 public class Condition {
+
     private final Step step;
+
     private final String selectedOption;
 
-    public Condition(Step step, String selectedOption) {
+
+    public Condition(final Step step, final String selectedOption) {
         this.step = step;
         this.selectedOption = selectedOption;
     }
-    
-    public boolean isConditionUnreachable() {        
+
+
+    public boolean isConditionUnreachable() {
         return this.step.getSelectedOption() != null && !this.selectedOption.equals(this.step.getSelectedOption());
     }
+
 
     public Step getStep() {
         return step;
     }
 
+
     public String getSelectedOption() {
         return selectedOption;
     }
-    
-    
 }

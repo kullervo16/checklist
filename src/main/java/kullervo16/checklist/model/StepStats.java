@@ -7,53 +7,65 @@ import java.util.Objects;
 
 /**
  * DTO for step specific statistics.
- * 
+ *
  * @author jef
  */
 public class StepStats {
 
     private String name;
+
     private int successRate;
+
     private int numberOfOccurrences;
+
     private final List<String> errors = new LinkedList<>();
+
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+
+    public void setName(final String name) {
         this.name = name;
     }
+
 
     public int getSuccessRate() {
         return successRate;
     }
 
-    public void setSuccessRate(int successRate) {
+
+    public void setSuccessRate(final int successRate) {
         this.successRate = successRate;
     }
+
 
     public int getNumberOfOccurrences() {
         return numberOfOccurrences;
     }
 
-    public void setNumberOfOccurrences(int numberOfOccurrences) {
+
+    public void setNumberOfOccurrences(final int numberOfOccurrences) {
         this.numberOfOccurrences = numberOfOccurrences;
     }
+
 
     public List<String> getErrors() {
         return errors;
     }
 
+
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.name);
+        hash = 13 * hash + Objects.hashCode(name);
         return hash;
     }
 
+
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -64,21 +76,20 @@ public class StepStats {
             return false;
         }
         final StepStats other = (StepStats) obj;
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(name, other.name)) {
             return false;
         }
         return true;
     }
 
-    
-    public void update(Step step) {
-        
-        this.errors.addAll(step.getErrors());
-        if(step.isComplete()) {
-            this.successRate = (int)(((this.successRate * this.numberOfOccurrences) + (step.getErrors().isEmpty() ? 100 : 0)) / (this.numberOfOccurrences+1));        
-            this.numberOfOccurrences++;
+
+    public void update(final Step step) {
+
+        errors.addAll(step.getErrors());
+
+        if (step.isComplete()) {
+            successRate = ((successRate * numberOfOccurrences) + (step.getErrors().isEmpty() ? 100 : 0)) / (numberOfOccurrences + 1);
+            numberOfOccurrences++;
         }
     }
-    
-    
 }

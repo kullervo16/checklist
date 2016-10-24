@@ -9,38 +9,43 @@ import java.util.Objects;
 
 /**
  * Class to model a milestone that is reached when the checks are ok up to a given point.
- * 
+ *
  * @author jef
  */
 public class Milestone {
-    
+
     private String name;
-    
+
     private boolean reached;
 
-    public Milestone(String name, boolean reached) {
-        this.name = name;
-        this.reached = reached;
-    }
 
     public Milestone() {
+    }
+
+    public Milestone(final String name, final boolean reached) {
+        this.name = name;
+        this.reached = reached;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+
+    public void setName(final String name) {
         this.name = name;
     }
+
 
     public boolean isReached() {
         return reached;
     }
 
-    public void setReached(boolean reached) {
+
+    public void setReached(final boolean reached) {
         this.reached = reached;
     }
+
 
     @Override
     public int hashCode() {
@@ -50,8 +55,9 @@ public class Milestone {
         return hash;
     }
 
+
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -71,10 +77,9 @@ public class Milestone {
         return true;
     }
 
+
     @Override
     public String toString() {
         return "Milestone{" + "name=" + name + ", reached=" + reached + '}';
     }
-    
-    
 }
