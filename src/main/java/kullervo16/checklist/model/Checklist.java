@@ -52,8 +52,7 @@ public class Checklist extends Template {
 
         // Add the template ID to the tag list if it is not yet a tag
         {
-            // Remove the leading '/' split id based on '/'
-            final String[] templateIdTags = SLASH_PATTERN.split(this.template.substring(1));
+            final String[] templateIdTags = getTagsFromTemplateId(this.template);
 
             if (!tags.contains(templateIdTags[0])) {
                 tags.add(templateIdTags[0]);
@@ -84,8 +83,7 @@ public class Checklist extends Template {
             // Add the subchecklist tag to identify sub-checklists
             tags.add("subchecklist");
 
-            // Remove the leading '/' split id based on '/'
-            final String[] parentTtemplateIdTags = SLASH_PATTERN.split(parent.template.substring(1));
+            final String[] parentTtemplateIdTags = getTagsFromTemplateId(parent.template);
 
             // Add parent's tags to the sub-checklist
             for (final String parentTag : parent.getTags()) {
@@ -212,5 +210,12 @@ public class Checklist extends Template {
 
     public boolean isUniqueTagcombination() {
         return uniqueTagcombination;
+    }
+
+
+    public static String[] getTagsFromTemplateId(final String templateId) {
+
+        // Remove the leading '/' split id based on '/'
+        return SLASH_PATTERN.split(templateId.substring(1));
     }
 }
