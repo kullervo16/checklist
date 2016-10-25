@@ -379,6 +379,11 @@ public class ChecklistService {
 
         final Checklist cl = getChecklist(checklistId);
 
+        // Prevent the user to delete the subchecklist tag
+        if (tag.equals("subchecklist")){
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"error\":\"You cannot delete the subchecklist tag\"}").build();
+        }
+
         // check that the tag is checklist specific, don't delete tags from the template...
         {
             final Template template = templateRepository.getTemplate(cl.getTemplate());
