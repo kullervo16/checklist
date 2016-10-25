@@ -221,7 +221,7 @@ public enum ChecklistRepository {
 
                 } else {
 
-                    for ( int i = 0; i < commonTags.size(); i++) {
+                    for ( int i = 0; i < commonTags.size(); ) {
 
                         // If the common tag exists in the checklist
                         if (clTags.contains(commonTags.get(i))) {

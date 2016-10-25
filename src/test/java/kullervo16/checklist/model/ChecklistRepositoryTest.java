@@ -139,9 +139,11 @@ public class ChecklistRepositoryTest {
 
         // now with a filter
         tagInfo = this.repository.getTagInfo("openshift");
-        assertEquals(1, tagInfo.size());
+        assertEquals(2, tagInfo.size());
         assertEquals("cl1", tagInfo.get(0).getText());
         assertEquals(1, tagInfo.get(0).getWeight());
+        assertEquals("odt", tagInfo.get(1).getText());
+        assertEquals(2, tagInfo.get(1).getWeight());
 
         tagInfo = this.repository.getTagInfo("cl1");
         assertEquals(0, tagInfo.size());
