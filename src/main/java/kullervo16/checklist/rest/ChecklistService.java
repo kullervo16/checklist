@@ -191,6 +191,32 @@ public class ChecklistService {
 
         return cl;
     }
+    
+    @PUT
+    @Path("/{id}/{step}/reopen")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Checklist reopen(@PathParam("id") final String checklistId, @PathParam("step") final String stepId) {
+
+        final Checklist cl = getChecklist(checklistId);
+        final Step step = getStep(cl, stepId);
+        
+        step.setState(State.UNKNOWN);
+        step.setAnswers(new LinkedList<>());
+        step.setErrors(new LinkedList<>());
+        step.setSelectedOption(null);
+        
+        // now iterate all steps to reset the ones that depend on our choice
+        for (final Step walker : cl.getSteps()) {
+
+            if (walker.getCondition() != null && walker.getCondition().getStep().equals(step)) {               
+                walker.setState(State.UNKNOWN);
+            }
+        }
+                
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);        
+
+        return cl;
+    }
 
 
     @PUT
@@ -392,7 +418,7 @@ public class ChecklistService {
             step.getMilestone().setReached(true);
         }
 
-        // now iterate all steps to update the once that depend on our choice
+        // now iterate all steps to update the ones that depend on our choice
         for (final Step walker : cl.getSteps()) {
 
             if (walker.getCondition() != null) {

@@ -191,6 +191,11 @@
                               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Revalidate</span>
                             </button>
                         </div>
+                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showReopenButton(step)">
+                            <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="reopen(step);" >
+                              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Reopen</span>
+                            </button>
+                        </div>
                         <div ng-show="showErrorDialog(step)" ng-class="unknown">
                             <p>Please enter the details of the problem :</p>
                             <p>

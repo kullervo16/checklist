@@ -333,6 +333,25 @@
             return step.state === 'CHECK_FAILED';
         }
         
+        function showReopenButton(step) {
+            if(step.state == 'UNKNOWN' || step.state === 'NOT_APPLICABLE' || step.state == 'ON_HOLD' || step.state === 'EXECUTED') {
+                return false;
+            }
+            // now check whether the next step is still open..            
+            for(var i=0;i< $scope.data.steps.length - 1;i++) {
+                if (step === $scope.data.steps[i]) {
+                    for(var j=i+1; j< $scope.data.steps.length;j++) {
+                        var nextStep = $scope.data.steps[j];
+                        if(nextStep.state !== 'NOT_APPLICABLE') {
+                            return nextStep.state !== 'CLOSED' && nextStep.state !== 'OK' && nextStep.state !== 'CHECK_FAILED';
+                        }
+                        // loop on to the first step that is not NOT_APPLICABLE (if any)
+                    }
+                }
+            }
+            return false;
+        }
+        
         function showAnswerTextBox(step) {
             return step.answerType === 'text' && step.state === 'UNKNOWN';
         }
@@ -390,7 +409,7 @@
         }
         
         function showGoBackToParent() {
-            return $scope.data.parent && $scope.data.progress === 100;
+            return $scope.data && $scope.data.parent && $scope.data.progress === 100;
         }
         // =================================================
         // Backend update operations
@@ -490,6 +509,16 @@
         function revalidate(step) {
             $scope.checkResults[step.id] = {};
             $http.put('rest/checklists/'+$location.search().id+"/"+step.id+'/validate')
+                .success(function (data,status,headers,config) {
+                    $scope.data = data;                        
+                }).error(function (data,status,headers,config) {
+                    console.log('Error updating step '+step.id);
+                });
+        }
+        
+        function reopen(step) {
+            $scope.checkResults[step.id] = {};
+            $http.put('rest/checklists/'+$location.search().id+"/"+step.id+'/reopen')
                 .success(function (data,status,headers,config) {
                     $scope.data = data;                        
                 }).error(function (data,status,headers,config) {
@@ -693,6 +722,7 @@
         $scope.showAnswerChecklists = showAnswerChecklists;
         $scope.showAnswerRadioButton= showAnswerRadioButton;
         $scope.showRevalidateButton = showRevalidateButton;
+        $scope.showReopenButton     = showReopenButton;
         $scope.getSubchecklistClass = getSubchecklistClass;
         $scope.toggleClosedFilter   = toggleClosedFilter;
         $scope.removeTagFromChecklist = removeTagFromChecklist;        
@@ -704,6 +734,7 @@
         $scope.addTag         = addTag;
         $scope.setStepOption  = setStepOption;
         $scope.revalidate     = revalidate;
+        $scope.reopen         = reopen;
         $scope.deleteChecklist= deleteChecklist;
         $scope.closeChecklist = closeChecklist;
         $scope.launchSubChecklist = launchSubChecklist;   

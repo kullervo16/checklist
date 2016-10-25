@@ -31,7 +31,7 @@ public class ApplicationConfig extends Application {
      * all resources defined in the project.
      * If required, comment out calling this method in getClasses().
      */
-    private static void addRestResourceClasses(final Set<Class<?>> resources) {
+    private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(kullervo16.checklist.rest.ChecklistService.class);
         resources.add(kullervo16.checklist.rest.MilestoneService.class);
         resources.add(kullervo16.checklist.rest.TagService.class);
