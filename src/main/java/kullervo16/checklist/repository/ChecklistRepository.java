@@ -139,13 +139,17 @@ public enum ChecklistRepository {
     }
 
 
-    public List<ChecklistInfo> getChecklistInformation(final List<String> tags, final List<String> milestones) {
+    public List<ChecklistInfo> getChecklistInformation(final List<String> tags, final List<String> milestones, boolean hideSubchecklists) {
 
         final List<ChecklistInfo> result = new LinkedList<>();
 
         synchronized (lock) {
 
             for (final Entry<String, Checklist> clEntry : data.entrySet()) {
+
+                if (hideSubchecklists && clEntry.getValue().isSubchecklist()) {
+                    continue;
+                }
 
                 if (!matchesTag(tags, clEntry.getValue())) {
                     continue;

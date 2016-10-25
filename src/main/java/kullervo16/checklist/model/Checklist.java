@@ -185,4 +185,9 @@ public class Checklist extends Template {
     public boolean isUniqueTagcombination() {
         return uniqueTagcombination;
     }
+
+
+    public boolean isSubchecklist() {
+        return parent != null;
+    }
 }

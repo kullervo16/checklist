@@ -50,7 +50,7 @@ public class ChecklistRepositoryTest {
     
     @Test
     public void testListChecklist() {
-        List<ChecklistInfo> cli = this.repository.getChecklistInformation(null, null);
+        List<ChecklistInfo> cli = this.repository.getChecklistInformation(null, null, false);
         assertEquals(3, cli.size());        
         assertNotNull(cli.get(0).getUuid());        
         assertNotNull(cli.get(0).getTags());        
@@ -60,26 +60,26 @@ public class ChecklistRepositoryTest {
     public void testListChecklistWithTag() {
         List<String> tagList = new LinkedList<>();
         tagList.add("odt");
-        List<ChecklistInfo> cli = this.repository.getChecklistInformation(tagList, null);
+        List<ChecklistInfo> cli = this.repository.getChecklistInformation(tagList, null, false);
         assertEquals(2, cli.size());        
         assertNotNull(cli.get(0).getUuid());        
         assertNotNull(cli.get(0).getTags());    
         tagList.clear();
         tagList.add("cl1");   
-        assertEquals(1, this.repository.getChecklistInformation(tagList, null).size());
+        assertEquals(1, this.repository.getChecklistInformation(tagList, null, false).size());
     }
     
     @Test
     public void testListChecklistWithMilestone() {        
         List<String> msList  = new LinkedList<>();
         msList.add("readyForDeployment");
-        assertEquals(1, this.repository.getChecklistInformation(null, msList).size());  
+        assertEquals(1, this.repository.getChecklistInformation(null, msList, false).size());
         msList.clear();
         msList.add("nonExisting");
-        assertEquals(0, this.repository.getChecklistInformation(null, msList).size());   
+        assertEquals(0, this.repository.getChecklistInformation(null, msList, false).size());
         msList.clear();
         msList.add("deployed");
-        assertEquals(0, this.repository.getChecklistInformation(null, msList).size());   // not yet reached
+        assertEquals(0, this.repository.getChecklistInformation(null, msList, false).size());   // not yet reached
     }
     
     @Test
@@ -88,10 +88,10 @@ public class ChecklistRepositoryTest {
         List<String> msList  = new LinkedList<>();
         tagList.add("odt");
         msList.add("readyForDeployment");
-        assertEquals(1, this.repository.getChecklistInformation(tagList, msList).size());  
+        assertEquals(1, this.repository.getChecklistInformation(tagList, msList, false).size());
         tagList.clear();        
         tagList.add("cl1");        
-        assertEquals(0, this.repository.getChecklistInformation(tagList, msList).size());        
+        assertEquals(0, this.repository.getChecklistInformation(tagList, msList, false).size());
     }
     
     @Test

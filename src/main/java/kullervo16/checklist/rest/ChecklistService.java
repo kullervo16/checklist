@@ -96,7 +96,7 @@ public class ChecklistService {
             milestoneList = Arrays.asList(milestones.split(","));
         }
 
-        return checklistRepository.getChecklistInformation(tagList, milestoneList);
+        return checklistRepository.getChecklistInformation(tagList, milestoneList, true);
 
     }
 
