@@ -210,6 +210,10 @@ public enum ChecklistRepository {
 
             for (final Checklist cl : data.values()) {
 
+                if (cl.isSubchecklist()) {
+                    continue;
+                }
+
                 if (!filterList.isEmpty()) {
 
                     if (!matchesTag(filterList, cl)) {
