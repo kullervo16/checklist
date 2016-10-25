@@ -85,7 +85,7 @@ public enum ChecklistRepository {
 
 
     public List<String> getChecklistNames() {
-        return  new LinkedList<>(data.keySet());
+        return new LinkedList<>(data.keySet());
     }
 
 
@@ -237,7 +237,11 @@ public enum ChecklistRepository {
 
         // TODO: replace with collect
         for (final Entry<String, Integer> tmEntry : tagMap.entrySet()) {
-            result.add(new TagcloudEntry(tmEntry.getKey(), tmEntry.getValue()));
+
+            // Ignore the subchecklist tag
+            if (!tmEntry.getKey().equals("subchecklist")) {
+                result.add(new TagcloudEntry(tmEntry.getKey(), tmEntry.getValue()));
+            }
         }
 
         return result;
