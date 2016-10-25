@@ -388,6 +388,10 @@
             
             
         }
+        
+        function showGoBackToParent() {
+            return $scope.data.parent && $scope.data.progress === 100;
+        }
         // =================================================
         // Backend update operations
         // =================================================
@@ -681,6 +685,7 @@
         $scope.showMainBody      = showMainBody;
         $scope.showProgressBar   = showProgressBar;       
         $scope.showAnswerTextBox = showAnswerTextBox;  
+        $scope.showGoBackToParent= showGoBackToParent;
         $scope.gotoChecklist     = gotoChecklist;
         $scope.showModal         = showModal;
         $scope.hideModal         = hideModal;
