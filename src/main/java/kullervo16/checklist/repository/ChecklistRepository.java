@@ -1,14 +1,8 @@
 package kullervo16.checklist.repository;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.Checklist;
@@ -205,6 +199,7 @@ public enum ChecklistRepository {
         }
 
         final Map<String, Integer> tagMap = new HashMap<>();
+        List<String> commonTags = null;
 
         synchronized (lock) {
 
@@ -221,7 +216,36 @@ public enum ChecklistRepository {
                     }
                 }
 
-                for (final String tag : cl.getTags()) {
+                final List<String> clTags = cl.getTags();
+
+                // If it is the first checklist
+                if (commonTags == null) {
+
+                    // Copy the tags from the checklist
+                    commonTags = new ArrayList<>(clTags);
+
+                    // Remove the filter tags
+                    commonTags.removeAll(filterList);
+
+                } else {
+
+                    for ( int i = 0; i < commonTags.size(); ) {
+
+                        // If the common tag exists in the checklist
+                        if (clTags.contains(commonTags.get(i))) {
+
+                            // Go to the next common tag
+                            i++;
+
+                        } else {
+
+                            // Remove the common tag because it is not common
+                           commonTags.remove(i);
+                        }
+                    }
+                }
+
+                for (final String tag : clTags) {
 
                     if (filterList.contains(tag)) {
                         // no need to repeat the ones in the filter (this only disturbs the tagcloud)
@@ -242,9 +266,13 @@ public enum ChecklistRepository {
         // TODO: replace with collect
         for (final Entry<String, Integer> tmEntry : tagMap.entrySet()) {
 
-            // Ignore the subchecklist tag
-            if (!tmEntry.getKey().equals("subchecklist")) {
-                result.add(new TagcloudEntry(tmEntry.getKey(), tmEntry.getValue()));
+            final String tag = tmEntry.getKey();
+
+            // If the tag is not a common tag
+            // And if it is not the subchecklist tag
+            if ((commonTags == null || !commonTags.contains(tag)) && .equals("subchecklist")) {
+
+                result.add(new TagcloudEntry(tag, tmEntry.getValue()));
             }
         }
 
