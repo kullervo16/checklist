@@ -32,6 +32,8 @@ import kullervo16.checklist.repository.ActorRepository;
 import kullervo16.checklist.repository.ChecklistRepository;
 import kullervo16.checklist.repository.TemplateRepository;
 
+import static kullervo16.checklist.utils.StringUtils.nullifyAndTrim;
+
 /**
  * REST service to expose the checklists via JSON.
  *
@@ -343,32 +345,41 @@ public class ChecklistService {
     @PUT
     @Path("/{id}/tags/{tag}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Checklist addTag(@PathParam("id") final String checklistId, @PathParam("tag") final String tagCandidate) {
-
-        // see if a similar tag already exists.. if so, replace it with that tag to get more matches (and better tagclouds)
-        String tag = tagCandidate;
-
-        for (final TagcloudEntry te : checklistRepository.getTagInfo(null)) {
-            if (te.getText().equalsIgnoreCase(tagCandidate)) {
-                tag = te.getText();
-            }
-        }
+    public Response addTag(@PathParam("id") final String checklistId, @PathParam("tag") final String tagCandidate) {
 
         final Checklist cl = getChecklist(checklistId);
 
-        if (!cl.getTags().contains(tag)) {
+        // see if a similar tag already exists.. if so, replace it with that tag to get more matches (and better tagclouds)
+        String tag = nullifyAndTrim(tagCandidate);
 
-            final List<String> newTagList = new LinkedList<>(cl.getTags());
+        // Only do something if the client provided a tagCandidate
+        if (tagCandidate != null) {
 
-            newTagList.add(tag);
-            cl.setUniqueTagcombination(checklistRepository.isTagCombinationUnique(newTagList, cl.getId()));
-            cl.getTags().add(tag);
-            cl.setSpecificTagSet(true);
+            if (tagCandidate.equalsIgnoreCase("subchecklist")) {
+                throw new IllegalArgumentException(tagCandidate + " is a forbidden tag");
+            }
+
+            for (final TagcloudEntry te : checklistRepository.getTagInfo(null)) {
+
+                if (te.getText().equalsIgnoreCase(tagCandidate)) {
+                    tag = te.getText();
+                }
+            }
+
+            if (!cl.getTags().contains(tag)) {
+
+                final List<String> newTagList = new LinkedList<>(cl.getTags());
+
+                newTagList.add(tag);
+                cl.setUniqueTagcombination(checklistRepository.isTagCombinationUnique(newTagList, cl.getId()));
+                cl.getTags().add(tag);
+                cl.setSpecificTagSet(true);
+            }
+
+            ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         }
 
-        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
-
-        return cl;
+        return Response.status(Response.Status.OK).entity(cl).build();
     }
 
 
