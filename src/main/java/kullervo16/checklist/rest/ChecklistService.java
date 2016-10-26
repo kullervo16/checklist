@@ -10,14 +10,7 @@ import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -83,10 +76,13 @@ public class ChecklistService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ChecklistInfo> listChecklists(@QueryParam("tags") final String tags, @QueryParam("milestones") final String milestones) {
+    public List<ChecklistInfo> listChecklists(@QueryParam("tags") final String tags,
+                                              @QueryParam("milestones") final String milestones,
+                                              @QueryParam("showSubChecklists") @DefaultValue("false") String showSubChecklistsParam) {
 
         List<String> tagList = null;
         List<String> milestoneList = null;
+        final boolean showSubChecklists;
 
         if (tags != null) {
             tagList = Arrays.asList(tags.split(","));
@@ -96,8 +92,14 @@ public class ChecklistService {
             milestoneList = Arrays.asList(milestones.split(","));
         }
 
-        return checklistRepository.getChecklistInformation(tagList, milestoneList, true);
+        if (showSubChecklistsParam != null) {
+            showSubChecklistsParam = showSubChecklistsParam.trim();
+        }
 
+        showSubChecklists = "true".equalsIgnoreCase(showSubChecklistsParam)
+                            || "1".equalsIgnoreCase(showSubChecklistsParam);
+
+        return checklistRepository.getChecklistInformation(tagList, milestoneList, !showSubChecklists);
     }
 
 
@@ -191,7 +193,8 @@ public class ChecklistService {
 
         return cl;
     }
-    
+
+
     @PUT
     @Path("/{id}/{step}/reopen")
     @Produces(MediaType.APPLICATION_JSON)
@@ -199,21 +202,21 @@ public class ChecklistService {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
-        
+
         step.setState(State.UNKNOWN);
         step.setAnswers(new LinkedList<>());
         step.setErrors(new LinkedList<>());
         step.setSelectedOption(null);
-        
+
         // now iterate all steps to reset the ones that depend on our choice
         for (final Step walker : cl.getSteps()) {
 
-            if (walker.getCondition() != null && walker.getCondition().getStep().equals(step)) {               
+            if (walker.getCondition() != null && walker.getCondition().getStep().equals(step)) {
                 walker.setState(State.UNKNOWN);
             }
         }
-                
-        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);        
+
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
         return cl;
     }
