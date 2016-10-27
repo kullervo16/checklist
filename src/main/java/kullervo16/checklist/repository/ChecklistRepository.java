@@ -270,7 +270,7 @@ public enum ChecklistRepository {
 
             // If the tag is not a common tag
             // And if it is not the subchecklist tag
-            if ((commonTags == null || !commonTags.contains(tag)) && .equals("subchecklist")) {
+            if ((commonTags == null || !commonTags.contains(tag)) && !tag.equals("subchecklist")) {
 
                 result.add(new TagcloudEntry(tag, tmEntry.getValue()));
             }
