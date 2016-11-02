@@ -115,39 +115,51 @@
             }            
             $('#myModal').modal('show');
         }
-        
-        function uploadFile() {
-                hideModal();
-                var fd = new FormData();
-                //Take the first selected file
-                fd.append("file", $scope.files[0]);
-                
-                if(!$scope.templateName.startsWith("/")) {
-                    $scope.templateName = "/"+$scope.templateName;
-                }
-                if($scope.templateName.split("/").length !== 3) {
-                    alert("Current layout requires a single grouping folder and a template name.");
-                } else {
-                    $http.put('rest/templates'+$scope.templateName, fd, {
-                        withCredentials: true,
-                        headers: {'Content-Type': undefined },
-                        transformRequest: angular.identity
-                    }).success( function (data,status,headers,config) {
-                                    $scope.uploadValidationData = data;   
-                                    if(data.length > 0) {                                    
-                                        showModal();
-                                    } else {
-                                        hideModal();
-                                        init();
-                                    }
-                                }
-                              ).error( function(data,status,headers,config) {
-                                        console.log("Error uploading file") 
-                                    });
-                }
 
-            };
-            
+        function uploadFile() {
+
+            if ($scope.files == null || $scope.files.length == 0) {
+                alert("You have to select a file !");
+                return;
+            }
+
+            if ($scope.templateName == null || $scope.templateName.trim().length == 0) {
+                alert("You have to give an ID !\nExample: /directory/template_name");
+                return;
+            }
+
+            var fd = new FormData();
+            //Take the first selected file
+            fd.append("file", $scope.files[0]);
+
+            if (!$scope.templateName.startsWith("/")) {
+                $scope.templateName = "/" + $scope.templateName;
+            }
+
+            if ($scope.templateName.split("/").length !== 3) {
+                alert("Current layout requires a single grouping folder and a template name.\nExample: /directory/template_name");
+                return;
+            }
+
+            hideModal();
+            $http.put('rest/templates' + $scope.templateName, fd, {
+                withCredentials: true,
+                headers: {'Content-Type': undefined},
+                transformRequest: angular.identity
+            }).success(function (data, status, headers, config) {
+                    $scope.uploadValidationData = data;
+                    if (data.length > 0) {
+                        showModal();
+                    } else {
+                        hideModal();
+                        init();
+                    }
+                }
+            ).error(function (data, status, headers, config) {
+                console.log("Error uploading file")
+            });
+        }
+
         function getClassForStep(step) {
             if(step.successRate === 100) {
                 return "success";
