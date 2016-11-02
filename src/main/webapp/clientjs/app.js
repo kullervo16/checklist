@@ -593,6 +593,9 @@
             }
             $http.get(url)
                 .success(function (data,status,headers,config) {
+                    if( data.length == 1) {
+                        window.open("checklist.html?id=" + data[0].uuid, "_self");
+                    }
                     $scope.rawchecklists = data;  
                     toggleClosedFilter($scope.hideClosedChecklists, false);
                 }).error(function (data,status,headers,config) {
