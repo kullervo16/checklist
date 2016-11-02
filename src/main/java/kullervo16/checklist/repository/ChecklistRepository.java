@@ -92,7 +92,9 @@ public enum ChecklistRepository {
     /**
      * This method creates a new checklist from an existing template.
      *
+     * @param templateId
      * @param template
+     * @param parent
      * @return a UUID
      */
     public String createFromTemplate(final String templateId, final Template template, final String parent) {
@@ -113,6 +115,7 @@ public enum ChecklistRepository {
 
         synchronized (lock) {
 
+            // TODO: delete result ignored
             subfolder.mkdirs();
 
             final Checklist checklist = new Checklist(uuid, template, new File(subfolder, uuid), parentCL);
@@ -129,7 +132,7 @@ public enum ChecklistRepository {
     }
 
 
-    public List<ChecklistInfo> getChecklistInformation(final List<String> tags, final List<String> milestones, boolean hideSubchecklists) {
+    public List<ChecklistInfo> getChecklistInformation(final List<String> tags, final List<String> milestones, final boolean hideSubchecklists) {
 
         final List<ChecklistInfo> result = new LinkedList<>();
 
@@ -181,7 +184,7 @@ public enum ChecklistRepository {
 
 
     /**
-     * Get information about the tags on the checklists
+     * Get information about the tags on the checklists.
      *
      * @param filter If specified, only return info from checklists that contain all tags specified in this comma separated list
      * @return
@@ -244,7 +247,7 @@ public enum ChecklistRepository {
                 for (final String tag : clTags) {
 
                     if (filterList.contains(tag)) {
-                        // no need to repeat the ones in the filter (this only disturbs the tagcloud)
+                        // no need to repeat the ones in the filter (this only disturbs the tags cloud)
                         continue;
                     }
 
@@ -265,7 +268,7 @@ public enum ChecklistRepository {
             final String tag = tmEntry.getKey();
 
             // If the tag is not a common tag
-            // And if it is not the subchecklist tag
+            // And if it is not the sub-checklist tag
             if ((commonTags == null || !commonTags.contains(tag)) && !tag.equals("subchecklist")) {
 
                 result.add(new TagcloudEntry(tag, tmEntry.getValue()));
@@ -276,7 +279,7 @@ public enum ChecklistRepository {
     }
 
 
-    private boolean matchesTag(final List<String> filterList, final Checklist cl) {
+    private static boolean matchesTag(final List<String> filterList, final Checklist cl) {
 
         if (filterList == null || filterList.isEmpty()) {
             return true;
@@ -295,7 +298,7 @@ public enum ChecklistRepository {
     }
 
 
-    private boolean matchesMilestone(final List<String> filterList, final Checklist cl) {
+    private static boolean matchesMilestone(final List<String> filterList, final Checklist cl) {
 
         if (filterList == null || filterList.isEmpty()) {
             return true;
@@ -336,7 +339,7 @@ public enum ChecklistRepository {
                 for (final Milestone ms : cl.getMilestones()) {
 
                     if (filterList.contains(ms.getName())) {
-                        // no need to repeat the ones in the filter (this only disturbs the tagcloud)
+                        // no need to repeat the ones in the filter (this only disturbs the tags cloud)
                         continue;
                     }
 
@@ -422,7 +425,7 @@ public enum ChecklistRepository {
 
 
     /**
-     * Checks if a tag combination is unique
+     * Checks if a tag combination is unique.
      *
      * @param tags
      * @param id   the id of the checklist in question (is not taken into account during comparison)
