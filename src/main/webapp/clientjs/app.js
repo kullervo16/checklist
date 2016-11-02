@@ -632,7 +632,7 @@
         }
         
         function openOverview() {
-            window.open('checklistOverview.html#tags='+$scope.tagSelection+"&milestones="+$scope.milestoneSelection);
+            window.open('checklistOverview.html#tags='+$scope.tagSelection+"&milestones="+$scope.milestoneSelection,'_self');
         }
         
         function addTagToSelection(tag) {
@@ -647,7 +647,10 @@
         
         function createTagCloud(path) {                   
             $http.get(path)
-                .success(function (data,status,headers,config) {  
+                .success(function (data,status,headers,config) {
+                    if(data.length == 0) {
+                        openOverview();
+                    }
                     $('#tags').empty();
                     $('#tags').jQCloud('destroy');
                     for(var i=0;i<data.length;i++) {
