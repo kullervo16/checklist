@@ -5,11 +5,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import kullervo16.checklist.messages.PersistenceRequest;
-import kullervo16.checklist.model.Checklist;
-import kullervo16.checklist.model.ChecklistInfo;
-import kullervo16.checklist.model.Milestone;
-import kullervo16.checklist.model.TagcloudEntry;
-import kullervo16.checklist.model.Template;
+import kullervo16.checklist.model.*;
 import org.jboss.resteasy.logging.Logger;
 
 /**
@@ -364,14 +360,44 @@ public enum ChecklistRepository {
     }
 
 
-    public void deleteChecklist(final Checklist cl) {
+    /**
+     * Delete a checklist and remove the link from the parent checklist if any.
+     *
+     * @param cl The checklist to delete.
+     * @return The ID of the parent checklist (can be used to display the parent checklist).
+     */
+    public String deleteChecklist(final Checklist cl) {
 
-        data.remove(cl.getId());
+        final String clId = cl.getId();
+        final String parentClId = cl.getParent();
+
+        if (parentClId != null) {
+
+            final Checklist parentCl = data.get(parentClId);
+
+            // This if statement is only there to avoid any delete conflicts
+            if (parentCl != null) {
+
+                for (final Step stepWalker : parentCl.getSteps()) {
+
+                    if (clId.equals(stepWalker.getChild())) {
+                        stepWalker.setChild(null);
+                        stepWalker.setState(State.UNKNOWN);
+                        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(clId), null);
+                        break;
+                    }
+                }
+            }
+        }
+
+        data.remove(clId);
 
         if (cl.getPersister().getFile() != null) {
             // TODO: delete result ignored
             cl.getPersister().getFile().delete();
         }
+
+        return parentClId;
     }
 
 
