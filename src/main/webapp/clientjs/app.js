@@ -527,7 +527,7 @@
         }
         
         function deleteChecklist() {
-            if(confirm("Are you sure you want to delete this checklist? This operation cannot be undone...")) {
+            if(confirm("Are you sure you want to delete this checklist and its sub-checklists? This operation cannot be undone...")) {
                 $http.delete('rest/checklists/'+$location.search().id)
                     .success(function (data,status,headers,config) {
                         $window.location.href = './checklistOverview.html'     

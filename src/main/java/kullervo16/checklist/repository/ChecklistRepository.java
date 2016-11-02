@@ -225,7 +225,7 @@ public enum ChecklistRepository {
 
                 } else {
 
-                    for ( int i = 0; i < commonTags.size(); ) {
+                    for (int i = 0; i < commonTags.size(); ) {
 
                         // If the common tag exists in the checklist
                         if (clTags.contains(commonTags.get(i))) {
@@ -236,7 +236,7 @@ public enum ChecklistRepository {
                         } else {
 
                             // Remove the common tag because it is not common
-                           commonTags.remove(i);
+                            commonTags.remove(i);
                         }
                     }
                 }
@@ -364,12 +364,31 @@ public enum ChecklistRepository {
      * Delete a checklist and remove the link from the parent checklist if any.
      *
      * @param cl The checklist to delete.
-     * @return The ID of the parent checklist (can be used to display the parent checklist).
      */
-    public String deleteChecklist(final Checklist cl) {
+    public void deleteChecklist(final Checklist cl) {
+
+        if (cl == null) {
+            return;
+        }
 
         final String clId = cl.getId();
         final String parentClId = cl.getParent();
+
+        // Delete the children checklists if any
+        for (final Step stepWalker : cl.getSteps()) {
+
+            final String childClId = stepWalker.getChild();
+
+            if (childClId != null) {
+
+                final Checklist childCl = data.get(childClId);
+
+                // Set the parent to null to avoid the deleteChecklist call to update this checklist
+                childCl.setParent(null);
+
+                deleteChecklist(childCl);
+            }
+        }
 
         // If there is a parent checklist, remove the link to this deleted checklist
         if (parentClId != null) {
@@ -391,14 +410,14 @@ public enum ChecklistRepository {
             }
         }
 
-        data.remove(clId);
+        synchronized (lock) {
+            data.remove(clId);
+        }
 
         if (cl.getPersister().getFile() != null) {
             // TODO: delete result ignored
             cl.getPersister().getFile().delete();
         }
-
-        return parentClId;
     }
 
 
