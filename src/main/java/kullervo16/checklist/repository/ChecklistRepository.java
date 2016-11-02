@@ -371,6 +371,7 @@ public enum ChecklistRepository {
         final String clId = cl.getId();
         final String parentClId = cl.getParent();
 
+        // If there is a parent checklist, remove the link to this deleted checklist
         if (parentClId != null) {
 
             final Checklist parentCl = data.get(parentClId);
