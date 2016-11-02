@@ -18,6 +18,7 @@
         <version>2.6</version>
         <configuration>
           <attachClasses>true</attachClasses>
+          <warName>${project.artifactId}</warName>
         </configuration>
       </plugin>
       <plugin>
@@ -65,6 +66,29 @@
                     </limits>
                 </rule>-->
               </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-war-to-deploymnents</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}</directory>
+                  <includes>
+                    <include>*.war</include>
+                  </includes>
+                </resource>
+              </resources>
+              <outputDirectory>${project.basedir}/.deployments</outputDirectory>
             </configuration>
           </execution>
         </executions>
