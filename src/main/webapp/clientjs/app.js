@@ -189,8 +189,13 @@
                             console.log('Error getting rest/templates');
                         });                  
                 }).error(function (data,status,headers,config) {
-                    console.log('Error creating new checklist');
-                }); 
+                   if( status === 409) {
+                       alert(data.description);
+                       console.log(data.description);
+                   }else {
+                       console.log('Unexpected error in deleteTemplate(id) !');
+                   }
+               });
             }              
         }
         

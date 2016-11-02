@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import kullervo16.checklist.exceptions.TemplateReferencedByAnotherTemplateException;
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.ErrorMessage;
 import kullervo16.checklist.model.Step;
@@ -90,7 +91,7 @@ public class TemplateService {
     @DELETE
     @Path("/{folder}/{name}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteTemplate(@PathParam("folder") final String folder, @PathParam("name") final String name) throws URISyntaxException {
+    public String deleteTemplate(@PathParam("folder") final String folder, @PathParam("name") final String name) throws URISyntaxException, TemplateReferencedByAnotherTemplateException {
 
         final Template template = templateRepository.getTemplate(folder, name);
 

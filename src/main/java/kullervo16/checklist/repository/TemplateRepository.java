@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import kullervo16.checklist.exceptions.TemplateReferencedByAnotherTemplateException;
 import kullervo16.checklist.model.ErrorMessage;
+import kullervo16.checklist.model.Step;
 import kullervo16.checklist.model.Template;
 import kullervo16.checklist.model.TemplateInfo;
 import kullervo16.checklist.model.persist.TemplatePersister;
@@ -210,13 +212,27 @@ public enum TemplateRepository {
     }
 
 
-    public void deleteTemplate(final Template t) {
+    public void deleteTemplate(final Template template) throws TemplateReferencedByAnotherTemplateException {
 
-        data.remove(t.getId());
+        for (final Template templateWalker : data.values()) {
 
-        if (t.getPersister().getFile() != null) {
+            if (templateWalker != template) {
+
+                for (final Step stepWalker : templateWalker.getSteps()) {
+
+                    if (template.getId().equalsIgnoreCase(stepWalker.getSubChecklist())) {
+
+                        throw new TemplateReferencedByAnotherTemplateException(template.getId(), stepWalker.getSubChecklist());
+                    }
+                }
+            }
+        }
+
+        data.remove(template.getId());
+
+        if (template.getPersister().getFile() != null) {
             // TODO: the result of the delete call is ignored
-            t.getPersister().getFile().delete();
+            template.getPersister().getFile().delete();
         }
     }
 }
