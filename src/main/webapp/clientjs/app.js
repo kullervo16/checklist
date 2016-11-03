@@ -587,16 +587,38 @@
         function getChecklists() {
             var hash=window.location.hash;  
             var url = 'rest/checklists'; // default, get all recent checklists
+            // Tags form the tags hash param
+            var filteredTags;
             if(hash !== '') {
+                var hashParams=hash.substring(1);
                 // add a filter, either on tag or on milestone
-                url += '?'+hash.substring(1); // strip the #
+                url += '?' + hashParams; // strip the #
+                var tagsParamPos = hashParams.indexOf("tags=");
+                if (tagsParamPos != -1) {
+                    tagsParamPos += 5;
+                    var tagsParamEndPos = hashParams.indexOf("&", tagsParamPos);
+                    filteredTags = hashParams.substring(tagsParamPos, tagsParamEndPos == -1 ? hashParams.length : tagsParamEndPos).split(",");
+                }
             }
             $http.get(url)
                 .success(function (data,status,headers,config) {
                     if( data.length == 1) {
                         window.open("checklist.html?id=" + data[0].uuid, "_self");
                     }
-                    $scope.rawchecklists = data;  
+                    // Remove the filtered tags from each checklist
+                    if (filteredTags != null) {
+                        for (var i = 0; i < data.length; i++) {
+                            var tags = data[i].tags;
+                            for (var j = 0; j < tags.length;) {
+                                if (filteredTags.includes(tags[j])) {
+                                    tags.splice(j, 1);
+                                } else {
+                                    j++;
+                                }
+                            }
+                        }
+                    }
+                    $scope.rawchecklists = data;
                     toggleClosedFilter($scope.hideClosedChecklists, false);
                 }).error(function (data,status,headers,config) {
                     console.log('Error listing checklists');
