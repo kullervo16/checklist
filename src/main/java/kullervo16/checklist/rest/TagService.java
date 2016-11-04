@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import kullervo16.checklist.model.Tagcloud;
 import kullervo16.checklist.model.TagcloudEntry;
 import kullervo16.checklist.repository.ChecklistRepository;
 
@@ -27,7 +28,7 @@ public class TagService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<TagcloudEntry> listTags(@QueryParam("filter") final String filter) {
+    public Tagcloud listTags(@QueryParam("filter") final String filter) {
         return checklistRepository.getTagInfo(filter);
 
     }

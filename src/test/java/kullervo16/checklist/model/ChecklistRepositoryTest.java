@@ -5,12 +5,9 @@
  */
 package kullervo16.checklist.model;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.*;
+
 import kullervo16.checklist.repository.ChecklistRepository;
-import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -130,7 +127,7 @@ public class ChecklistRepositoryTest {
     
     @Test
     public void testGetTagInfo() {
-        List<TagcloudEntry> tagInfo = this.repository.getTagInfo(null);
+        List<TagcloudEntry> tagInfo = new ArrayList<>(this.repository.getTagInfo(null).getEntries());
         assertEquals(2, tagInfo.size());
         assertEquals("cl1", tagInfo.get(0).getText());
         assertEquals(1, tagInfo.get(0).getWeight());
@@ -138,14 +135,14 @@ public class ChecklistRepositoryTest {
         assertEquals(2, tagInfo.get(1).getWeight());
 
         // now with a filter
-        tagInfo = this.repository.getTagInfo("openshift");
+        tagInfo = new ArrayList<>(this.repository.getTagInfo("openshift").getEntries());
         assertEquals(2, tagInfo.size());
         assertEquals("cl1", tagInfo.get(0).getText());
         assertEquals(1, tagInfo.get(0).getWeight());
         assertEquals("odt", tagInfo.get(1).getText());
         assertEquals(2, tagInfo.get(1).getWeight());
 
-        tagInfo = this.repository.getTagInfo("cl1");
+        tagInfo = new ArrayList<>(this.repository.getTagInfo("cl1").getEntries());
         assertEquals(0, tagInfo.size());
 
     }

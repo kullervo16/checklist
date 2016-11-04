@@ -666,29 +666,45 @@
             } else {
                 $scope.tagSelection = $scope.tagSelection+","+tag.innerText;
             }
-            $scope.$apply();
             createTagCloud('rest/tags?filter='+$scope.tagSelection);
         }
-        
-        function createTagCloud(path) {                   
+
+        function createTagCloud(path) {
             $http.get(path)
-                .success(function (data,status,headers,config) {
-                    if(data.length == 0) {
+                .success(function (data, status, headers, config) {
+                    $scope.tagSelection = $scope.arrayToComaSeparatedString(data.selection);
+                    var nbEntries = data.entries.length;
+                    if (nbEntries == 0) {
                         openOverview();
                     }
                     $('#tags').empty();
                     $('#tags').jQCloud('destroy');
-                    for(var i=0;i<data.length;i++) {
-                        data[i]['handlers'] = {};
-                        data[i]['handlers']['click'] =  function() {
-                                                            angular.element('#tags').scope().addTagToSelection(this)                          
+                    for (var i = 0; i < nbEntries; i++) {
+                        var entriesWalker = data.entries[i];
+                        entriesWalker['handlers'] = {};
+                        entriesWalker['handlers']['click'] = function () {
+                            angular.element('#tags').scope().addTagToSelection(this)
                         };
                     }
-                    $('#tags').jQCloud(data);            
-                }).error(function (data,status,headers,config) {
-                    console.log('Error getting rest/tags');
-                });
+                    $('#tags').jQCloud(data.entries);
+                }).error(function (data, status, headers, config) {
+                console.log('Error getting rest/tags');
+            });
         }
+
+        function arrayToComaSeparatedString(array) {
+            var string = "";
+            var separator = "";
+            if( array != null) {
+                var arrayLength = array.length;
+                for( var i = 0; i < arrayLength; i++) {
+                    string += separator + array[i];
+                    separator = ",";
+                }
+            }
+            return string;
+        }
+
         function addMileStoneToSelection(milestone) {
             if($scope.milestoneSelection === '') {
                 $scope.milestoneSelection = milestone.innerText;
@@ -793,7 +809,9 @@
         $scope.addTagToSelection = addTagToSelection;
         $scope.addMileStoneToSelection = addMileStoneToSelection;
         
-        $scope.toggleRefresh = toggleRefresh;     
+        $scope.toggleRefresh = toggleRefresh;
+
+        $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
     }
     );
 

@@ -189,14 +189,9 @@ public enum ChecklistRepository {
      * @param filter If specified, only return info from checklists that contain all tags specified in this comma separated list
      * @return
      */
-    public List<TagcloudEntry> getTagInfo(final String filter) {
+    public Tagcloud getTagInfo(final String filter) {
 
-        List<String> filterList = new LinkedList<>();
-
-        if (filter != null) {
-            filterList = Arrays.asList(filter.split(","));
-        }
-
+        final Set<String> filterSet = filter == null ? new HashSet<>(5) : new HashSet<>(Arrays.asList(filter.split(",")));
         final Map<String, Integer> tagMap = new HashMap<>();
         List<String> commonTags = null;
 
@@ -208,9 +203,9 @@ public enum ChecklistRepository {
                     continue;
                 }
 
-                if (!filterList.isEmpty()) {
+                if (filter != null && !filterSet.isEmpty()) {
 
-                    if (!matchesTag(filterList, cl)) {
+                    if (!matchesTag(filterSet, cl)) {
                         continue;
                     }
                 }
@@ -224,7 +219,7 @@ public enum ChecklistRepository {
                     commonTags = new ArrayList<>(clTags);
 
                     // Remove the filter tags
-                    commonTags.removeAll(filterList);
+                    commonTags.removeAll(filterSet);
 
                 } else {
 
@@ -246,7 +241,7 @@ public enum ChecklistRepository {
 
                 for (final String tag : clTags) {
 
-                    if (filterList.contains(tag)) {
+                    if (filterSet.contains(tag)) {
                         // no need to repeat the ones in the filter (this only disturbs the tags cloud)
                         continue;
                     }
@@ -275,19 +270,27 @@ public enum ChecklistRepository {
             }
         }
 
-        return result;
+        if (commonTags != null) {
+            filterSet.addAll(commonTags);
+        }
+
+        final List<String> newFilters = new ArrayList<>(filterSet);
+
+        newFilters.sort(String::compareToIgnoreCase);
+
+        return new Tagcloud(result, newFilters);
     }
 
 
-    private static boolean matchesTag(final List<String> filterList, final Checklist cl) {
+    private static boolean matchesTag(final Collection<String> filterSet, final Checklist cl) {
 
-        if (filterList == null || filterList.isEmpty()) {
+        if (filterSet == null || filterSet.isEmpty()) {
             return true;
         }
 
         boolean match = true;
 
-        for (final String tag : filterList) {
+        for (final String tag : filterSet) {
 
             if (!tag.equals("")) {
                 match &= cl.getTags().contains(tag);

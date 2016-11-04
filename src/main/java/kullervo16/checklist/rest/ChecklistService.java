@@ -362,7 +362,7 @@ public class ChecklistService {
                 throw new IllegalArgumentException(tagCandidate + " is a forbidden tag");
             }
 
-            for (final TagcloudEntry te : checklistRepository.getTagInfo(null)) {
+            for (final TagcloudEntry te : checklistRepository.getTagInfo(null).getEntries()) {
 
                 if (te.getText().equalsIgnoreCase(tagCandidate)) {
                     tag = te.getText();
