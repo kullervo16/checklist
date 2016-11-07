@@ -15,12 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import kullervo16.checklist.messages.PersistenceRequest;
-import kullervo16.checklist.model.State;
-import kullervo16.checklist.model.Checklist;
-import kullervo16.checklist.model.ChecklistInfo;
-import kullervo16.checklist.model.Step;
-import kullervo16.checklist.model.TagcloudEntry;
-import kullervo16.checklist.model.Template;
+import kullervo16.checklist.model.*;
 import kullervo16.checklist.repository.ActorRepository;
 import kullervo16.checklist.repository.ChecklistRepository;
 import kullervo16.checklist.repository.TemplateRepository;
@@ -215,6 +210,15 @@ public class ChecklistService {
 
             if (walker.getCondition() != null && walker.getCondition().getStep().equals(step)) {
                 walker.setState(State.UNKNOWN);
+            }
+        }
+
+        // Remove the milestone if any
+        {
+            final Milestone milestone = step.getMilestone();
+
+            if (milestone != null) {
+                milestone.setReached(false);
             }
         }
 
