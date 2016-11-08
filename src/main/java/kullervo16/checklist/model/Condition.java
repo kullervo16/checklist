@@ -22,7 +22,10 @@ public class Condition {
 
 
     public boolean isConditionUnreachable() {
-        return this.step.getSelectedOption() != null && !this.selectedOption.equals(this.step.getSelectedOption());
+        return this.step.getSelectedOption() != null
+               && (this.step.getSelectedOption() == null
+                   || this.step.getSelectedOption().isEmpty()
+                   || !this.selectedOption.equals(this.step.getSelectedOption()));
     }
 
 

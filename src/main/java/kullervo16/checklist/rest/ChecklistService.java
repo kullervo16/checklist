@@ -209,7 +209,7 @@ public class ChecklistService {
         for (final Step walker : cl.getSteps()) {
 
             if (walker.getCondition() != null && walker.getCondition().getStep().equals(step)) {
-                walker.setState(State.UNKNOWN);
+                walker.setState(State.NOT_APPLICABLE);
             }
         }
 
@@ -448,9 +448,9 @@ public class ChecklistService {
 
             if (walker.getCondition() != null) {
 
-                if (walker.getCondition().isConditionUnreachable()) {
-                    // this condition has become unreachable.. so set the state to not-applicable.
-                    walker.setState(State.NOT_APPLICABLE);
+                if (!walker.getCondition().isConditionUnreachable()) {
+                    // this condition has become reachable.. so set the state to UNKNOWN.
+                    walker.setState(State.UNKNOWN);
                 }
             }
         }

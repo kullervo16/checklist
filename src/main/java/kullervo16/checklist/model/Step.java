@@ -96,6 +96,7 @@ public class Step {
                 }
             }
 
+            state = State.NOT_APPLICABLE;
             condition = new Condition(selectionPoint, step.getCondition().getSelectedOption());
         }
     }
