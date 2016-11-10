@@ -18,7 +18,6 @@
         <version>2.6</version>
         <configuration>
           <attachClasses>true</attachClasses>
-          <warName>${project.artifactId}</warName>
         </configuration>
       </plugin>
       <plugin>
@@ -71,25 +70,20 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
         <executions>
           <execution>
             <id>copy-war-to-deploymnents</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
             <phase>install</phase>
             <configuration>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}</directory>
-                  <includes>
-                    <include>*.war</include>
-                  </includes>
-                </resource>
-              </resources>
-              <outputDirectory>${project.basedir}/.deployments</outputDirectory>
+              <target name="copy-war-to-deploymnents">
+                <copy file="${project.build.directory}/${project.build.finalName}.war" tofile="${project.basedir}/.deployments/${project.artifactId}.war"/>
+              </target>
             </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
