@@ -209,13 +209,53 @@ public class TemplatePersister {
 
                         checkStep(stepMap, pos++, result);
 
-                        if (stepMap.containsKey("id")) {
+                        final String stepId = (String) stepMap.get("id");
 
-                            if (currentIdList.contains(stepMap.get("id"))) {
-                                result.add(new ErrorMessage("Duplicate id : " + stepMap.get("id"), ErrorMessage.Severity.MAJOR, "You used the same id twice in the template"));
+                        if (stepId != null) {
+
+                            if (currentIdList.contains(stepId)) {
+                                result.add(new ErrorMessage("Duplicate id : " + stepId, ErrorMessage.Severity.MAJOR, "You used the same id twice in the template"));
                             } else {
-                                currentIdList.add(stepMap.get("id").toString());
+                                currentIdList.add(stepId.toString());
                             }
+
+                            // Check the condition if any
+                            {
+                                final Object conditionsObject = stepMap.get("condition");
+
+                                if (conditionsObject != null) {
+
+                                    if ((conditionsObject instanceof List)) {
+
+                                        final List<Map<String, String>> conditions = (List<Map<String, String>>) conditionsObject;
+
+                                        if (!conditions.isEmpty()) {
+
+                                            final Map<String, String> condition = conditions.get(0);
+
+                                            if (condition != null) {
+
+                                                final String selectionPoint = condition.get("selectionPoint");
+
+                                                if (selectionPoint == null) {
+
+                                                    result.add(new ErrorMessage("The step " + stepId + " condition must depend on a step", ErrorMessage.Severity.MAJOR, "The property \"selectionPoint\" must be defined for the condition."));
+
+                                                } else {
+
+                                                    if (!currentIdList.contains(selectionPoint)) {
+                                                        result.add(new ErrorMessage("The step " + stepId + " must be defined after the " + selectionPoint + "  step", ErrorMessage.Severity.MAJOR, "A dependent step can never be defined before the step it depends on."));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        result.add(new ErrorMessage("The step " + stepId + " condition must depend on a step", ErrorMessage.Severity.MAJOR, "The property \"selectionPoint\" must be defined for the condition."));
+                                    }
+                                }
+                            }
+                        } else {
+                            result.add(new ErrorMessage("Each step should have an ID", ErrorMessage.Severity.MAJOR, "You have to define the \"id\" property for each step."));
                         }
                     }
                 }
