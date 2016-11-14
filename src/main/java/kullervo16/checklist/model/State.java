@@ -11,23 +11,35 @@ package kullervo16.checklist.model;
  * @author jeve
  */
 public enum State implements Comparable<State> {
-    UNKNOWN(0),
-    NOT_APPLICABLE(1),
-    OK(2),
-    ON_HOLD(3),
-    EXECUTION_FAILED(4),
-    EXECUTED(5),
-    CHECK_FAILED(6),
-    EXECUTION_FAILED_NO_COMMENT(7),
-    CHECK_FAILED_NO_COMMENT(8),
-    CLOSED(9);
+    NOT_YET_APPLICABLE(false, false),
+    UNKNOWN(false, false),
+    NOT_APPLICABLE(true, false),
+    OK(true, true),
+    ON_HOLD(false, false),
+    EXECUTED(false, false),
+    EXECUTION_FAILED_NO_COMMENT(false, true),
+    EXECUTION_FAILED(true, true),
+    CHECK_FAILED_NO_COMMENT(false, true),
+    CHECK_FAILED(true, true),
+    CLOSED(true, false);
 
-    // TODO: this seems not to be used
-    private final int value;
+    private final boolean complete;
+
+    private final boolean reopenable;
 
 
-    State(final int value) {
-        this.value = value;
+    State(final boolean complete, final boolean reopenable) {
+        this.complete = complete;
+        this.reopenable = reopenable;
     }
 
+
+    public boolean isComplete() {
+        return this.complete;
+    }
+
+
+    public boolean isReopenable() {
+        return this.reopenable;
+    }
 }

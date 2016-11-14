@@ -59,7 +59,7 @@ public class ChecklistService {
             for (final Step step : parent.getSteps()) {
 
                 if (step.getId().equals(stepName)) {
-                    step.setState(State.ON_HOLD);
+                    parent.updateStepState(step, State.ON_HOLD);
                     step.setChild(childUUID);
                 }
             }
@@ -130,15 +130,8 @@ public class ChecklistService {
 
         final Checklist cl = checklistRepository.getChecklist(id);
 
-        for (final Step step : cl.getSteps()) {
-
-            if (step.getState().equals(State.UNKNOWN) || step.getState().equals(State.ON_HOLD)) {
-                step.setState(State.CLOSED);
-            }
-        }
-
+        cl.close();
         verifyCompleteChecklist(cl);
-
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(id), null);
 
         return Response.ok().build();
@@ -157,15 +150,14 @@ public class ChecklistService {
 
             if (step.getChecks().isEmpty()) {
                 // border case : no checks.. so immediately ok
-                step.setState(State.OK);
-                verifyCompleteChecklist(cl);
+                completeStep(cl, step);
             } else {
                 // normal case : checks... only mark executed, the check phase will start
-                step.setState(State.EXECUTED);
+                cl.updateStepState(step, State.EXECUTED);
             }
 
         } else {
-            step.setState(State.EXECUTION_FAILED_NO_COMMENT);
+            cl.updateStepState(step, State.EXECUTION_FAILED_NO_COMMENT);
         }
 
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
@@ -182,9 +174,9 @@ public class ChecklistService {
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
 
+        // revalidate only allowed when in check failed... otherwise we ignore the request
         if (State.CHECK_FAILED.equals(step.getState())) {
-            // revalidate only allowed when in check failed... otherwise we ignore the request
-            step.setState(State.EXECUTED);
+            cl.updateStepState(step, State.EXECUTED);
             ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         }
 
@@ -200,18 +192,10 @@ public class ChecklistService {
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
 
-        step.setState(State.UNKNOWN);
+        cl.updateStepState(step, State.UNKNOWN);
         step.setAnswers(new LinkedList<>());
         step.setErrors(new LinkedList<>());
         step.setSelectedOption(null);
-
-        // now iterate all steps to reset the ones that depend on our choice
-        for (final Step walker : cl.getSteps()) {
-
-            if (walker.getCondition() != null && walker.getCondition().getStep().equals(step)) {
-                walker.setState(State.NOT_APPLICABLE);
-            }
-        }
 
         // Remove the milestone if any
         {
@@ -237,17 +221,9 @@ public class ChecklistService {
         final Step step = getStep(cl, stepId);
 
         if (result) {
-
-            step.setState(State.OK);
-
-            if (step.getMilestone() != null) {
-                step.getMilestone().setReached(true);
-            }
-
-            verifyCompleteChecklist(cl);
-
+            completeStep(cl, step);
         } else {
-            step.setState(State.CHECK_FAILED_NO_COMMENT);
+            cl.updateStepState(step, State.CHECK_FAILED_NO_COMMENT);
         }
 
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
@@ -290,11 +266,11 @@ public class ChecklistService {
         switch (step.getState()) {
 
             case EXECUTION_FAILED_NO_COMMENT:
-                step.setState(State.EXECUTION_FAILED);
+                cl.updateStepState(step, State.EXECUTION_FAILED);
                 break;
 
             case CHECK_FAILED_NO_COMMENT:
-                step.setState(State.CHECK_FAILED);
+                cl.updateStepState(step, State.CHECK_FAILED);
                 break;
 
             default:
@@ -323,14 +299,9 @@ public class ChecklistService {
         if (step.getQuestion() != null) {
 
             if (!step.getChecks().isEmpty()) {
-                step.setState(State.EXECUTED);
+                cl.updateStepState(step, State.EXECUTED);
             } else {
-                // no checks, directly to OK
-                step.setState(State.OK);
-                verifyCompleteChecklist(cl);
-                if (step.getMilestone() != null) {
-                    step.getMilestone().setReached(true);
-                }
+                completeStep(cl, step);
             }
 
             try {
@@ -437,26 +408,7 @@ public class ChecklistService {
         }
 
         step.setSelectedOption(choice);
-        step.setState(State.OK);
-
-        if (step.getMilestone() != null) {
-            step.getMilestone().setReached(true);
-        }
-
-        // now iterate all steps to update the ones that depend on our choice
-        for (final Step walker : cl.getSteps()) {
-
-            if (walker.getCondition() != null) {
-
-                if (!walker.getCondition().isConditionUnreachable()) {
-                    // this condition has become reachable.. so set the state to UNKNOWN.
-                    walker.setState(State.UNKNOWN);
-                }
-            }
-        }
-
-        // can be that the last step in a checklist is not executed... so verify as well
-        verifyCompleteChecklist(cl);
+        completeStep(cl, step);
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
         return cl;
@@ -484,5 +436,15 @@ public class ChecklistService {
         }
 
         throw new IllegalArgumentException("No step found with id " + stepId);
+    }
+
+
+    /**
+     *
+     */
+    private void completeStep(final Checklist cl, final Step step) {
+
+        cl.updateStepState(step, State.OK);
+        verifyCompleteChecklist(cl);
     }
 }

@@ -145,7 +145,7 @@ public class Checklist extends Template {
      */
     public int getProgress() {
 
-        final List<? extends Step> stepWalker = getSteps();
+        final List<? extends Step> stepWalker = steps;
         int totalSteps = 0;
         int stepsToDo = 0;
 
@@ -221,6 +221,101 @@ public class Checklist extends Template {
 
 
     public boolean isSubchecklist() {
-        return parent != null;
+        return this.parent != null;
+    }
+
+
+    public void updateStepState(final Step step, final State state) {
+
+        final State previousState = step.state;
+        final Condition condition = step.getCondition();
+
+        step.setState(state);
+
+        if (state == State.OK) {
+
+            if (step.getMilestone() != null) {
+                step.getMilestone().setReached(true);
+            }
+        }
+
+        // If the state completion has changed
+        if (previousState == null || previousState.isComplete() != state.isComplete()) {
+
+            // Update dependent steps
+            for (int stepPos = this.steps.size() - 1; stepPos >= 0; stepPos--) {
+
+                final Step stepWalker = this.steps.get(stepPos);
+                final Condition stepWalkerCondition = stepWalker.getCondition();
+
+                if (stepWalkerCondition != null && stepWalkerCondition.getStep() == step) {
+
+                    if (stepWalkerCondition.isConditionReachable()) {
+                        updateStepState(stepWalker, State.UNKNOWN);
+                    } else {
+                        updateStepState(stepWalker, stepWalkerCondition.getSelectedOption() == null ? State.NOT_YET_APPLICABLE : State.NOT_APPLICABLE);
+                    }
+                }
+
+                if (stepWalker == step) {
+                    break;
+                }
+            }
+
+            updateStepReopenable(step);
+
+            // Update reopenable for step this step depends on, if any
+            if (condition != null) {
+
+                updateStepReopenable(condition.getStep());
+            }
+        }
+    }
+
+
+    public void updateStepsReopenable() {
+
+        for (int i = this.steps.size() - 1; i >= 0; i--) {
+
+            updateStepReopenable(this.steps.get(i));
+        }
+    }
+
+
+    public void updateStepReopenable(final Step step) {
+
+        final State state = step.getState();
+
+        boolean reopenable = true;
+
+        if (state == null || !state.isReopenable()) {
+
+            reopenable = false;
+
+        } else {
+
+            for (final Step stepWalker : this.steps) {
+
+                if (stepWalker.dependsOn(step) && (stepWalker.isComplete() && stepWalker.getState() != State.NOT_APPLICABLE)) {
+                    reopenable = false;
+                    break;
+                }
+            }
+        }
+
+        step.setReopenable(reopenable);
+    }
+
+
+    public void close() {
+
+        for (final Step step : steps) {
+
+            if (!step.getState().isComplete() ) {
+                step.setState(State.CLOSED);
+            }
+
+            step.setReopenable(false);
+        }
     }
 }

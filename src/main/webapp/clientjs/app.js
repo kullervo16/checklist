@@ -284,6 +284,8 @@
                 return "executed";
             } else if(step.state === 'ON_HOLD') {
                 return "onHold";
+            } else if(step.state === 'NOT_YET_APPLICABLE') {
+                return "notYetApplicable";
             } else if(step.state === 'NOT_APPLICABLE') {
                 return "notApplicable";
             } else if(step.state === 'CLOSED') {
@@ -343,7 +345,7 @@
         }
         
         function showOptions(step) {
-            return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType && !(step.state === 'CLOSED');
+            return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType && !(step.state === 'CLOSED' || step.state === 'NOT_YET_APPLICABLE');
         }           
         
         function showRevalidateButton(step) {
@@ -351,22 +353,7 @@
         }
         
         function showReopenButton(step) {
-            if(step.state == 'UNKNOWN' || step.state === 'NOT_APPLICABLE' || step.state == 'ON_HOLD' || step.state === 'EXECUTED') {
-                return false;
-            }
-            // now check whether the next step is still open..            
-            for(var i=0;i< $scope.data.steps.length - 1;i++) {
-                if (step === $scope.data.steps[i]) {
-                    for(var j=i+1; j< $scope.data.steps.length;j++) {
-                        var nextStep = $scope.data.steps[j];
-                        if(nextStep.state !== 'NOT_APPLICABLE') {
-                            return nextStep.state !== 'CLOSED' && nextStep.state !== 'OK' && nextStep.state !== 'CHECK_FAILED';
-                        }
-                        // loop on to the first step that is not NOT_APPLICABLE (if any)
-                    }
-                }
-            }
-            return false;
+            return step.reopenable;
         }
         
         function showAnswerTextBox(step) {

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.Milestone;
+import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Step;
 
 /**
@@ -88,5 +89,14 @@ public class ChecklistPersister extends TemplatePersister {
                 appendEscaped(writer.append(SEPARATOR_1).append(SEPARATOR_2), answer).append('\n');
             });
         }
+    }
+
+
+    @Override
+    protected void afterRead() {
+
+        super.afterRead();
+
+        ((Checklist)template).updateStepsReopenable();
     }
 }

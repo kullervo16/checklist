@@ -90,6 +90,7 @@ public class TemplatePersister {
                 lastCheck = System.currentTimeMillis();
                 fileModifTime = file.lastModified();
                 template.setCreationTime(fileModifTime);
+                afterRead();
             } catch (final Exception ex) {
 
                 Logger.getLogger(TemplatePersister.class.getName()).log(Level.SEVERE, "Error while parsing " + file, ex);
@@ -447,6 +448,20 @@ public class TemplatePersister {
                 writer.append(SEPARATOR_1).append(SEPARATOR_2).append(option).append('\n');
             });
         }
+
+        {
+            final Condition condition = step.getCondition();
+
+            if (condition != null) {
+
+                writer.append(SEPARATOR_1).append("condition:\n");
+                writer.append(SEPARATOR_1).append(SEPARATOR_2).append("selectionPoint: ").append(condition.getStep().getId()).append('\n');
+
+                if (condition.getSelectedOption() != null) {
+                    writer.append(SEPARATOR_1).append(SEPARATOR_2).append("option: ").append(condition.getSelectedOption()).append('\n');
+                }
+            }
+        }
     }
 
 
@@ -554,5 +569,10 @@ public class TemplatePersister {
 
     public File getFile() {
         return file;
+    }
+
+
+    protected void afterRead() {
+
     }
 }

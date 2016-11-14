@@ -53,6 +53,8 @@ public class Step {
 
     private String child;
 
+    protected boolean reopenable;
+
 
     public Step() {
     }
@@ -84,6 +86,7 @@ public class Step {
         question = step.getQuestion();
         answerType = step.getAnswerType();
         child = step.getChild();
+        reopenable = step.reopenable;
 
         if (step.getCondition() != null) {
 
@@ -96,7 +99,7 @@ public class Step {
                 }
             }
 
-            state = State.NOT_APPLICABLE;
+            state = State.NOT_YET_APPLICABLE;
             condition = new Condition(selectionPoint, step.getCondition().getSelectedOption());
         }
     }
@@ -214,9 +217,10 @@ public class Step {
 
             Step selectionPoint = null;
 
+            final List<Map> condition = (List<Map>) stepMap.get("condition");
             for (final Step walker : stepList) {
 
-                if (walker.getId().equals(((List<Map>) stepMap.get("condition")).get(0).get("selectionPoint"))) {
+                if (walker.getId().equals(condition.get(0).get("selectionPoint"))) {
                     selectionPoint = walker;
                 }
             }
@@ -225,7 +229,7 @@ public class Step {
                 throw new IllegalStateException("Unable to meet condition for step " + id);
             }
 
-            condition = new Condition(selectionPoint, (String) ((List<Map>) stepMap.get("condition")).get(1).get("option"));
+            this.condition = new Condition(selectionPoint, condition.size() ==  1 ? null : (String) condition.get(1).get("option"));
         }
 
         if (stepMap.containsKey("lastUpdate")) {
@@ -324,24 +328,8 @@ public class Step {
 
     public boolean isComplete() {
 
-        if (state == null) {
-            return false;
-        }
-
-        switch (state) {
-
-            case UNKNOWN:
-            case ON_HOLD:
-            case EXECUTED:
-            case CHECK_FAILED_NO_COMMENT:
-            case EXECUTION_FAILED_NO_COMMENT:
-
-                return false;
-
-            default:
-
-                return true;
-        }
+        // TODO: a state can be null ????  If not, remove the check this.state != null
+        return this.state != null && this.state.isComplete();
     }
 
 
@@ -505,4 +493,23 @@ public class Step {
         return child;
     }
 
+
+    public boolean isReopenable() {
+        return this.reopenable;
+    }
+
+
+    public void setReopenable(final boolean reopenable) {
+        this.reopenable = reopenable;
+    }
+
+
+    public boolean dependsOn(final Step step) {
+
+        if (this.condition == null) {
+            return false;
+        }
+
+        return this.condition.getStep() == step;
+    }
 }

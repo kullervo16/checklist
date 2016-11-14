@@ -83,6 +83,18 @@ div.notApplicable a {
     text-decoration: underline;
 }
 
+div.notYetApplicable {
+    color:black;
+    background-color: lightgoldenrodyellow;
+    padding-left:10px;
+    padding-bottom:10px;
+}
+
+div.notYetApplicable a {
+    color:black;
+    text-decoration: underline;
+}
+
 textarea {
     font-size:0.9em;
     color:#6da021;

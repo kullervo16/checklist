@@ -408,7 +408,7 @@ public enum ChecklistRepository {
 
                     if (clId.equals(stepWalker.getChild())) {
                         stepWalker.setChild(null);
-                        stepWalker.setState(State.UNKNOWN);
+                        parentCl.updateStepState(stepWalker, State.UNKNOWN);
                         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(parentClId), null);
                         break;
                     }

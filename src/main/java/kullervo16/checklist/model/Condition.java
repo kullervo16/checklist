@@ -21,11 +21,19 @@ public class Condition {
     }
 
 
-    public boolean isConditionUnreachable() {
-        return this.step.getSelectedOption() != null
-               && (this.step.getSelectedOption() == null
-                   || this.step.getSelectedOption().isEmpty()
-                   || !this.selectedOption.equals(this.step.getSelectedOption()));
+    public boolean isConditionReachable() {
+
+        // If the step state is NOT_APPLICABLE, we consider the condition is reachable
+        if (this.step.getState() == State.NOT_APPLICABLE) {
+            return true;
+        }
+
+        // If the step state is not OK, we consider the step is not reachable
+        if (this.step.getState() != State.OK) {
+            return false;
+        }
+
+        return this.selectedOption == null || this.selectedOption.equals(this.step.getSelectedOption());
     }
 
 
