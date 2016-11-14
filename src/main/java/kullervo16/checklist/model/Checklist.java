@@ -312,7 +312,7 @@ public class Checklist extends Template {
         for (final Step step : steps) {
 
             if (!step.getState().isComplete() ) {
-                step.setState(State.CLOSED);
+                step.setState(State.ABORTED);
             }
 
             step.setReopenable(false);

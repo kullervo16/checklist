@@ -35,7 +35,7 @@ div.unknown {
     padding-bottom:10px;
 }
 
-div.closed {
+div.aborted {
     color:white;
     background-color: purple;
     padding-left:10px;

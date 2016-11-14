@@ -21,7 +21,7 @@ public enum State implements Comparable<State> {
     EXECUTION_FAILED(true, true),
     CHECK_FAILED_NO_COMMENT(false, true),
     CHECK_FAILED(true, true),
-    CLOSED(true, false);
+    ABORTED(true, false);
 
     private final boolean complete;
 

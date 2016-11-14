@@ -288,8 +288,8 @@
                 return "notYetApplicable";
             } else if(step.state === 'NOT_APPLICABLE') {
                 return "notApplicable";
-            } else if(step.state === 'CLOSED') {
-                return "closed";
+            } else if(step.state === 'ABORTED') {
+                return "aborted";
             } else if(step.state === 'EXECUTION_FAILED' 
                    || step.state === 'CHECK_FAILED' 
                    || step.state === 'CHECK_FAILED_NO_COMMENT' 
@@ -345,7 +345,7 @@
         }
         
         function showOptions(step) {
-            return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType && !(step.state === 'CLOSED' || step.state === 'NOT_YET_APPLICABLE');
+            return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType && !(step.state === 'ABORTED' || step.state === 'NOT_YET_APPLICABLE');
         }           
         
         function showRevalidateButton(step) {
@@ -543,7 +543,7 @@
         }
         
         function closeChecklist() {
-            if(confirm("Are you sure you want to close this checklist? All unfinished steps will be set to closed. This operation cannot be undone...")) {
+            if(confirm("Are you sure you want to close this checklist? All unfinished steps will be set to aborted. This operation cannot be undone...")) {
                 $http.post('rest/checklists/'+$location.search().id+'/actions/close')
                     .success(function (data,status,headers,config) {
                         $window.location.href = './checklistOverview.html'     
