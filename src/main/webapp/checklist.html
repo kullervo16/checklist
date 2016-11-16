@@ -112,7 +112,7 @@
                             <p>Answer :</p>
                             <p ng-if="showAnswerTextBox(step)">
                                 <textarea ng-model="answerText" rows="4" cols="50" ></textarea>
-                                <button type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, answerText);">
+                                <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, answerText);">
                                   <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
                                 </button>
                             </p>
@@ -122,7 +122,7 @@
                                          <input type="radio" name="option" ng-model="$parent.radioAnswer" ng-value="option" /> {{option}}
                                      </label>                                    
                                 </p>                                
-                                <button type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, radioAnswer);">
+                                <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, radioAnswer);">
                                   <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
                                 </button>
                             </div>
@@ -132,7 +132,7 @@
                                          <input type="checkbox" name="option" ng-model="$parent.checkboxAnswer[option]" ng-value="option" /> {{option}}
                                      </label>                                    
                                 </p>                                
-                                <button type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, checkboxAnswer);">
+                                <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, checkboxAnswer);">
                                   <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
                                 </button>
                             </div>

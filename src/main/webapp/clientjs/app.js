@@ -493,12 +493,14 @@
         }
         
         function setStepOption(step, choice) {
-            $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/options/"+choice)
-                .success(function (data,status,headers,config) {
-                    $scope.data = data;                        
-                }).error(function (data,status,headers,config) {
+            if( isInChecklistMode()) {
+                $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/options/"+choice)
+                    .success(function (data,status,headers,config) {
+                        $scope.data = data;
+                    }).error(function (data,status,headers,config) {
                     console.log('Error updating step '+step.id);
                 });
+            }
         }
         
         function launchSubChecklist(step) {
@@ -752,7 +754,14 @@
           }
           $scope.refreshState = state;
         }
-        
+
+        // =================================================
+        // misc operations
+        // =================================================
+        function isInChecklistMode() {
+            return $scope.mode !== 'template';
+        }
+
         $scope.getClassForMilestone = getClassForMilestone;
         $scope.getClassForStep      = getClassForStep;
         
