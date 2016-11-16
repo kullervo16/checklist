@@ -546,7 +546,11 @@
             if(confirm("Are you sure you want to close this checklist? All unfinished steps will be set to aborted. This operation cannot be undone...")) {
                 $http.post('rest/checklists/'+$location.search().id+'/actions/close')
                     .success(function (data,status,headers,config) {
-                        $window.location.href = './checklistOverview.html'     
+                        if ($scope.data.parent == null) {
+                            $window.location.href = './checklistOverview.html'
+                        } else {
+                            $window.location.href = './checklist.html?id=' + $scope.data.parent;
+                        }
                     }).error(function (data,status,headers,config) {
                         console.log('Error closing checklist '+$location.search().id);
                         $window.location.href = './checklistOverview.html';     
