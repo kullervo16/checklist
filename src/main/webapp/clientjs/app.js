@@ -554,9 +554,10 @@
                             $window.location.href = './checklist.html?id=' + $scope.data.parent;
                         }
                     }).error(function (data,status,headers,config) {
+                        alert('Error closing checklist ' + $location.search().id);
                         console.log('Error closing checklist '+$location.search().id);
-                        $window.location.href = './checklistOverview.html';     
-                    });  
+                        $window.location.href = './checklist.html?id=' + $scope.data.id;
+                    });
                 }
         }
         
