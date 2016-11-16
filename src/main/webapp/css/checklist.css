@@ -110,3 +110,7 @@ a.anchor {
     top: -180px;
     visibility: hidden;
 }
+
+.btn-group {
+    vertical-align: bottom;
+}
