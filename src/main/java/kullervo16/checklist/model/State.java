@@ -15,7 +15,7 @@ public enum State implements Comparable<State> {
     UNKNOWN(false, false, false),
     NOT_APPLICABLE(true, false, false),
     OK(true, true, false),
-    ON_HOLD(false, false, false),
+    IN_PROGRESS(false, false, false),
     EXECUTED(false, false, true),
     EXECUTION_FAILED_NO_COMMENT(false, true, true),
     EXECUTION_FAILED(true, true, true),

@@ -79,7 +79,7 @@ public class ChecklistService {
             for (final Step step : parent.getSteps()) {
 
                 if (step.getId().equals(stepName)) {
-                    parent.updateStepState(step, State.ON_HOLD);
+                    parent.updateStepState(step, State.IN_PROGRESS);
                     step.setChild(childUUID);
                 }
             }

@@ -47,14 +47,14 @@ div.unknown a {
     text-decoration: underline;
 }
 
-div.onHold {
+div.inProgress {
     color:black;
     background-color: lightblue;
     padding-left:10px;
     padding-bottom:10px;
 }
 
-div.onHold a {
+div.inProgress a {
     color:black;    
     text-decoration: underline;
 }

@@ -282,8 +282,8 @@
                 return "ok";
             } else if(step.state === 'EXECUTED') {
                 return "executed";
-            } else if(step.state === 'ON_HOLD') {
-                return "onHold";
+            } else if(step.state === 'IN_PROGRESS') {
+                return "inProgress";
             } else if(step.state === 'NOT_YET_APPLICABLE') {
                 return "notYetApplicable";
             } else if(step.state === 'NOT_APPLICABLE') {
