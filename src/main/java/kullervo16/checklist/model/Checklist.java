@@ -302,6 +302,20 @@ public class Checklist extends Template {
                     }
                 }
             }
+
+            {
+                final String child = step.getChild();
+
+                if (child != null && state == ABORTED) {
+
+                    final Checklist childCl = ChecklistRepository.INSTANCE.getChecklist(child);
+
+                    if (childCl != null) {
+
+                        childCl.close();
+                    }
+                }
+            }
         }
     }
 
