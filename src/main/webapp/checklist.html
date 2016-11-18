@@ -96,7 +96,7 @@
                     
                         <!-- if the step links to a subchecklist, create a link. Otherwise just a title. -->
                         <h3 class="list-group-item-heading" ng-if="!step.child">{{step.id}}</h3>                        
-                        <h3 class="list-group-item-heading" ng-if="step.child"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h3>                        
+                        <h3 class="list-group-item-heading" ng-if="step.child"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h3>
                         
                         
                         <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showActionDetails(step)">

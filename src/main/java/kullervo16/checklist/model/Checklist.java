@@ -1,13 +1,19 @@
 package kullervo16.checklist.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.persist.ChecklistPersister;
+import kullervo16.checklist.repository.ActorRepository;
+import kullervo16.checklist.repository.ChecklistRepository;
+
+import static kullervo16.checklist.model.State.ABORTED;
+import static kullervo16.checklist.model.State.EXECUTION_FAILED;
+import static kullervo16.checklist.model.State.OK;
 
 /**
  * Data object class to model a Checklist... it is backed by a YAML file.
@@ -232,7 +238,7 @@ public class Checklist extends Template {
 
         step.setState(state);
 
-        if (state == State.OK) {
+        if (state == OK) {
 
             if (step.getMilestone() != null) {
                 step.getMilestone().setReached(true);
@@ -269,6 +275,33 @@ public class Checklist extends Template {
 
                 updateStepReopenable(condition.getStep());
             }
+
+            if (state.isComplete()) {
+
+                // If the checklist is complete
+                if (getProgress() == 100) {
+
+                    // If it is a sub-checklist, update the parent checklist step pointing on this checklist
+                    if (this.parent != null) {
+
+                        final Checklist parentCl = ChecklistRepository.INSTANCE.getChecklist(this.parent);
+
+                        if (parentCl != null) {
+
+                            for (final Step parentClStepsWalker : parentCl.getSteps()) {
+
+                                if (this.template.equals(parentClStepsWalker.getSubChecklist()) && !parentClStepsWalker.isComplete()) {
+                                    // we update the first not completed step with the proper template (this allows the same template to be used
+                                    // multiple times as subchecklist in a single instance. We call it recursively because this template may also
+                                    // have a parent...
+                                    parentCl.updateStepState(parentClStepsWalker, state.isError() ? EXECUTION_FAILED : OK);
+                                    ActorRepository.getPersistenceActor().tell(new PersistenceRequest(parentCl.getId()), null);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -288,17 +321,23 @@ public class Checklist extends Template {
 
         boolean reopenable = true;
 
-        if (state == null || !state.isReopenable()) {
+        setReopenable:
+        {
+            if (state == null || !state.isReopenable()) {
+                reopenable = false;
+                break setReopenable;
+            }
 
-            reopenable = false;
-
-        } else {
+            if (step.getSubChecklist() != null) {
+                reopenable = false;
+                break setReopenable;
+            }
 
             for (final Step stepWalker : this.steps) {
 
                 if (stepWalker.dependsOn(step) && (stepWalker.isComplete() && stepWalker.getState() != State.NOT_APPLICABLE)) {
                     reopenable = false;
-                    break;
+                    break setReopenable;
                 }
             }
         }
@@ -309,13 +348,13 @@ public class Checklist extends Template {
 
     public void close() {
 
-        for (final Step step : steps) {
+        for (final Step step : this.steps) {
 
-            if (!step.getState().isComplete() ) {
-                step.setState(State.ABORTED);
+            if (step.getState().isComplete()) {
+                step.setReopenable(false);
+            } else {
+                updateStepState(step, ABORTED);
             }
-
-            step.setReopenable(false);
         }
     }
 }

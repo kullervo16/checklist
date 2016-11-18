@@ -8,18 +8,38 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import kullervo16.checklist.messages.PersistenceRequest;
-import kullervo16.checklist.model.*;
+import kullervo16.checklist.model.Checklist;
+import kullervo16.checklist.model.ChecklistInfo;
+import kullervo16.checklist.model.Milestone;
+import kullervo16.checklist.model.State;
+import kullervo16.checklist.model.Step;
+import kullervo16.checklist.model.TagcloudEntry;
+import kullervo16.checklist.model.Template;
 import kullervo16.checklist.repository.ActorRepository;
 import kullervo16.checklist.repository.ChecklistRepository;
 import kullervo16.checklist.repository.TemplateRepository;
 
+import static kullervo16.checklist.model.State.CHECK_FAILED;
+import static kullervo16.checklist.model.State.CHECK_FAILED_NO_COMMENT;
+import static kullervo16.checklist.model.State.EXECUTED;
+import static kullervo16.checklist.model.State.EXECUTION_FAILED;
+import static kullervo16.checklist.model.State.EXECUTION_FAILED_NO_COMMENT;
+import static kullervo16.checklist.model.State.OK;
+import static kullervo16.checklist.model.State.UNKNOWN;
 import static kullervo16.checklist.utils.StringUtils.nullifyAndTrim;
 
 /**
@@ -131,7 +151,6 @@ public class ChecklistService {
         final Checklist cl = checklistRepository.getChecklist(id);
 
         cl.close();
-        verifyCompleteChecklist(cl);
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(id), null);
 
         return Response.ok().build();
@@ -146,19 +165,8 @@ public class ChecklistService {
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
 
-        if (result) {
-
-            if (step.getChecks().isEmpty()) {
-                // border case : no checks.. so immediately ok
-                completeStep(cl, step);
-            } else {
-                // normal case : checks... only mark executed, the check phase will start
-                cl.updateStepState(step, State.EXECUTED);
-            }
-
-        } else {
-            cl.updateStepState(step, State.EXECUTION_FAILED_NO_COMMENT);
-        }
+        cl.updateStepState(step, result ? step.getChecks().isEmpty() ? OK : EXECUTED
+                                        : EXECUTION_FAILED_NO_COMMENT);
 
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
@@ -175,8 +183,8 @@ public class ChecklistService {
         final Step step = getStep(cl, stepId);
 
         // revalidate only allowed when in check failed... otherwise we ignore the request
-        if (State.CHECK_FAILED.equals(step.getState())) {
-            cl.updateStepState(step, State.EXECUTED);
+        if (CHECK_FAILED.equals(step.getState())) {
+            cl.updateStepState(step, EXECUTED);
             ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         }
 
@@ -192,7 +200,7 @@ public class ChecklistService {
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
 
-        cl.updateStepState(step, State.UNKNOWN);
+        cl.updateStepState(step, UNKNOWN);
         step.setAnswers(new LinkedList<>());
         step.setErrors(new LinkedList<>());
         step.setSelectedOption(null);
@@ -218,40 +226,11 @@ public class ChecklistService {
     public Checklist setCheckResult(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("result") final boolean result) {
 
         final Checklist cl = getChecklist(checklistId);
-        final Step step = getStep(cl, stepId);
 
-        if (result) {
-            completeStep(cl, step);
-        } else {
-            cl.updateStepState(step, State.CHECK_FAILED_NO_COMMENT);
-        }
-
+        cl.updateStepState(getStep(cl, stepId), result ? OK : CHECK_FAILED_NO_COMMENT);
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
         return cl;
-    }
-
-
-    private void verifyCompleteChecklist(final Checklist cl) throws IllegalArgumentException {
-
-        if (cl.getProgress() == 100) {
-
-            // this checklist is complete... now check whether we are a subchecklist... if so, update the parent
-            if (cl.getParent() != null) {
-
-                final Checklist parent = getChecklist(cl.getParent());
-
-                for (final Step walker : parent.getSteps()) {
-
-                    if (cl.getTemplate().equals(walker.getSubChecklist()) && !walker.isComplete()) {
-                        // we update the first not completed step with the proper template (this allows the same template to be used
-                        // multiple times as subchecklist in a single instance. We call it recursively because this template may also
-                        // have a parent...
-                        setCheckResult(cl.getParent(), walker.getId(), true);
-                    }
-                }
-            }
-        }
     }
 
 
@@ -266,11 +245,11 @@ public class ChecklistService {
         switch (step.getState()) {
 
             case EXECUTION_FAILED_NO_COMMENT:
-                cl.updateStepState(step, State.EXECUTION_FAILED);
+                cl.updateStepState(step, EXECUTION_FAILED);
                 break;
 
             case CHECK_FAILED_NO_COMMENT:
-                cl.updateStepState(step, State.CHECK_FAILED);
+                cl.updateStepState(step, CHECK_FAILED);
                 break;
 
             default:
@@ -298,11 +277,7 @@ public class ChecklistService {
 
         if (step.getQuestion() != null) {
 
-            if (!step.getChecks().isEmpty()) {
-                cl.updateStepState(step, State.EXECUTED);
-            } else {
-                completeStep(cl, step);
-            }
+            cl.updateStepState(step, step.getChecks().isEmpty() ? OK : EXECUTED);
 
             try {
                 final JsonReader jsonReader = Json.createReader(new StringReader(answer));
@@ -408,7 +383,7 @@ public class ChecklistService {
         }
 
         step.setSelectedOption(choice);
-        completeStep(cl, step);
+        cl.updateStepState(step, OK);
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
         return cl;
@@ -436,15 +411,5 @@ public class ChecklistService {
         }
 
         throw new IllegalArgumentException("No step found with id " + stepId);
-    }
-
-
-    /**
-     *
-     */
-    private void completeStep(final Checklist cl, final Step step) {
-
-        cl.updateStepState(step, State.OK);
-        verifyCompleteChecklist(cl);
     }
 }

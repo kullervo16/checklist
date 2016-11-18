@@ -307,7 +307,8 @@
         }
         
         function showActionDetails(step) {
-            return step.state === 'UNKNOWN' || step.state === 'EXECUTION_FAILED' || $scope.mode === 'template';
+            return (step.state === 'UNKNOWN' || step.state === 'EXECUTION_FAILED' || $scope.mode === 'template')
+                && !(step.subChecklist != null && step.state === 'EXECUTION_FAILED');
         }
         
         function showActionButtons(step) {
@@ -329,7 +330,7 @@
         }
         
         function showSubchecklist(step) {
-            return showActionDetails(step) && step.subChecklist;
+            return showActionDetails(step) && step.subChecklist != null;
         }
         
         function getSubchecklistClass() {
