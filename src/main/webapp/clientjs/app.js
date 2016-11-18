@@ -767,6 +767,7 @@
         $scope.getClassForMilestone = getClassForMilestone;
         $scope.getClassForStep      = getClassForStep;
         
+        $scope.isInChecklistMode = isInChecklistMode;
         $scope.showActionButtons = showActionButtons;
         $scope.showActionDetails = showActionDetails;
         $scope.showErrorDialog   = showErrorDialog;
