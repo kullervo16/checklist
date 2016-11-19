@@ -188,7 +188,21 @@ public class Step {
             }
         }
 
-        state = stepMap.containsKey("state") ? State.valueOf((String) stepMap.get("state")) : State.UNKNOWN;
+        try {
+            state = stepMap.containsKey("state") ? State.valueOf((String) stepMap.get("state")) : State.UNKNOWN;
+        }catch(IllegalArgumentException iae) {
+            // ok, so there is a state that we do not know (anymore). If it's one we know of, it is handled here, otherwise we rethrow
+            switch((String)stepMap.get("state")) {
+                case "ON_HOLD":
+                    state = State.IN_PROGRESS;
+                    break;
+                case "CLOSED":
+                    state = State.ABORTED;
+                    break;
+                default:
+                    throw iae;
+            }            
+        }
 
         if (stepMap.containsKey("milestone")) {
 

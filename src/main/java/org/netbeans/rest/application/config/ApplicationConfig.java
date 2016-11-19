@@ -36,6 +36,7 @@ public class ApplicationConfig extends Application {
         resources.add(kullervo16.checklist.rest.MilestoneService.class);
         resources.add(kullervo16.checklist.rest.TagService.class);
         resources.add(kullervo16.checklist.rest.TemplateService.class);
+        resources.add(kullervo16.checklist.rest.mappers.TemplateReferencedByAnotherTemplateExceptionMapper.class);
     }
 
 }
