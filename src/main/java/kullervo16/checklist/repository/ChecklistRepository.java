@@ -464,4 +464,30 @@ public enum ChecklistRepository {
 
         return true;
     }
+
+    public void mergeTag(String tagName, String mergeInto) {
+       
+        synchronized (lock) {
+            for(Checklist walker : data.values()) {
+                if(walker.getTags().contains(tagName)) {
+                    walker.getTags().remove(tagName);
+                    if(!walker.getTags().contains(mergeInto)) {
+                        walker.getTags().add(mergeInto);
+                    }                    
+                    ActorRepository.getPersistenceActor().tell(new PersistenceRequest(walker.getId()), null);                    
+                }
+            }
+        }
+    }
+
+    public void deleteTag(String tagName) {
+        synchronized (lock) {
+            for(Checklist walker : data.values()) {
+                if(walker.getTags().contains(tagName)) {
+                    walker.getTags().remove(tagName);
+                    ActorRepository.getPersistenceActor().tell(new PersistenceRequest(walker.getId()), null);                    
+                }
+            }
+        }
+    }
 }

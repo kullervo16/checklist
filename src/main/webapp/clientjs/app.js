@@ -815,8 +815,112 @@
         $scope.toggleRefresh = toggleRefresh;
 
         $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
-    }
+    }                
     );
 
-   
+   app.controller('tagController', function($scope,$http,$window) {
+       // =================================================
+        // init stuff... get data from backend     
+        // =================================================                                            
+        
+        $http.get('rest/tags')
+            .success(function (data,status,headers,config) {
+                load(data);                
+            }).error(function (data,status,headers,config) {
+                console.log('Error getting rest/tags');
+            });
+            
+        function load(data) {
+            $scope.rawData = data.entries;    
+            $scope.beginLetters = [];
+            $scope.groupedData = {};
+            // now calculate the begin letters and split
+            for(var i=0;i<$scope.rawData.length;i++) {
+                var beginLetter = $scope.rawData[i].text.toUpperCase().substring(0,1);
+                if(!contains($scope.beginLetters, beginLetter)) {
+                    $scope.beginLetters.push(beginLetter);
+                    $scope.groupedData[beginLetter] = [];
+                }
+                $scope.groupedData[beginLetter].push($scope.rawData[i]);
+            }
+            $scope.beginLetters.sort();
+            for(var i=0;i<$scope.beginLetters.length;i++) {
+                $scope.groupedData[scope.beginLetters[i]].sort();
+            }
+            console.log($scope.beginLetters);
+            console.log($scope.groupedData);
+        }
+            
+        var contains = function(haystack,needle) {
+            var indexOf = Array.prototype.indexOf;
+            return indexOf.call(haystack, needle) > -1;
+        };
+        
+        function editTag(tag) {
+            $scope.selectedTag = tag;
+            $scope.selectedMergeCandidate = undefined;
+            $scope.mergeCandidates = [];
+            for(var i=0;i<$scope.rawData.length;i++) {
+                var candidate = $scope.rawData[i].text;
+                if(candidate !== tag) {
+                    $scope.mergeCandidates.push(candidate);
+                }
+            }
+            $scope.mergeCandidates.sort();
+            //$scope.selectedAction = undefined; // keep the last one, browser remembers the last selection as well.. user can still say no in the confirmation
+            $scope.newName = undefined;
+            $scope.selectedMergeCandidate = undefined;
+            $('#editModal').modal('show');
+        }
+        
+        function actionOK() {
+            if($scope.selectedAction === undefined) return false;
+            if($scope.selectedAction === 'merge') return $scope.selectedMergeCandidate !== undefined;
+            if($scope.selectedAction === 'rename') return $scope.newName !== undefined;
+            return true;
+        }
+        
+        function setAction(action) {
+            $scope.selectedAction = action;
+            console.log("Selected action = "+action);
+        }                
+        
+        function checkEditState(modal) {
+            if(actionOK()) {
+                if(confirm("Are you sure you want to "+$scope.selectedAction+" "+$scope.selectedTag+"? This action cannot be undone...")) {
+                    var command = 'rest/tags/'+$scope.selectedTag;
+                    if($scope.selectedAction === 'merge') {
+                        command += '?newName='+$scope.selectedMergeCandidate;
+                    } else if($scope.selectedAction === 'rename') {
+                        command += '?newName='+$scope.newName;
+                    }
+                    $http.delete(command).success(function (data,status,headers,config) {
+                        $http.get('rest/tags')
+                            .success(function (data,status,headers,config) {
+                                load(data); 
+                            }).error(function (data,status,headers,config) {
+                                console.log('Error getting rest/tags');
+                            });                  
+                    }).error(function (data,status,headers,config) {
+                       if( status === 409) {
+                           alert(data.description);
+                           console.log(data.description);
+                       }else {
+                           console.log('Unexpected error in delete tag !');
+                       }
+                   });
+                   
+                }
+                $('#editModal').modal('hide');
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+            }
+        }
+        
+        $scope.editTag = editTag;
+        $scope.actionOK = actionOK;
+        $scope.setAction= setAction;
+        $scope.checkEditState = checkEditState;
+   }
+   );
 })();
