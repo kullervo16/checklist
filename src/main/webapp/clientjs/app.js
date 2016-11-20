@@ -839,7 +839,9 @@
                     $scope.groupedData[beginLetter].push($scope.rawData[i].text);
                 }
                 $scope.beginLetters.sort();
-                
+                for(var i=0;i<$scope.beginLetters.length;i++) {
+                    $scope.groupedData[scope.beginLetters[i]].sort();
+                }
                 console.log($scope.beginLetters);
                 console.log($scope.groupedData);
             }).error(function (data,status,headers,config) {
@@ -850,6 +852,12 @@
             var indexOf = Array.prototype.indexOf;
             return indexOf.call(haystack, needle) > -1;
         };
+        
+        function editTag(tag) {
+            alert("Edit "+tag);
+        }
+        
+        $scope.editTag = editTag;
    }
    );
 })();
