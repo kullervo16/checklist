@@ -867,7 +867,7 @@
                 }
             }
             $scope.mergeCandidates.sort();
-            $scope.selectedAction = undefined;
+            //$scope.selectedAction = undefined; // keep the last one, browser remembers the last selection as well.. user can still say no in the confirmation
             $scope.newName = undefined;
             $scope.selectedMergeCandidate = undefined;
             $('#editModal').modal('show');
@@ -890,9 +890,9 @@
                 if(confirm("Are you sure you want to "+$scope.selectedAction+" "+$scope.selectedTag+"? This action cannot be undone...")) {
                     var command = 'rest/tags/'+$scope.selectedTag;
                     if($scope.selectedAction === 'merge') {
-                        command += '?mergeInto='+$scope.selectedMergeCandidate;
+                        command += '?newName='+$scope.selectedMergeCandidate;
                     } else if($scope.selectedAction === 'rename') {
-                        command += '?renameTo='+$scope.newName;
+                        command += '?newName='+$scope.newName;
                     }
                     $http.delete(command).success(function (data,status,headers,config) {
                         $http.get('rest/tags')
