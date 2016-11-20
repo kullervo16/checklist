@@ -30,6 +30,5 @@ public class TagService {
     @Produces(MediaType.APPLICATION_JSON)
     public Tagcloud listTags(@QueryParam("filter") final String filter) {
         return checklistRepository.getTagInfo(filter);
-
-    }
+    }        
 }

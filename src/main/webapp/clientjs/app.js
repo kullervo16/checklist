@@ -815,8 +815,41 @@
         $scope.toggleRefresh = toggleRefresh;
 
         $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
-    }
+    }                
     );
 
-   
+   app.controller('tagController', function($scope,$http,$window) {
+       // =================================================
+        // init stuff... get data from backend     
+        // =================================================                                            
+        
+        $http.get('rest/tags')
+            .success(function (data,status,headers,config) {
+                
+                $scope.rawData = data.entries;    
+                $scope.beginLetters = [];
+                $scope.groupedData = {};
+                // now calculate the begin letters and split
+                for(var i=0;i<$scope.rawData.length;i++) {
+                    var beginLetter = $scope.rawData[i].text.toUpperCase().substring(0,1);
+                    if(!contains($scope.beginLetters, beginLetter)) {
+                        $scope.beginLetters.push(beginLetter);
+                        $scope.groupedData[beginLetter] = [];
+                    }
+                    $scope.groupedData[beginLetter].push($scope.rawData[i].text);
+                }
+                $scope.beginLetters.sort();
+                
+                console.log($scope.beginLetters);
+                console.log($scope.groupedData);
+            }).error(function (data,status,headers,config) {
+                console.log('Error getting rest/tags');
+            });
+            
+        var contains = function(haystack,needle) {
+            var indexOf = Array.prototype.indexOf;
+            return indexOf.call(haystack, needle) > -1;
+        };
+   }
+   );
 })();

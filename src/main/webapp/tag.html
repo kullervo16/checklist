@@ -5,20 +5,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">        
-        <title>Tags & milestones</title>
+        <title>Checklist</title>
         <script src="clientjs/jquery.min.js"></script>
-        <script src="clientjs/bootstrap.min.js"></script>
+        <script src="clientjs/bootstrap.min.js"></script>        
         <!-- Angular JS-->
         <script src="clientjs/angular.js"></script>
         <!-- Bootstrap core CSS-->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">        
         <!-- Bootstrap theme-->
         <link href="css/bootstrap-theme.min.css" rel="stylesheet">
         <link href="css/checklist.css" rel="stylesheet">
         <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
         <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
-        <script src="clientjs/jqcloud.js"></script>
-        <link rel="stylesheet" href="css/jqcloud.css">
         <script src="clientjs/app.js"></script>
     </head>
 
@@ -42,24 +40,26 @@
                 <!-- /.nav-collapse-->
             </div>
         </div>
-        <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist" ng-init="createTagClouds()">    
+        <div role="main" class="container theme-showcase" ng-controller="tagController as tag">    
             <div class="jumbotron">
-                <h1>Help</h1>                                              
+                <h1>Tags</h1>                                
+            </div>       
+            <div>
+                <span ng-repeat="tagLetter in beginLetters">
+                    <a href="#{{tagLetter}}" >{{tagLetter}}</a>&nbsp;-&nbsp;
+                </span>
+            </div>    
+            <div class="list-group" ng-repeat="tagLetter in beginLetters">    
+                <h3><a ng-attr-id="{{tagLetter}}"/>{{tagLetter}}</h3>
             </div>
-            <h2>Documentation</h2>
-            <p>The project is documented on the <a href="https://github.com/kullervo16/checklist/blob/master/README.md" target="_blank">github site</a>,
-            where you find an overview of the features (including some screenshots) and examples on how to configure these features in YAML</p>
-            <h2>Feature missing?</h2>
-            <p>Since this is a fairly new project, probably there is still some killer feature missing. Feel free to <a href="https://github.com/kullervo16/checklist/issues" target="_blank">create
-                    an issue</a>. Of course, if you find a but, that's also the place to go</p>
-            <h2>Want to join?</h2>
-            <p>Everybody is more than welcome to add code. Please send me a pull request.</p>
         </div>
+        <!-- for the case when all steps are done.. position on the bottom -->
+        <a name="complete" id="complete" class="anchor"></a>
 
         <!-- /container-->
         <!-- Bootstrap core JavaScript-->
         <!-- ==================================================-->
         <!-- Placed at the end of the document so the pages load faster-->
-        <script src="clientjs/holder.js"></script>
+        <script src="clientjs/holder.js"></script>       
     </body>
 </html>
