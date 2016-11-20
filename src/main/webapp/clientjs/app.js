@@ -836,7 +836,7 @@
                         $scope.beginLetters.push(beginLetter);
                         $scope.groupedData[beginLetter] = [];
                     }
-                    $scope.groupedData[beginLetter].push($scope.rawData[i].text);
+                    $scope.groupedData[beginLetter].push($scope.rawData[i]);
                 }
                 $scope.beginLetters.sort();
                 for(var i=0;i<$scope.beginLetters.length;i++) {
@@ -854,10 +854,49 @@
         };
         
         function editTag(tag) {
-            alert("Edit "+tag);
+            $scope.selectedTag = tag;
+            $scope.selectedMergeCandidate = undefined;
+            $scope.mergeCandidates = [];
+            for(var i=0;i<$scope.rawData.length;i++) {
+                var candidate = $scope.rawData[i].text;
+                if(candidate !== tag) {
+                    $scope.mergeCandidates.push(candidate);
+                }
+            }
+            $scope.mergeCandidates.sort();
+            $scope.selectedAction = undefined;
+            $scope.newName = undefined;
+            $scope.selectedMergeCandidate = undefined;
+            $('#editModal').modal('show');
+        }
+        
+        function actionOK() {
+            if($scope.selectedAction === undefined) return false;
+            if($scope.selectedAction === 'merge') return $scope.selectedMergeCandidate !== undefined;
+            if($scope.selectedAction === 'rename') return $scope.newName !== undefined;
+            return true;
+        }
+        
+        function setAction(action) {
+            $scope.selectedAction = action;
+            console.log("Selected action = "+action);
+        }                
+        
+        function checkEditState(modal) {
+            if(actionOK()) {
+                if(confirm("Are you sure you want to "+$scope.selectedAction+" "+$scope.selectedTag+"? This action cannot be undone...")) {
+                    alert($scope.selectedAction+" "+$scope.selectedTag+" "+$scope.newName+" "+$scope.selectedMergeCandidate);
+                }
+                $('#editModal').modal('hide');
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+            }
         }
         
         $scope.editTag = editTag;
+        $scope.actionOK = actionOK;
+        $scope.setAction= setAction;
+        $scope.checkEditState = checkEditState;
    }
    );
 })();
