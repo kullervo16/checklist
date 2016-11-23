@@ -245,8 +245,8 @@ public class Checklist extends Template {
             }
         }
 
-        // If the state completion has changed
-        if (previousState == null || previousState.isComplete() != state.isComplete()) {
+        // If the state completion has changed or if the step has been opened/unopened
+        if (previousState == null || previousState.isComplete() != state.isComplete() || previousState.isOpen() != state.isOpen()) {
 
             // Update dependent steps
             for (int stepPos = this.steps.size() - 1; stepPos >= 0; stepPos--) {
@@ -349,7 +349,9 @@ public class Checklist extends Template {
 
             for (final Step stepWalker : this.steps) {
 
-                if (stepWalker.dependsOn(step) && (stepWalker.isComplete() && stepWalker.getState() != State.NOT_APPLICABLE)) {
+                if (stepWalker.dependsOn(step)
+                    && ((stepWalker.isComplete() && stepWalker.getState() != State.NOT_APPLICABLE)
+                        || stepWalker.getState().isOpen())) {
                     reopenable = false;
                     break setReopenable;
                 }

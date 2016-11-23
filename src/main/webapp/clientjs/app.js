@@ -305,14 +305,9 @@
         function showErrorDialog(step) {
             return (step.state === 'EXECUTION_FAILED_NO_COMMENT' || step.state === 'CHECK_FAILED_NO_COMMENT') && $scope.mode !== 'template';
         }
-        
-        function showActionDetails(step) {
-            return (step.state === 'UNKNOWN' || step.state === 'EXECUTION_FAILED' || $scope.mode === 'template')
-                && !(step.subChecklist != null && step.state === 'EXECUTION_FAILED');
-        }
-        
+
         function showActionButtons(step) {
-            return showActionDetails(step) && step.action && $scope.mode !== 'template' && !step.options;
+            return step.state === 'IN_PROGRESS' && step.action && $scope.mode !== 'template' && !step.options;
         }
         
         function showChecks(step) {
@@ -330,7 +325,7 @@
         }
         
         function showSubchecklist(step) {
-            return showActionDetails(step) && step.subChecklist != null;
+            return step.subChecklist != null && (step.state === 'UNKNOWN' || $scope.mode === 'template');
         }
         
         function getSubchecklistClass() {
@@ -416,9 +411,34 @@
         function showGoBackToParent() {
             return $scope.data && $scope.data.parent && $scope.data.progress === 100;
         }
+
+        function showStartProgress(step) {
+            return step.action != null && step.state === 'UNKNOWN' && $scope.mode !== 'template';
+        }
+
+        function showDocumentation(step) {
+            return step.documentation
+                   && ((   step.state !== 'NOT_YET_APPLICABLE'
+                        && step.state !== 'NOT_APPLICABLE'
+                        && step.state !== 'OK'
+                        && step.state !== 'ABORTED')
+                       || $scope.mode === 'template');
+        }
+
         // =================================================
         // Backend update operations
         // =================================================
+
+        function startAction(step) {
+            $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/start")
+                .success(function (data, status, headers, config) {
+                    $scope.data = data;
+                    reposition();
+                }).error(function (data, status, headers, config) {
+                console.log('Error starting step ' + step.id);
+            });
+        }
+
         /**
          * Action result for a step, send to the backend and reload.
          */
@@ -769,16 +789,17 @@
         
         $scope.isInChecklistMode = isInChecklistMode;
         $scope.showActionButtons = showActionButtons;
-        $scope.showActionDetails = showActionDetails;
         $scope.showErrorDialog   = showErrorDialog;
         $scope.showChecks        = showChecks;
         $scope.showCheckButtons  = showCheckButtons;
-        $scope.showSubchecklist  = showSubchecklist;        
+        $scope.showSubchecklist  = showSubchecklist;
         $scope.showOptions       = showOptions;
         $scope.showMainBody      = showMainBody;
         $scope.showProgressBar   = showProgressBar;       
         $scope.showAnswerTextBox = showAnswerTextBox;  
         $scope.showGoBackToParent= showGoBackToParent;
+        $scope.showStartProgress = showStartProgress;
+        $scope.showDocumentation = showDocumentation;
         $scope.gotoChecklist     = gotoChecklist;
         $scope.showModal         = showModal;
         $scope.hideModal         = hideModal;
@@ -791,6 +812,7 @@
         $scope.toggleClosedFilter   = toggleClosedFilter;
         $scope.removeTagFromChecklist = removeTagFromChecklist;        
         
+        $scope.startAction    = startAction;
         $scope.updateAction   = updateAction;
         $scope.addErrorAction = addErrorAction;
         $scope.addAnswer      = addAnswer;

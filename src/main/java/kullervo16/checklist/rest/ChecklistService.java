@@ -38,6 +38,7 @@ import static kullervo16.checklist.model.State.CHECK_FAILED_NO_COMMENT;
 import static kullervo16.checklist.model.State.EXECUTED;
 import static kullervo16.checklist.model.State.EXECUTION_FAILED;
 import static kullervo16.checklist.model.State.EXECUTION_FAILED_NO_COMMENT;
+import static kullervo16.checklist.model.State.IN_PROGRESS;
 import static kullervo16.checklist.model.State.OK;
 import static kullervo16.checklist.model.State.UNKNOWN;
 import static kullervo16.checklist.utils.StringUtils.nullifyAndTrim;
@@ -212,6 +213,25 @@ public class ChecklistService {
             if (milestone != null) {
                 milestone.setReached(false);
             }
+        }
+
+        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
+
+        return cl;
+    }
+
+
+    @PUT
+    @Path("/{id}/{step}/start")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Checklist startStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId) {
+
+        final Checklist cl = getChecklist(checklistId);
+        final Step step = getStep(cl, stepId);
+
+        // If the step can be marker as IN_PROGRESS
+        if (step.getAction() != null && step.getState() == UNKNOWN) {
+            cl.updateStepState(step, IN_PROGRESS);
         }
 
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);

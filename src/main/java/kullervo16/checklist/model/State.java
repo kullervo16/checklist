@@ -11,17 +11,17 @@ package kullervo16.checklist.model;
  * @author jeve
  */
 public enum State implements Comparable<State> {
-    NOT_YET_APPLICABLE(false, false, false),
-    UNKNOWN(false, false, false),
-    NOT_APPLICABLE(true, false, false),
-    OK(true, true, false),
-    IN_PROGRESS(false, false, false),
-    EXECUTED(false, false, true),
-    EXECUTION_FAILED_NO_COMMENT(false, true, true),
-    EXECUTION_FAILED(true, true, true),
-    CHECK_FAILED_NO_COMMENT(false, true, true),
-    CHECK_FAILED(true, true, true),
-    ABORTED(true, false, true);
+    NOT_YET_APPLICABLE(false, false, false, false),
+    UNKNOWN(false, false, false, false),
+    NOT_APPLICABLE(false, true, false, false),
+    OK(false, true, true, false),
+    IN_PROGRESS(true, false, false, false),
+    EXECUTED(true, false, false, true),
+    EXECUTION_FAILED_NO_COMMENT(true, false, true, true),
+    EXECUTION_FAILED(false, true, true, true),
+    CHECK_FAILED_NO_COMMENT(true, false, true, true),
+    CHECK_FAILED(false, true, true, true),
+    ABORTED(false, true, false, true);
 
     private final boolean complete;
 
@@ -29,11 +29,14 @@ public enum State implements Comparable<State> {
 
     private final boolean error;
 
+    private final boolean open;
 
-    State(final boolean complete, final boolean reopenable, final boolean error) {
+
+    State(final boolean open, final boolean complete, final boolean reopenable, final boolean error) {
         this.complete = complete;
         this.reopenable = reopenable;
         this.error = error;
+        this.open = open;
     }
 
 
@@ -49,5 +52,10 @@ public enum State implements Comparable<State> {
 
     public boolean isError() {
         return this.error;
+    }
+
+
+    public boolean isOpen() {
+        return this.open;
     }
 }
