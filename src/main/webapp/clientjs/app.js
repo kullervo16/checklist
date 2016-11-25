@@ -311,7 +311,7 @@
         }
         
         function showChecks(step) {
-            return step.state === 'EXECUTED' || $scope.mode === 'template';
+            return step.state === 'EXECUTED' || ($scope.mode === 'template' && step.checks != null && step.checks.length > 0);
         }
         
         function showCheckButtons(step,check) {
@@ -325,7 +325,7 @@
         }
         
         function showSubchecklist(step) {
-            return step.subChecklist != null && (step.state === 'UNKNOWN' || $scope.mode === 'template');
+            return $scope.mode === 'checklist' && step.subChecklist != null && step.state === 'UNKNOWN';
         }
         
         function getSubchecklistClass() {
@@ -367,7 +367,11 @@
         function gotoChecklist(cl) {
             $window.location='checklist.html?id='+cl;
         }
-        
+
+        function gotoTemplate(templateId) {
+            $window.location = 'checklist.html?mode=template&id=' + window.encodeURIComponent(templateId);
+        }
+
         function hideModal(modalId) {
             $(modalId).modal('hide');
             $('body').removeClass('modal-open');
@@ -583,18 +587,20 @@
         }
         
         function removeTagFromChecklist(tag) {
-            if(confirm("Are you sure you want to remove tag '"+tag+"' from this checklist? You can always add it again later...")) {
-                $http.delete('rest/checklists/'+$location.search().id+'/tags/'+tag)
-                    .success(function (data,status,headers,config) {
-                        $scope.data = data; 
-                        if(!data.specificTagSet || !data.uniqueTagcombination) {                        
-                            showModal('#tagModal');
-                        }
-                    }).error(function (data,status,headers,config) {
+            if( $scope.mode === 'checklist') {
+                if(confirm("Are you sure you want to remove tag '"+tag+"' from this checklist? You can always add it again later...")) {
+                    $http.delete('rest/checklists/'+$location.search().id+'/tags/'+tag)
+                         .success(function (data,status,headers,config) {
+                             $scope.data = data;
+                             if(!data.specificTagSet || !data.uniqueTagcombination) {
+                                 showModal('#tagModal');
+                             }
+                         }).error(function (data,status,headers,config) {
                         alert(data.error);
-                        console.log('Error removing tag '+tag+' from checklist '+$location.search().id);                        
-                    });  
+                        console.log('Error removing tag '+tag+' from checklist '+$location.search().id);
+                    });
                 }
+            }
         }
         // =================================================
         // overview operations
@@ -801,6 +807,7 @@
         $scope.showStartProgress = showStartProgress;
         $scope.showDocumentation = showDocumentation;
         $scope.gotoChecklist     = gotoChecklist;
+        $scope.gotoTemplate      = gotoTemplate;
         $scope.showModal         = showModal;
         $scope.hideModal         = hideModal;
         $scope.showErrors        = showErrors;
@@ -837,7 +844,7 @@
         $scope.toggleRefresh = toggleRefresh;
 
         $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
-    }                
+    }
     );
 
    app.controller('tagController', function($scope,$http,$window) {

@@ -63,7 +63,7 @@
                     </p>
                         
                 </div>
-            </div>            
+            </div>
             <div ng-show="data.milestones.length">
                 <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> 
                     <span ng-repeat="milestone in data.milestones">
@@ -80,7 +80,7 @@
                         <span class="label label-primary" ng-click="removeTagFromChecklist(tag)">{{tag}}</span>
                         &nbsp;
                     </span>
-                    <button type="button" class="btn btn-default btn-sm" title="Add tag" ng-click="showModal('#tagModal')">
+                    <button type="button" class="btn btn-default btn-sm" title="Add tag" ng-click="showModal('#tagModal')" ng-show="$scope.mode === 'checklist'">
                       <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </button>
                 </p>                  
@@ -96,9 +96,10 @@
                         <a id="{{step.id}}" name="{{step.id}}" class="anchor"></a>
                     
                         <!-- if the step links to a subchecklist, create a link. Otherwise just a title. -->
-                        <h3 class="list-group-item-heading" ng-if="!step.child">{{step.id}}</h3>                        
-                        <h3 class="list-group-item-heading" ng-if="step.child"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h3>
-                        
+                        <h3 class="list-group-item-heading" ng-if="(step.child == null && mode === 'checklist') || (step.subChecklist == null  && mode === 'template')">{{step.id}}</h3>
+                        <h3 class="list-group-item-heading" ng-if="step.child != null  && mode === 'checklist'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h3>
+                        <h3 class="list-group-item-heading" ng-if="step.subChecklist != null  && mode === 'template'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoTemplate(step.subChecklist)">{{step.id}}</a></h3>
+
                         
                         <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="step.responsible">
                             <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{step.responsible}}</h4>                            
@@ -145,7 +146,7 @@
                         </div>
                         
                         <div ng-show="showSubchecklist(step) ">
-                            <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" ng-class="getSubchecklistClass()" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></h4>
+                            <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" ng-class="getSubchecklistClass()" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></span></h4>
                         </div>
                         <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showStartProgress(step)">
                             <button type="button" class="btn btn-default" aria-label="Start" ng-click="startAction(step);" >
