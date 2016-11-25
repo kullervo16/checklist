@@ -559,13 +559,17 @@
         
         function deleteChecklist() {
             if(confirm("Are you sure you want to delete this checklist and its sub-checklists? This operation cannot be undone...")) {
+                var parent = $scope.data.parent;
                 $http.delete('rest/checklists/'+$location.search().id)
                     .success(function (data,status,headers,config) {
-                        $window.location.href = './checklistOverview.html'     
+                        if (parent == null) {
+                            $window.location.href = './checklistOverview.html'
+                        } else {
+                            $window.location.href = './checklist.html?id=' + parent;
+                        }
                     }).error(function (data,status,headers,config) {
                         console.log('Error deleting checklist '+$location.search().id);
-                        $window.location.href = './checklistOverview.html';     
-                    });  
+                    });
                 }
         }
         
