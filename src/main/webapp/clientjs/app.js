@@ -1,5 +1,5 @@
 (function() {
-    var app = angular.module('checklist',['ui.bootstrap']);
+    var app = angular.module('checklist',['ui.bootstrap','ngResource']);
     
     app.config(['$locationProvider', function($locationProvider){
         $locationProvider.html5Mode({
@@ -21,6 +21,42 @@
             });
         };
     });
+       
+
+    app.filter("trust", ['$sce', function($sce) {
+      return function(htmlCode){
+        return $sce.trustAsHtml(htmlCode);
+      }
+    }]);
+
+    app.filter("createLinks", ['$sce', function ($sce) {
+            return function (text) {                
+                text = parseProtocol("http://", text); 
+                return parseProtocol("https://", text);                
+            }
+            function parseProtocol(protocol,text) {
+                var newText = "";
+                while (text.indexOf(protocol) >= 0) {
+                    newText += text.substring(0, text.indexOf(protocol));
+                    var url = text.substring(text.indexOf(protocol));
+                    if (url.indexOf(" ") > 0) {
+                        // normal case... other words after                    
+                        url = url.substring(0, url.indexOf(" "));
+                    } else {
+                        // border case... text ends with URL
+                        url = url;
+                    }
+                    newText += "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>";
+                    text = text.substring(text.indexOf(protocol) + url.length);
+                }
+                // now set the remainer (which may be the complete string when no URLs in it :-)
+                newText += text                
+                return newText;
+            }
+        }]);
+      
+    
+
 
     app.controller('templateController', function($scope,$http,$window) {
         // init stuff... get data from backend
@@ -795,7 +831,7 @@
           }
           $scope.refreshState = state;
         }
-
+        
         // =================================================
         // misc operations
         // =================================================
@@ -855,7 +891,7 @@
         $scope.addMileStoneToSelection = addMileStoneToSelection;
         $scope.instantiateFromTemplate = instantiateFromTemplate;
         
-        $scope.toggleRefresh = toggleRefresh;
+        $scope.toggleRefresh = toggleRefresh;        
 
         $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
     }

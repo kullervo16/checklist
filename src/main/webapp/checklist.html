@@ -8,8 +8,10 @@
         <title>Checklist</title>
         <script src="clientjs/jquery.min.js"></script>
         <script src="clientjs/bootstrap.min.js"></script>        
-        <!-- Angular JS-->
+        <!-- Angular JS-->        
         <script src="clientjs/angular.js"></script>
+        <script src="clientjs/angular-sanitize.min.js"></script>
+        <script src="clientjs/angular-resource.js"></script>
         <!-- Bootstrap core CSS-->
         <link href="css/bootstrap.min.css" rel="stylesheet">        
         <!-- Bootstrap theme-->
@@ -145,7 +147,7 @@
                             </div>
                             <p>
                                 <ul ng-repeat="answer in step.answers">
-                                    <li>{{answer}}</li>
+                                    <li><div ng-bind-html="answer | createLinks | trust"/></li>
                                 </ul>
                             </p>
                         </div>
@@ -275,7 +277,7 @@
                   </div>
                   <div class="modal-body">                      
                       <ul ng-repeat="error in shownStep.errors">
-                          <li>{{error}}</li>
+                          <li><div ng-bind-html="error | createLinks | trust"/></li>
                       </ul>
                   </div>
               </div>
