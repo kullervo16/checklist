@@ -606,6 +606,15 @@
                 }
             }
         }
+        
+        function instantiateFromTemplate() {            
+            $http.post('rest/checklists'+$location.search().id)
+                .success(function (data,status,headers,config) {
+                    $window.location.href = './checklist.html?id='+data;                      
+                }).error(function (data,status,headers,config) {
+                    console.log('Error creating new checklist');
+                });
+        }
         // =================================================
         // overview operations
         // =================================================
@@ -844,6 +853,7 @@
         $scope.openOverview = openOverview;
         $scope.addTagToSelection = addTagToSelection;
         $scope.addMileStoneToSelection = addMileStoneToSelection;
+        $scope.instantiateFromTemplate = instantiateFromTemplate;
         
         $scope.toggleRefresh = toggleRefresh;
 

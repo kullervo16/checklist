@@ -90,6 +90,11 @@
               <uib-progressbar animate="false" value="data.progress" type="success"><b>{{data.progress}}%</b></uib-progressbar>
             </div>
             <div ng-show="showMainBody()">
+                <p ng-if="mode === 'template'">
+                    <button type="button" class="btn btn-default btn-sm" title="Create checklist from template" ng-click="instantiateFromTemplate()">
+                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span>&nbsp;Create checklist
+                    </button>
+                </p>
                 <div class="list-group" ng-repeat="step in data.steps">    
                     <div ng-class="getClassForStep(step)">
                         <!-- put an anchor for the auto-focus -->
