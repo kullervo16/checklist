@@ -118,3 +118,7 @@ a.anchor {
 .goto-checklist {
     vertical-align: middle;
 }
+
+.addAnswer {
+    vertical-align: super;
+}

@@ -121,7 +121,7 @@
                             <p>Answer :</p>
                             <p ng-if="showAnswerTextBox(step)">
                                 <textarea ng-model="answerText" rows="4" cols="50" ></textarea>
-                                <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, answerText);">
+                                <button ng-if="isInChecklistMode()" type="button" class="btn btn-default addAnswer" aria-label="ok" ng-click="addAnswer(step, answerText);">
                                   <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
                                 </button>
                             </p>
