@@ -45,7 +45,12 @@
         <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">    
             <div class="jumbotron">
                 <h1>{{data.displayName}}</h1>
-                <h3>{{data.description}}</h3>  
+                <h3>{{data.description}}</h3>
+                <div style="height: 30px" ng-if="mode === 'template'">
+                    <button type="button" class="btn btn-default btn-sm" title="Create checklist from template" ng-click="instantiateFromTemplate()">
+                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span>&nbsp;Create checklist
+                    </button>
+                </div>
                 <div style="height: 30px" ng-if="mode === 'checklist'">
                     <p>Autorefresh : 
                         <input type="checkbox" name="autoRefresh" onchange="angular.element(this).scope().toggleRefresh(this.checked)" ng-if="refreshState" checked/>
@@ -92,33 +97,31 @@
               <uib-progressbar animate="false" value="data.progress" type="success"><b>{{data.progress}}%</b></uib-progressbar>
             </div>
             <div ng-show="showMainBody()">
-                <p ng-if="mode === 'template'">
-                    <button type="button" class="btn btn-default btn-sm" title="Create checklist from template" ng-click="instantiateFromTemplate()">
-                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span>&nbsp;Create checklist
-                    </button>
-                </p>
-                <div class="list-group" ng-repeat="step in data.steps">    
+                <div class="list-group" ng-repeat="step in data.steps">
                     <div ng-class="getClassForStep(step)">
                         <!-- put an anchor for the auto-focus -->
                         <a id="{{step.id}}" name="{{step.id}}" class="anchor"></a>
                     
                         <!-- if the step links to a subchecklist, create a link. Otherwise just a title. -->
-                        <h3 class="list-group-item-heading" ng-if="(step.child == null && mode === 'checklist') || (step.subChecklist == null  && mode === 'template')">{{step.id}}</h3>
-                        <h3 class="list-group-item-heading" ng-if="step.child != null  && mode === 'checklist'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h3>
-                        <h3 class="list-group-item-heading" ng-if="step.subChecklist != null  && mode === 'template'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoTemplate(step.subChecklist)">{{step.id}}</a></h3>
+                        <h3 class="list-group-item-heading stepId" ng-if="(step.child == null && mode === 'checklist') || (step.subChecklist == null  && mode === 'template')">{{step.id}}</h3>
+                        <h3 class="list-group-item-heading stepId" ng-if="step.child != null  && mode === 'checklist'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h3>
+                        <h3 class="list-group-item-heading stepId" ng-if="step.subChecklist != null  && mode === 'template'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoTemplate(step.subChecklist)">{{step.id}}</a></h3>
 
-                        
-                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="step.responsible">
+                        <div class="btn-group btn-group responsible" role="group" aria-label="operations" ng-show="step.responsible">
                             <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{step.responsible}}</h4>                            
                         </div>
-                        
-                        <div ng-show="step.action">
+
+                        <div class="showDocumentation" ng-if="showDocumentation(step)" >
+                            <h4><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target = "_blank">&nbsp;&nbsp;Documentation&nbsp;</a></span></h4>
+                        </div>
+
+                        <div ng-if="step.action">
                             <h4><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>&nbsp;&nbsp;{{step.action}}</h4>
                         </div>
-                        
-                        <div ng-show="step.question">
+
+                        <div ng-if="step.question">
                             <h4><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;{{step.question}}</h4>
-                            <p>Answer :</p>
+                            <p ng-if="showAnswer(step)">Answer :</p>
                             <p ng-if="showAnswerTextBox(step)">
                                 <textarea ng-model="answerText" rows="4" cols="50" ></textarea>
                                 <button ng-if="isInChecklistMode()" type="button" class="btn btn-default addAnswer" aria-label="ok" ng-click="addAnswer(step, answerText);">
@@ -152,15 +155,15 @@
                             </p>
                         </div>
                         
-                        <div ng-show="showSubchecklist(step) ">
+                        <div ng-if="showSubchecklist(step) ">
                             <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" ng-class="getSubchecklistClass()" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></span></h4>
                         </div>
-                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showStartProgress(step)">
+                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-if="showStartProgress(step)">
                             <button type="button" class="btn btn-default" aria-label="Start" ng-click="startAction(step);" >
                                 <span class="glyphicon glyphicon-play" aria-hidden="true">&nbsp;Start</span>
                             </button>
                         </div>
-                        <div ng-show="showOptions(step)">
+                        <div ng-if="showOptions(step)">
                             <h4><span class="glyphicon glyphicon-question-sign" aria-hidden="true">&nbsp;&nbsp;Please select an option</span></h4>
                             <div class="btn-group" uib-dropdown>                                                          
                               <button id="split-button" type="button" class="btn">Available options</button>
@@ -176,10 +179,10 @@
                               </ul>
                             </div>
                         </div>
-                        <div ng-show="step.selectedOption">
+                        <div ng-if="step.selectedOption">
                             <h4>Selected option : {{step.selectedOption}}</h4>
                         </div>
-                        <div ng-show="step.errors.length">
+                        <div ng-if="step.errors.length">
                             <h4>
                                 <span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;Errors:&nbsp;<span class="badge">{{step.errors.length}}</span> 
                                 <button type="button" class="btn btn-xs" aria-label="details" ng-click="showErrors(step);" >
@@ -188,7 +191,7 @@
                             </h4>  
                             
                         </div>
-                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showActionButtons(step)">
+                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-if="showActionButtons(step)">
                             <p>Action result :&nbsp;&nbsp;</p>
                             <button type="button" class="btn btn-default" aria-label="ok" ng-click="updateAction(step, true);" >
                               <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
@@ -197,17 +200,17 @@
                               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Problem</span>
                             </button>
                         </div>
-                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showRevalidateButton(step)">
+                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-if="showRevalidateButton(step)">
                             <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="revalidate(step);" >
                               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Revalidate</span>
                             </button>
                         </div>
-                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-show="showReopenButton(step)">
+                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-if="showReopenButton(step)">
                             <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="reopen(step);" >
                               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Reopen</span>
                             </button>
                         </div>
-                        <div ng-show="showErrorDialog(step)" ng-class="unknown">
+                        <div ng-if="showErrorDialog(step)" ng-class="unknown">
                             <p>Please enter the details of the problem :</p>
                             <p>
                                 <textarea ng-model="currentError" rows="4" cols="50" ></textarea>
@@ -216,7 +219,7 @@
                                 </button>
                             </p>
                         </div>
-                        <div ng-show="showChecks(step)">
+                        <div ng-if="showChecks(step)">
                             <p>Please verify following condition(s):</p>
                             <ul ng-repeat="check in step.checks">
                                 <li>
@@ -236,10 +239,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div ng-show="showDocumentation(step)" >
-                            <h4><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target = "_blank">&nbsp;&nbsp;Documentation&nbsp;</a></span></h4>
-                        </div>
-                    </div>                                                             
+                    </div>
                 </div>
                 <div ng-show="showGoBackToParent()">
                     <h2>Your subtemplate is now complete. Click <a ng-click="gotoChecklist(data.parent)">here</a> to go back to the parent and continue.</h2>

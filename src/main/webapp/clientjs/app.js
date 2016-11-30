@@ -315,24 +315,24 @@
         }
         function getClassForStep(step) {          
             if(step.state === 'OK') {
-                return "ok";
+                return "step ok";
             } else if(step.state === 'EXECUTED') {
-                return "executed";
+                return "step executed";
             } else if(step.state === 'IN_PROGRESS') {
-                return "inProgress";
+                return "step inProgress";
             } else if(step.state === 'NOT_YET_APPLICABLE') {
-                return "notYetApplicable";
+                return "step notYetApplicable";
             } else if(step.state === 'NOT_APPLICABLE') {
-                return "notApplicable";
+                return "step notApplicable";
             } else if(step.state === 'ABORTED') {
-                return "aborted";
+                return "step aborted";
             } else if(step.state === 'EXECUTION_FAILED' 
                    || step.state === 'CHECK_FAILED' 
                    || step.state === 'CHECK_FAILED_NO_COMMENT' 
                    || step.state === 'EXECUTION_FAILED_NO_COMMENT') {
-                return "nok";
+                return "step nok";
             }   
-            return "unknown";
+            return "step unknown";
         }
         // =================================================
         // Visibility determination
@@ -387,19 +387,23 @@
         function showReopenButton(step) {
             return step.reopenable;
         }
-        
-        function showAnswerTextBox(step) {
-            return step.answerType === 'text' && step.state === 'UNKNOWN';
+
+        function showAnswer(step) {
+            return step.state === 'UNKNOWN';
         }
-        
-        function showAnswerRadioButton(step) {
-            return step.answerType === 'onlyOne' && step.state === 'UNKNOWN';
-        }
-        
+
         function showAnswerChecklists(step) {
             return step.answerType === 'multiple' && step.state === 'UNKNOWN';
         }
-        
+
+        function showAnswerRadioButton(step) {
+            return step.answerType === 'onlyOne' && step.state === 'UNKNOWN';
+        }
+
+        function showAnswerTextBox(step) {
+            return step.answerType === 'text' && step.state === 'UNKNOWN';
+        }
+
         function gotoChecklist(cl) {
             $window.location='checklist.html?id='+cl;
         }
@@ -457,12 +461,7 @@
         }
 
         function showDocumentation(step) {
-            return step.documentation
-                   && ((   step.state !== 'NOT_YET_APPLICABLE'
-                        && step.state !== 'NOT_APPLICABLE'
-                        && step.state !== 'OK'
-                        && step.state !== 'ABORTED')
-                       || $scope.mode === 'template');
+            return step.documentation != null;
         }
 
         // =================================================
@@ -841,57 +840,58 @@
 
         $scope.getClassForMilestone = getClassForMilestone;
         $scope.getClassForStep      = getClassForStep;
-        
-        $scope.isInChecklistMode = isInChecklistMode;
-        $scope.showActionButtons = showActionButtons;
-        $scope.showErrorDialog   = showErrorDialog;
-        $scope.showChecks        = showChecks;
-        $scope.showCheckButtons  = showCheckButtons;
-        $scope.showSubchecklist  = showSubchecklist;
-        $scope.showOptions       = showOptions;
-        $scope.showMainBody      = showMainBody;
-        $scope.showProgressBar   = showProgressBar;       
-        $scope.showAnswerTextBox = showAnswerTextBox;  
-        $scope.showGoBackToParent= showGoBackToParent;
-        $scope.showStartProgress = showStartProgress;
-        $scope.showDocumentation = showDocumentation;
-        $scope.gotoChecklist     = gotoChecklist;
-        $scope.gotoTemplate      = gotoTemplate;
-        $scope.showModal         = showModal;
-        $scope.hideModal         = hideModal;
-        $scope.showErrors        = showErrors;
-        $scope.showAnswerChecklists = showAnswerChecklists;
-        $scope.showAnswerRadioButton= showAnswerRadioButton;
-        $scope.showRevalidateButton = showRevalidateButton;
-        $scope.showReopenButton     = showReopenButton;
-        $scope.getSubchecklistClass = getSubchecklistClass;
-        $scope.toggleClosedFilter   = toggleClosedFilter;
-        $scope.removeTagFromChecklist = removeTagFromChecklist;        
-        
-        $scope.startAction    = startAction;
-        $scope.updateAction   = updateAction;
-        $scope.addErrorAction = addErrorAction;
-        $scope.addAnswer      = addAnswer;
-        $scope.setCheckResult = setCheckResult;
-        $scope.addTag         = addTag;
-        $scope.setStepOption  = setStepOption;
-        $scope.revalidate     = revalidate;
-        $scope.reopen         = reopen;
-        $scope.deleteChecklist= deleteChecklist;
-        $scope.closeChecklist = closeChecklist;
-        $scope.launchSubChecklist = launchSubChecklist;   
-                
-        $scope.getChecklists = getChecklists;
-        $scope.getClassForChecklist = getClassForChecklist;   
-        $scope.createTagClouds = createTagClouds;
-        $scope.clearTagSelection = clearTagSelection;
+
+        $scope.isInChecklistMode      = isInChecklistMode;
+        $scope.showActionButtons      = showActionButtons;
+        $scope.showErrorDialog        = showErrorDialog;
+        $scope.showChecks             = showChecks;
+        $scope.showCheckButtons       = showCheckButtons;
+        $scope.showSubchecklist       = showSubchecklist;
+        $scope.showOptions            = showOptions;
+        $scope.showMainBody           = showMainBody;
+        $scope.showProgressBar        = showProgressBar;
+        $scope.showAnswer             = showAnswer;
+        $scope.showAnswerChecklists   = showAnswerChecklists;
+        $scope.showAnswerRadioButton  = showAnswerRadioButton;
+        $scope.showAnswerTextBox      = showAnswerTextBox;
+        $scope.showGoBackToParent     = showGoBackToParent;
+        $scope.showStartProgress      = showStartProgress;
+        $scope.showDocumentation      = showDocumentation;
+        $scope.gotoChecklist          = gotoChecklist;
+        $scope.gotoTemplate           = gotoTemplate;
+        $scope.showModal              = showModal;
+        $scope.hideModal              = hideModal;
+        $scope.showErrors             = showErrors;
+        $scope.showRevalidateButton   = showRevalidateButton;
+        $scope.showReopenButton       = showReopenButton;
+        $scope.getSubchecklistClass   = getSubchecklistClass;
+        $scope.toggleClosedFilter     = toggleClosedFilter;
+        $scope.removeTagFromChecklist = removeTagFromChecklist;
+
+        $scope.startAction        = startAction;
+        $scope.updateAction       = updateAction;
+        $scope.addErrorAction     = addErrorAction;
+        $scope.addAnswer          = addAnswer;
+        $scope.setCheckResult     = setCheckResult;
+        $scope.addTag             = addTag;
+        $scope.setStepOption      = setStepOption;
+        $scope.revalidate         = revalidate;
+        $scope.reopen             = reopen;
+        $scope.deleteChecklist    = deleteChecklist;
+        $scope.closeChecklist     = closeChecklist;
+        $scope.launchSubChecklist = launchSubChecklist;
+
+        $scope.getChecklists           = getChecklists;
+        $scope.getClassForChecklist    = getClassForChecklist;
+        $scope.createTagClouds         = createTagClouds;
+        $scope.clearTagSelection       = clearTagSelection;
         $scope.clearMilestoneSelection = clearMilestoneSelection;
-        $scope.openOverview = openOverview;
-        $scope.addTagToSelection = addTagToSelection;
+        $scope.openOverview            = openOverview;
+        $scope.addTagToSelection       = addTagToSelection;
         $scope.addMileStoneToSelection = addMileStoneToSelection;
         $scope.instantiateFromTemplate = instantiateFromTemplate;
-        
-        $scope.toggleRefresh = toggleRefresh;        
+
+        $scope.toggleRefresh = toggleRefresh;
 
         $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
     }
