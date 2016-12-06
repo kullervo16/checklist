@@ -42,13 +42,13 @@
                 <!-- /.nav-collapse-->
             </div>
         </div>
-        <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">    
+        <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">
             <div class="jumbotron">
                 <h1>{{data.displayName}}</h1>
                 <h3>{{data.description}}</h3>
                 <div style="height: 30px" ng-if="mode === 'template'">
                     <button type="button" class="btn btn-default btn-sm" title="Create checklist from template" ng-click="instantiateFromTemplate()">
-                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span>&nbsp;Create checklist
+                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span>Create checklist
                     </button>
                 </div>
                 <div style="height: 30px" ng-if="mode === 'checklist'">
@@ -101,31 +101,22 @@
                     <div ng-class="getClassForStep(step)">
                         <!-- put an anchor for the auto-focus -->
                         <a id="{{step.id}}" name="{{step.id}}" class="anchor"></a>
-                    
-                        <!-- if the step links to a subchecklist, create a link. Otherwise just a title. -->
-                        <h3 class="list-group-item-heading stepId" ng-if="(step.child == null && mode === 'checklist') || (step.subChecklist == null  && mode === 'template')">{{step.id}}</h3>
-                        <h3 class="list-group-item-heading stepId" ng-if="step.child != null  && mode === 'checklist'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h3>
-                        <h3 class="list-group-item-heading stepId" ng-if="step.subChecklist != null  && mode === 'template'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoTemplate(step.subChecklist)">{{step.id}}</a></h3>
 
-                        <div class="btn-group btn-group responsible" role="group" aria-label="operations" ng-show="step.responsible">
-                            <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{step.responsible}}</h4>                            
-                        </div>
+                        <h3 class="list-group-item-heading stepId" ng-if="mode === 'template'">{{step.id}}</h3>
 
-                        <div class="showDocumentation" ng-if="showDocumentation(step)" >
-                            <h4><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target = "_blank">&nbsp;&nbsp;Documentation&nbsp;</a></span></h4>
-                        </div>
+                        <h4 class="responsible" ng-if="step.responsible"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>{{step.responsible}}</h4>
 
-                        <div ng-if="step.action">
-                            <h4><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>&nbsp;&nbsp;{{step.action}}</h4>
-                        </div>
+                        <h4 class="documentation" ng-if="showDocumentation(step)"><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target = "_blank">Documentation</a></h4>
 
-                        <div ng-if="step.question">
-                            <h4><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;{{step.question}}</h4>
-                            <p ng-if="showAnswer(step)">Answer :</p>
+                        <h4 class="action" ng-if="step.action"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>{{step.action}}</h4>
+
+                        <h4 class="question" ng-if="step.question"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>{{step.question}}</h4>
+
+                        <div class="answer" ng-if="step.question">
                             <p ng-if="showAnswerTextBox(step)">
                                 <textarea ng-model="answerText" rows="4" cols="50" ></textarea>
                                 <button ng-if="isInChecklistMode()" type="button" class="btn btn-default addAnswer" aria-label="ok" ng-click="addAnswer(step, answerText);">
-                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
+                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
                                 </button>
                             </p>
                             <div ng-if="showAnswerRadioButton(step)">
@@ -135,7 +126,7 @@
                                      </label>                                    
                                 </p>                                
                                 <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, radioAnswer);">
-                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
+                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
                                 </button>
                             </div>
                             <div ng-if="showAnswerChecklists(step)">
@@ -145,7 +136,7 @@
                                      </label>                                    
                                 </p>                                
                                 <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, checkboxAnswer);">
-                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
+                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
                                 </button>
                             </div>
                             <p>
@@ -156,11 +147,12 @@
                         </div>
                         
                         <div ng-if="showSubchecklist(step) ">
-                            <h4><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" ng-class="getSubchecklistClass()" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></span></h4>
+                            <h4 ng-if="mode === 'checklist' && step.child != null"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h4>
+                            <h4 ng-if="step.child == null"><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" ng-class="getSubchecklistClass()" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></span></h4>
                         </div>
-                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-if="showStartProgress(step)">
+                        <div role="group" aria-label="operations" ng-if="showStartProgress(step)">
                             <button type="button" class="btn btn-default" aria-label="Start" ng-click="startAction(step);" >
-                                <span class="glyphicon glyphicon-play" aria-hidden="true">&nbsp;Start</span>
+                                <span class="glyphicon glyphicon-play" aria-hidden="true">Start</span>
                             </button>
                         </div>
                         <div ng-if="showOptions(step)">
@@ -191,31 +183,21 @@
                             </h4>  
                             
                         </div>
-                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-if="showActionButtons(step)">
-                            <p>Action result :&nbsp;&nbsp;</p>
+                        <div role="group" aria-label="operations" ng-if="showActionButtons(step)">
+                            <p>Action result :</p>
                             <button type="button" class="btn btn-default" aria-label="ok" ng-click="updateAction(step, true);" >
-                              <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
+                              <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
                             </button>
                             <button type="button" class="btn btn-default" aria-label="problem" ng-click="updateAction(step, false);" >
-                              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Problem</span>
+                              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">Problem</span>
                             </button>
                         </div>
-                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-if="showRevalidateButton(step)">
-                            <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="revalidate(step);" >
-                              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Revalidate</span>
-                            </button>
-                        </div>
-                        <div class="btn-group btn-group" role="group" aria-label="operations" ng-if="showReopenButton(step)">
-                            <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="reopen(step);" >
-                              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">&nbsp;Reopen</span>
-                            </button>
-                        </div>
-                        <div ng-if="showErrorDialog(step)" ng-class="unknown">
+                        <div class='errorBlock' ng-if="showErrorDialog(step)" ng-class="unknown">
                             <p>Please enter the details of the problem :</p>
                             <p>
                                 <textarea ng-model="currentError" rows="4" cols="50" ></textarea>
                                 <button type="button" class="btn btn-default" aria-label="ok" ng-click="addErrorAction(step, currentError);">
-                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;OK</span>
+                                  <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
                                 </button>
                             </p>
                         </div>
@@ -239,6 +221,14 @@
                                 </li>
                             </ul>
                         </div>
+                        <div role="group" aria-label="operations">
+                            <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="revalidate(step);" ng-if="showRevalidateButton(step)">
+                                <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">Revalidate</span>
+                            </button>
+                            <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="reopen(step);" ng-if="showReopenButton(step)">
+                                <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">Reopen</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div ng-show="showGoBackToParent()">
@@ -261,7 +251,7 @@
                         <p>Good examples are a specific project name, a version, a period ....</p>
                         <input ng-model="newTag" ng-enter="addTag(newTag)" autofocus/>
                         <button type="button" class="btn btn-default" aria-label="ok" ng-click="addTag(newTag)" >
-                          <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">&nbsp;Add</span>
+                          <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">Add</span>
                         </button>
                     </div>
                   </div>

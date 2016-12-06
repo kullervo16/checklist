@@ -66,8 +66,8 @@
             }
             $http.get('rest/templates')
                 .success(function (data,status,headers,config) {
-                    $scope.rawItems = data;     
-                        toggleShowSubchecklists($scope.subCLshown, false);
+                    $scope.rawItems = data;
+                    toggleShowSubchecklists($scope.subCLshown, false);
                 }).error(function (data,status,headers,config) {
                     console.log('Error getting rest/template/list');
                 });  
@@ -284,7 +284,7 @@
                 $http.get('rest/templates'+$location.search().id)
                     .success(function (data,status,headers,config) {
                         console.log("Data loaded");
-                        $scope.data = data;                    
+                        $scope.data = data;
                     }).error(function (data,status,headers,config) {
                         console.log('Error getting rest/checklist/get');
                     });
@@ -361,7 +361,7 @@
         }
         
         function showSubchecklist(step) {
-            return $scope.mode === 'checklist' && step.subChecklist != null && step.state === 'UNKNOWN';
+            return step.subChecklist != null;
         }
         
         function getSubchecklistClass() {
@@ -386,10 +386,6 @@
         
         function showReopenButton(step) {
             return step.reopenable;
-        }
-
-        function showAnswer(step) {
-            return step.state === 'UNKNOWN';
         }
 
         function showAnswerChecklists(step) {
@@ -447,9 +443,11 @@
                 console.log('Start new repositioning cycle');
                 $interval(function(){console.log('repos');$anchorScroll();},500,3);
             }
-            
-            
-            
+        }
+
+        function repositionTo(step) {
+            $window.location.hash = step.id;
+            $anchorScroll();
         }
         
         function showGoBackToParent() {
@@ -472,7 +470,7 @@
             $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/start")
                 .success(function (data, status, headers, config) {
                     $scope.data = data;
-                    reposition();
+                    repositionTo(step);
                 }).error(function (data, status, headers, config) {
                 console.log('Error starting step ' + step.id);
             });
@@ -557,6 +555,7 @@
                 $http.put('rest/checklists/'+$location.search().id+"/"+step.id+"/options/"+choice)
                     .success(function (data,status,headers,config) {
                         $scope.data = data;
+                        reposition();
                     }).error(function (data,status,headers,config) {
                     console.log('Error updating step '+step.id);
                 });
@@ -586,7 +585,8 @@
             $scope.checkResults[step.id] = {};
             $http.put('rest/checklists/'+$location.search().id+"/"+step.id+'/reopen')
                 .success(function (data,status,headers,config) {
-                    $scope.data = data;                        
+                    $scope.data = data;
+                    repositionTo(step);
                 }).error(function (data,status,headers,config) {
                     console.log('Error updating step '+step.id);
                 });
@@ -850,7 +850,6 @@
         $scope.showOptions            = showOptions;
         $scope.showMainBody           = showMainBody;
         $scope.showProgressBar        = showProgressBar;
-        $scope.showAnswer             = showAnswer;
         $scope.showAnswerChecklists   = showAnswerChecklists;
         $scope.showAnswerRadioButton  = showAnswerRadioButton;
         $scope.showAnswerTextBox      = showAnswerTextBox;

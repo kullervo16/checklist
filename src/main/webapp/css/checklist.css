@@ -29,7 +29,7 @@ div.executed a {
 
 div.unknown {
     color:black;
-    background-color: white;
+    background-color: ivory;
 }
 
 div.unknown a {
@@ -98,10 +98,6 @@ a.anchor {
     visibility: hidden;
 }
 
-.btn-group {
-    vertical-align: bottom;
-}
-
 .goto-checklist {
     vertical-align: middle;
 }
@@ -111,27 +107,56 @@ a.anchor {
 }
 
 .stepId {
-    float: left;
+    font-style: italic;
 }
 
-div.responsible {
+.responsible, .documentation {
     float: right;
-    margin-left: 20px;
+    margin: 0 0 0.5em 1em;
 }
 
-div.responsible h4 {
-    margin: 0;
-}
-
-div.showDocumentation {
-    float: right;
-    margin-left: 20px;
-}
-
-div.responsible + div:not(.showDocumentation), div.showDocumentation + div {
+.responsible ~ div {
     clear: both;
 }
 
-div.showDocumentation h4 {
+.responsible .glyphicon, .documentation .glyphicon, .action .glyphicon, .question .glyphicon, button.btn .glyphicon:before {
+    margin-right: 0.5em;
+    vertical-align: text-bottom;
+}
+
+button.btn-xs .glyphicon:before {
+    margin-right: 0;
+}
+
+.question, .action {
+    display: inline-flex;
+    float: left;
     margin: 0;
+}
+
+.question {
+    margin-bottom: 0.5em;
+}
+
+.answer textarea, .errorBlock textarea {
+    display: block;
+    width: 100%;
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.answer > div {
+    margin-left: 1em;
+}
+
+.answer p {
+    margin: 0;
+}
+
+button.btn {
+    padding: 6px;
+}
+
+input[type=radio], input[type=checkbox] {
+    margin-right: 3px;
 }
