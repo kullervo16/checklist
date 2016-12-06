@@ -1,82 +1,84 @@
 <html lang="en" ng-app="checklist">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">        
-        <title>Tags & milestones</title>
-        <script src="clientjs/jquery.min.js"></script>
-        <script src="clientjs/bootstrap.min.js"></script>
-        <!-- Angular JS-->
-        <script src="clientjs/angular.js"></script>
-        <script src="clientjs/angular-sanitize.min.js"></script>
-        <script src="clientjs/angular-resource.js"></script>
-        <!-- Bootstrap core CSS-->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <!-- Bootstrap theme-->
-        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
-        <link href="css/checklist.css" rel="stylesheet">
-        <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
-        <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
-        <script src="clientjs/jqcloud.js"></script>
-        <link rel="stylesheet" href="css/jqcloud.css">
-        <script src="clientjs/app.js"></script>
-    </head>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Tags & milestones</title>
+  <script src="clientjs/jquery.min.js"></script>
+  <script src="clientjs/bootstrap.min.js"></script>
+  <!-- Angular JS-->
+  <script src="clientjs/angular.js"></script>
+  <script src="clientjs/angular-sanitize.min.js"></script>
+  <script src="clientjs/angular-resource.js"></script>
+  <!-- Bootstrap core CSS-->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap theme-->
+  <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+  <link href="css/checklist.css" rel="stylesheet">
+  <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
+  <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
+  <script src="clientjs/jqcloud.js"></script>
+  <link rel="stylesheet" href="css/jqcloud.css">
+  <script src="clientjs/app.js"></script>
+</head>
 
-    <body role="document" ng-app="read">
-        <!-- Fixed navbar-->
-        <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
-                        <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
-                        <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme--></div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="./templates.html" target="_self">Templates</a></li>
-                        <li><a href="./checklistOverview.html" target="_self">Checklists</a></li>
-                        <li><a href="./select.html" target="_self">Select</a></li>
-                        <li><a href="./tag.html" target="_self">Tags</a></li>
-                        <li><a href="./help.html" target="_self">Help</a></li>
-                    </ul>
-                </div>
-                <!-- /.nav-collapse-->
-            </div>
-        </div>
-        <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist" ng-init="createTagClouds()">    
-            <div class="jumbotron">
-                <h1>Tags & milestones</h1>                                              
-            </div>
-            <h2>Tags : </h2>
-            <h3>Current selection : {{tagSelection}} 
-                &nbsp;&nbsp;&nbsp;
-                <button type="button" class="btn btn-default" title="Go to selection" ng-if="tagSelection !== ''" ng-click="openOverview()">
-                  <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
-                </button>
-                &nbsp;&nbsp;&nbsp;
-                <button type="button" class="btn btn-default" title="Clear selection" ng-if="tagSelection !== ''" ng-click="clearTagSelection()">
-                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </button></h3>
-            
-            <div id="tags" style="width: 100%;height: 300px"></div>
-            <h2>Milestones : </h2>            
-            <h3>Current selection : {{milestoneSelection}} 
-                &nbsp;&nbsp;&nbsp;
-                <button type="button" class="btn btn-default" title="Go to selection" ng-if="milestoneSelection !== ''" ng-click="openOverview()">
-                  <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
-                </button>
-                &nbsp;&nbsp;&nbsp;
-                <button type="button" class="btn btn-default" title="Clear selection" ng-if="milestoneSelection !== ''" ng-click="clearMilestoneSelection()">
-                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </button></h3>
-            <div id="milestones" style="width: 100%;height: 300px"></div>
-        </div>
+<body role="document" ng-app="read">
+  <!-- Fixed navbar-->
+  <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
+          <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme--></div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="./templates.html" target="_self">Templates</a></li>
+          <li><a href="./checklistOverview.html" target="_self">Checklists</a></li>
+          <li><a href="./select.html" target="_self">Select</a></li>
+          <li><a href="./tag.html" target="_self">Tags</a></li>
+          <li><a href="./help.html" target="_self">Help</a></li>
+        </ul>
+      </div>
+      <!-- /.nav-collapse-->
+    </div>
+  </div>
+  <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist" ng-init="createTagClouds()">
+    <div class="jumbotron">
+      <h1>Tags & milestones</h1>
+    </div>
+    <h2>Tags : </h2>
+    <h3>Current selection : {{tagSelection}}
+        &nbsp;&nbsp;&nbsp;
+      <button type="button" class="btn btn-default" title="Go to selection" ng-if="tagSelection !== ''" ng-click="openOverview()">
+        <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+      </button>
+        &nbsp;&nbsp;&nbsp;
+      <button type="button" class="btn btn-default" title="Clear selection" ng-if="tagSelection !== ''" ng-click="clearTagSelection()">
+        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+      </button>
+    </h3>
 
-        <!-- /container-->
-        <!-- Bootstrap core JavaScript-->
-        <!-- ==================================================-->
-        <!-- Placed at the end of the document so the pages load faster-->
-        <script src="clientjs/holder.js"></script>
-    </body>
+    <div id="tags" style="width: 100%;height: 300px"></div>
+    <h2>Milestones : </h2>
+    <h3>Current selection : {{milestoneSelection}}
+        &nbsp;&nbsp;&nbsp;
+      <button type="button" class="btn btn-default" title="Go to selection" ng-if="milestoneSelection !== ''" ng-click="openOverview()">
+        <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+      </button>
+        &nbsp;&nbsp;&nbsp;
+      <button type="button" class="btn btn-default" title="Clear selection" ng-if="milestoneSelection !== ''" ng-click="clearMilestoneSelection()">
+        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+      </button>
+    </h3>
+    <div id="milestones" style="width: 100%;height: 300px"></div>
+  </div>
+
+  <!-- /container-->
+  <!-- Bootstrap core JavaScript-->
+  <!-- ==================================================-->
+  <!-- Placed at the end of the document so the pages load faster-->
+  <script src="clientjs/holder.js"></script>
+</body>
 </html>

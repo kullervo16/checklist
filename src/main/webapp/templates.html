@@ -1,171 +1,164 @@
 <html lang="en" ng-app="checklist">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">        
-        <title>Templates</title>
-        <script src="clientjs/jquery.min.js"></script>
-        <script src="clientjs/bootstrap.min.js"></script>
-        <!-- Angular JS-->
-        <script src="clientjs/angular.js"></script>
-        <script src="clientjs/angular-sanitize.min.js"></script>
-        <script src="clientjs/angular-resource.js"></script>
-        <!-- Bootstrap core CSS-->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <!-- Bootstrap theme-->
-        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
-        <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
-        <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
-        <script src="clientjs/app.js"></script>
-    </head>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Templates</title>
+  <script src="clientjs/jquery.min.js"></script>
+  <script src="clientjs/bootstrap.min.js"></script>
+  <!-- Angular JS-->
+  <script src="clientjs/angular.js"></script>
+  <script src="clientjs/angular-sanitize.min.js"></script>
+  <script src="clientjs/angular-resource.js"></script>
+  <!-- Bootstrap core CSS-->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap theme-->
+  <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+  <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
+  <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
+  <script src="clientjs/app.js"></script>
+</head>
 
-    <body role="document" ng-app="read">
-        <!-- Fixed navbar-->
-        <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
-                        <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
-                        <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme--></div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="./templates.html" target="_self">Templates</a></li>
-                        <li><a href="./checklistOverview.html" target="_self">Checklists</a></li>
-                        <li><a href="./select.html" target="_self">Select</a></li>
-                        <li><a href="./tag.html" target="_self">Tags</a></li>
-                        <li><a href="./help.html" target="_self">Help</a></li>
-                    </ul>
-                </div>
-                <!-- /.nav-collapse-->
-            </div>
+<body role="document" ng-app="read">
+  <!-- Fixed navbar-->
+  <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
+          <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme--></div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="./templates.html" target="_self">Templates</a></li>
+          <li><a href="./checklistOverview.html" target="_self">Checklists</a></li>
+          <li><a href="./select.html" target="_self">Select</a></li>
+          <li><a href="./tag.html" target="_self">Tags</a></li>
+          <li><a href="./help.html" target="_self">Help</a></li>
+        </ul>
+      </div>
+      <!-- /.nav-collapse-->
+    </div>
+  </div>
+  <div role="main" class="container theme-showcase" ng-controller="templateController as template">
+    <div class="jumbotron">
+      <h1>Available templates</h1>
+      <p>Show subchecklists : <input type="checkbox" name="showSubchecklists" onchange="angular.element(this).scope().toggleShowSubchecklists(this.checked, true)"/></p>
+      <h3>
+        <button onclick="angular.element(this).scope().showModal(true)" data-target="#myModal" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp; Add a new template</button>
+      </h3>
+    </div>
+    <div>
+      <div class="list-group" ng-repeat="t in items">
+        <h4 class="list-group-item-heading">{{t.id}}</h4>
+        <p><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;&nbsp;{{t.description}}
+          <span class="pull-right label label-info" ng-if="t.subchecklistOnly">subchecklist</span>
+        </p>
+
+        <div ng-show="t.tags.length" class="pull-right">
+          <p><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+            <span ng-repeat="tag in t.tags">&nbsp;<span class="label label-primary">{{tag}}</span>&nbsp;</span>
+          </p>
         </div>
-        <div role="main" class="container theme-showcase" ng-controller="templateController as template">            
-            <div class="jumbotron">
-                <h1>Available templates</h1>
-                <p>Show subchecklists : <input type="checkbox" name="showSubchecklists" onchange="angular.element(this).scope().toggleShowSubchecklists(this.checked, true)"/></p>
-                <h3><button onclick="angular.element(this).scope().showModal(true)" data-target="#myModal" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp; Add a new template</button></h3>                
+        <div ng-show="t.milestones.length" class="pull-right">
+          <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><span ng-repeat="milestone in t.milestones">&nbsp;<span ng-class="getClassForMilestone(milestone)">{{milestone.name}}</span>&nbsp;</span>
+          </p>
+        </div>
+
+        <div class="btn-group btn-group" role="group" aria-label="operations">
+          <button type="button" class="btn btn-default" title="New checklist" ng-click="createChecklist(t.id);" ng-disabled="t.subchecklistOnly">
+            <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-default" title="Inspect" ng-click="showTemplate(t.id)">
+            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-default" title="Stats" ng-click="showStats(t.id)">
+            <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+          </button>
+        </div>
+        &nbsp;&nbsp;
+        <div class="btn-group btn-group" role="group" aria-label="operations">
+          <button type="button" class="btn btn-default" title="Download" ng-click="downloadTemplate(t.id);">
+            <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-default" title="Upload" ng-click="uploadTemplate(t.id)">
+            <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="btn btn-default" title="Delete" ng-click="deleteTemplate(t.id)">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Select a template file to add</h4>
+          </div>
+          <div class="modal-body">
+            <div ng-repeat="err in uploadValidationData">
+              <h4>{{err.severity}}:&nbsp;&nbsp;{{err.description}}</h4>
+              <p>{{err.details}}</p>
             </div>
-            <div>                
-                <div class="list-group" ng-repeat="t in items">                
-                    <h4 class="list-group-item-heading">{{t.id}}</h4>
-                    <p><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;&nbsp;{{t.description}}
-                        <span class="pull-right label label-info" ng-if="t.subchecklistOnly">subchecklist</span>
-                    </p>
-                    
-                    <div ng-show="t.tags.length" class="pull-right">
-                        <p ><span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 
-                            <span ng-repeat="tag in t.tags">
-                                &nbsp;
-                                <span class="label label-primary" >{{tag}}</span>
-                                &nbsp;
-                            </span>
-                        </p>                        
-                    </div>
-                    <div ng-show="t.milestones.length" class="pull-right">
-                        <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> 
-                            <span ng-repeat="milestone in t.milestones">
-                                &nbsp;
-                                <span ng-class="getClassForMilestone(milestone)" >{{milestone.name}}</span>
-                                &nbsp;
-                            </span>
-                        </p> 
-                    </div>
-                    
-                    <div class="btn-group btn-group" role="group" aria-label="operations">
-                        <button type="button" class="btn btn-default" title="New checklist" ng-click="createChecklist(t.id);" ng-disabled="t.subchecklistOnly">
-                          <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default" title="Inspect" ng-click="showTemplate(t.id)">
-                          <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default" title="Stats" ng-click="showStats(t.id)">
-                          <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-                        </button>
-                    </div>
-                &nbsp;&nbsp;
-                    <div class="btn-group btn-group" role="group" aria-label="operations">
-                        <button type="button" class="btn btn-default" title="Download" ng-click="downloadTemplate(t.id);">
-                          <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default" title="Upload" ng-click="uploadTemplate(t.id)">
-                          <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-default" title="Delete" ng-click="deleteTemplate(t.id)">
-                          <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                        </button>
-                    </div>
-                </div>
-            </div>        
-        
-            <div id="myModal" class="modal fade" role="dialog">
-              <div class="modal-dialog">
+            <div>
+              <label for="file" style="width: 5rem;">File</label>
+              <input type="file" name="file" id="file" onchange="angular.element(this).scope().setFile(this.files)" style="display: inline-block;"/>
+            </div>
+            <div>
+              <label for="templateName" style="width: 5rem;">Id</label>
+              <input type="text" name="templateName" id="templateName" onchange="angular.element(this).scope().setTemplateName(this)"/>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" onclick="angular.element(this).scope().uploadFile()">OK</button>
+            <button type="button" class="btn btn-default" onclick="angular.element(this).scope().hideModal()">Close</button>
+          </div>
+        </div>
 
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Select a template file to add</h4>
-                  </div>
-                  <div class="modal-body">
-                    <div ng-repeat="err in uploadValidationData">
-                      <h4>{{err.severity}}:&nbsp;&nbsp;{{err.description}}</h4>
-                      <p>{{err.details}}</p>
-                    </div>
-                    <div>
-                      <label for="file" style="width: 5rem;">File</label>
-                      <input type="file" name="file" id="file" onchange="angular.element(this).scope().setFile(this.files)" style="display: inline-block;"/>
-                    </div>
-                    <div>
-                      <label for="templateName" style="width: 5rem;">Id</label>
-                      <input type="text" name="templateName" id="templateName" onchange="angular.element(this).scope().setTemplateName(this)"/>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" onclick="angular.element(this).scope().uploadFile()">OK</button>
-                    <button type="button" class="btn btn-default" onclick="angular.element(this).scope().hideModal()">Close</button>
-                  </div>
-                </div>
+      </div>
+    </div>
 
+    <div id="stats" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title">Statistics ({{stats.numberOfOccurrences}} times executed)</h3>
+          </div>
+          <div class="modal-body" style="overflow: auto">
+            <h3>Currently active steps:</h3>
+            <div ng-repeat="step in stats.currentStepList">
+              <h4>{{step.name}} ({{step.numberOfOccurrences}} times completed)</h4>
+              <div class="progress">
+                <uib-progressbar animate="false" value="step.successRate" type="{{getClassForStep(step)}}"><b>{{step.successRate}}%</b></uib-progressbar>
+              </div>
+              <div ng-show="step.errors.length">
+                <div ng-repeat="error in step.errors">
+                  <p><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;&nbsp;{{error}}</p>
+                </div>
               </div>
             </div>
-            
-            <div id="stats" class="modal fade" role="dialog">
-              <div class="modal-dialog">
 
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3 class="modal-title">Statistics ({{stats.numberOfOccurrences}} times executed)</h3>
-                  </div>
-                  <div class="modal-body" style="overflow: auto">
-                      <h3>Currently active steps:</h3>
-                      <div ng-repeat="step in stats.currentStepList">
-                          <h4>{{step.name}} ({{step.numberOfOccurrences}} times completed)</h4>
-                          <div class="progress">
-                              <uib-progressbar animate="false" value="step.successRate" type="{{getClassForStep(step)}}"><b>{{step.successRate}}%</b></uib-progressbar>
-                          </div>
-                          <div ng-show="step.errors.length">
-                              <div ng-repeat="error in step.errors">
-                                  <p><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;&nbsp;{{error}}</p>                                  
-                              </div>
-                          </div>
-                      </div>
-                    
-                  </div>                  
-                </div>
+          </div>
+        </div>
 
-              </div>
-            </div>
-            
-            </div>
+      </div>
+    </div>
 
-        <!-- /container-->
-        <!-- Bootstrap core JavaScript-->
-        <!-- ==================================================-->
-        <!-- Placed at the end of the document so the pages load faster-->
-        <script src="clientjs/holder.js"></script>        
-    </body>
+  </div>
+
+  <!-- /container-->
+  <!-- Bootstrap core JavaScript-->
+  <!-- ==================================================-->
+  <!-- Placed at the end of the document so the pages load faster-->
+  <script src="clientjs/holder.js"></script>
+</body>
 </html>

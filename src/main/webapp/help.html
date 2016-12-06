@@ -1,67 +1,67 @@
 <html lang="en" ng-app="checklist">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">        
-        <title>Tags & milestones</title>
-        <script src="clientjs/jquery.min.js"></script>
-        <script src="clientjs/bootstrap.min.js"></script>
-        <!-- Angular JS-->
-        <script src="clientjs/angular.js"></script>
-        <script src="clientjs/angular-sanitize.min.js"></script>
-        <script src="clientjs/angular-resource.js"></script>
-        <!-- Bootstrap core CSS-->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <!-- Bootstrap theme-->
-        <link href="css/bootstrap-theme.min.css" rel="stylesheet">
-        <link href="css/checklist.css" rel="stylesheet">
-        <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
-        <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
-        <script src="clientjs/jqcloud.js"></script>
-        <link rel="stylesheet" href="css/jqcloud.css">
-        <script src="clientjs/app.js"></script>
-    </head>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Tags & milestones</title>
+  <script src="clientjs/jquery.min.js"></script>
+  <script src="clientjs/bootstrap.min.js"></script>
+  <!-- Angular JS-->
+  <script src="clientjs/angular.js"></script>
+  <script src="clientjs/angular-sanitize.min.js"></script>
+  <script src="clientjs/angular-resource.js"></script>
+  <!-- Bootstrap core CSS-->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap theme-->
+  <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+  <link href="css/checklist.css" rel="stylesheet">
+  <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
+  <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
+  <script src="clientjs/jqcloud.js"></script>
+  <link rel="stylesheet" href="css/jqcloud.css">
+  <script src="clientjs/app.js"></script>
+</head>
 
-    <body role="document" ng-app="read">
-        <!-- Fixed navbar-->
-        <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
-                        <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
-                        <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme--></div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="./templates.html" target="_self">Templates</a></li>
-                        <li><a href="./checklistOverview.html" target="_self">Checklists</a></li>
-                        <li><a href="./select.html" target="_self">Select</a></li>
-                        <li><a href="./tag.html" target="_self">Tags</a></li>
-                        <li><a href="./help.html" target="_self">Help</a></li>
-                    </ul>
-                </div>
-                <!-- /.nav-collapse-->
-            </div>
-        </div>
-        <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist" ng-init="createTagClouds()">    
-            <div class="jumbotron">
-                <h1>Help</h1>                                              
-            </div>
-            <h2>Documentation</h2>
-            <p>The project is documented on the <a href="https://github.com/kullervo16/checklist/blob/master/README.md" target="_blank">github site</a>,
-            where you find an overview of the features (including some screenshots) and examples on how to configure these features in YAML</p>
-            <h2>Feature missing?</h2>
-            <p>Since this is a fairly new project, probably there is still some killer feature missing. Feel free to <a href="https://github.com/kullervo16/checklist/issues" target="_blank">create
-                    an issue</a>. Of course, if you find a but, that's also the place to go</p>
-            <h2>Want to join?</h2>
-            <p>Everybody is more than welcome to add code. Please send me a pull request.</p>
-        </div>
+<body role="document" ng-app="read">
+  <!-- Fixed navbar-->
+  <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
+          <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme--></div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="./templates.html" target="_self">Templates</a></li>
+          <li><a href="./checklistOverview.html" target="_self">Checklists</a></li>
+          <li><a href="./select.html" target="_self">Select</a></li>
+          <li><a href="./tag.html" target="_self">Tags</a></li>
+          <li><a href="./help.html" target="_self">Help</a></li>
+        </ul>
+      </div>
+      <!-- /.nav-collapse-->
+    </div>
+  </div>
+  <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist" ng-init="createTagClouds()">
+    <div class="jumbotron">
+      <h1>Help</h1>
+    </div>
+    <h2>Documentation</h2>
+    <p>The project is documented on the <a href="https://github.com/kullervo16/checklist/blob/master/README.md" target="_blank">github site</a>,
+       where you find an overview of the features (including some screenshots) and examples on how to configure these features in YAML</p>
+    <h2>Feature missing?</h2>
+    <p>Since this is a fairly new project, probably there is still some killer feature missing. Feel free to <a href="https://github.com/kullervo16/checklist/issues" target="_blank">create
+                                                                                                                                                                                      an issue</a>. Of course, if you find a but, that's also the place to go</p>
+    <h2>Want to join?</h2>
+    <p>Everybody is more than welcome to add code. Please send me a pull request.</p>
+  </div>
 
-        <!-- /container-->
-        <!-- Bootstrap core JavaScript-->
-        <!-- ==================================================-->
-        <!-- Placed at the end of the document so the pages load faster-->
-        <script src="clientjs/holder.js"></script>
-    </body>
+  <!-- /container-->
+  <!-- Bootstrap core JavaScript-->
+  <!-- ==================================================-->
+  <!-- Placed at the end of the document so the pages load faster-->
+  <script src="clientjs/holder.js"></script>
+</body>
 </html>
