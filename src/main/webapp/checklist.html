@@ -52,19 +52,19 @@
         </button>
       </div>
       <div style="height: 30px" ng-if="mode === 'checklist'">
-        <p>Autorefresh :
+        <p id="autorefreshBlock">Autorefresh :
           <input type="checkbox" name="autoRefresh" onchange="angular.element(this).scope().toggleRefresh(this.checked)" ng-if="refreshState" checked/>
           <input type="checkbox" name="autoRefresh" onchange="angular.element(this).scope().toggleRefresh(this.checked)" ng-if="!refreshState"/>
            &nbsp;&nbsp;&nbsp;
-          <button type="button" class="btn btn-default" title="Delete" ng-click="deleteChecklist()">
+          <button id="deleteClButton" type="button" class="btn btn-default" title="Delete" ng-click="deleteChecklist()">
             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
           </button>
            &nbsp;&nbsp;&nbsp;
-          <button type="button" class="btn btn-default" title="Close" ng-click="closeChecklist()" ng-if="data.progress < 100">
+          <button id="closeClButton" type="button" class="btn btn-default" title="Close" ng-click="closeChecklist()" ng-if="data.progress < 100">
             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
           </button>
            &nbsp;&nbsp;&nbsp;
-          <button type="button" class="btn btn-default" title="Go to parent" ng-if="data.parent" ng-click="gotoChecklist(data.parent)">
+          <button id="gotoParentClButton" type="button" class="btn btn-default" title="Go to parent" ng-if="data.parent" ng-click="gotoChecklist(data.parent)">
             <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
           </button>
         </p>
@@ -79,7 +79,7 @@
     <div ng-show="data.tags.length">
       <p><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
         <span ng-repeat="tag in data.tags | orderBy: tag">&nbsp;<span class="label label-primary" ng-click="removeTagFromChecklist(tag)">{{tag}}</span>&nbsp;</span>
-        <button type="button" class="btn btn-default btn-sm" title="Add tag" ng-click="showModal('#tagModal')" ng-show="$scope.mode === 'checklist'">
+        <button id="addTagButton" type="button" class="btn btn-default btn-sm" title="Add tag" ng-click="showModal('#tagModal')" ng-show="mode === 'checklist'">
           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         </button>
       </p>
@@ -103,6 +103,12 @@
           <h4 class="action" ng-if="step.action"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>{{step.action}}</h4>
 
           <h4 class="question" ng-if="step.question"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>{{step.question}}</h4>
+
+          <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'template'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoTemplate(step.subChecklist)">{{step.subChecklist}}</a></h4>
+
+          <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child != null"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoChecklist(step.child)">{{step.subChecklist}}</a></h4>
+
+          <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child == null"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="launchSubChecklist(step)">{{step.subChecklist}}</a></h4>
 
           <div class="answer" ng-if="step.question">
             <p ng-if="showAnswerTextBox(step)">
@@ -140,10 +146,6 @@
             </p>
           </div>
 
-          <div ng-if="showSubchecklist(step) ">
-            <h4 ng-if="mode === 'checklist' && step.child != null"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span>&nbsp;&nbsp;<a ng-click="gotoChecklist(step.child)">{{step.id}}</a></h4>
-            <h4 ng-if="step.child == null"><span class="glyphicon glyphicon-share" aria-hidden="true">&nbsp;&nbsp;<button type="button" ng-class="getSubchecklistClass()" aria-label="ok" ng-click="launchSubChecklist(step)">Launch checklist</button></span></h4>
-          </div>
           <div role="group" aria-label="operations" ng-if="showStartProgress(step)">
             <button type="button" class="btn btn-default" aria-label="Start" ng-click="startAction(step);">
               <span class="glyphicon glyphicon-play" aria-hidden="true">Start</span>
@@ -180,10 +182,10 @@
           <div role="group" aria-label="operations" ng-if="showActionButtons(step)">
             <p>Action result :</p>
             <button type="button" class="btn btn-default" aria-label="ok" ng-click="updateAction(step, true);">
-              <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
+              <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>OK
             </button>
             <button type="button" class="btn btn-default" aria-label="problem" ng-click="updateAction(step, false);">
-              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">Problem</span>
+              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>Problem
             </button>
           </div>
           <div class='errorBlock' ng-if="showErrorDialog(step)" ng-class="unknown">
@@ -217,10 +219,10 @@
           </div>
           <div role="group" aria-label="operations">
             <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="revalidate(step);" ng-if="showRevalidateButton(step)">
-              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">Revalidate</span>
+              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>Revalidate
             </button>
-            <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="reopen(step);" ng-if="showReopenButton(step)">
-              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true">Reopen</span>
+            <button type="button" class="btn btn-default" aria-label="reopen" ng-click="reopen(step);" ng-if="showReopenButton(step)">
+              <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>Reopen
             </button>
           </div>
         </div>
@@ -245,7 +247,7 @@
               <p>Good examples are a specific project name, a version, a period ....</p>
               <input ng-model="newTag" ng-enter="addTag(newTag)" autofocus/>
               <button type="button" class="btn btn-default" aria-label="ok" ng-click="addTag(newTag)">
-                <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">Add</span>
+                <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>Add
               </button>
             </div>
           </div>

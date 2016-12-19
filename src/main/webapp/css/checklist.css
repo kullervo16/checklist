@@ -1,3 +1,7 @@
+a {
+    cursor: pointer;
+}
+
 div.step {
     padding:10px;
 }
@@ -119,16 +123,16 @@ a.anchor {
     clear: both;
 }
 
-.responsible .glyphicon, .documentation .glyphicon, .action .glyphicon, .question .glyphicon, button.btn .glyphicon:before {
+.responsible .glyphicon, .documentation .glyphicon, .action .glyphicon, .question .glyphicon, .subchecklist .glyphicon, button.btn .glyphicon:before {
     margin-right: 0.5em;
     vertical-align: text-bottom;
 }
 
-button.btn-xs .glyphicon:before {
+button.btn-xs .glyphicon:before, #addTagButton .glyphicon:before, #deleteClButton .glyphicon:before, #closeClButton .glyphicon:before, #gotoParentClButton .glyphicon:before {
     margin-right: 0;
 }
 
-.question, .action {
+.question, .action, .subchecklist {
     display: inline-flex;
     float: left;
     margin: 0;
@@ -155,8 +159,20 @@ button.btn-xs .glyphicon:before {
 
 button.btn {
     padding: 6px;
+    line-height: 1;
 }
 
 input[type=radio], input[type=checkbox] {
     margin-right: 3px;
+}
+
+#autorefreshBlock button {
+    margin-right: 0;
+}
+
+@media screen and (min-width: 768px) {
+
+    .jumbotron {
+        padding-bottom: 30px;
+    }
 }
