@@ -128,7 +128,7 @@ a.anchor {
     vertical-align: text-bottom;
 }
 
-button.btn-xs .glyphicon:before, #addTagButton .glyphicon:before, #deleteClButton .glyphicon:before, #closeClButton .glyphicon:before, #gotoParentClButton .glyphicon:before {
+button.btn-xs .glyphicon:before, #addTagButton .glyphicon:before, #deleteClButton .glyphicon:before, #closeClButton .glyphicon:before, #gotoParentClButton .glyphicon:before, .operationsDiv button .glyphicon:before {
     margin-right: 0;
 }
 
@@ -162,12 +162,38 @@ button.btn {
     line-height: 1;
 }
 
+.questionAction {
+    margin-right: 0.5em;
+}
+
 input[type=radio], input[type=checkbox] {
     margin-right: 3px;
 }
 
+.errors-sign {
+    margin-right: 0.25em;
+}
+
+.errors-badge {
+    margin-left: 0.25em;
+}
+
+.errors-badge:hover {
+    color: black;
+    cursor: pointer;
+}
+
+.operationsDiv button {
+    margin-right: 1em;
+}
+
 #autorefreshBlock button {
+    margin-left: 20px;
     margin-right: 0;
+}
+
+#milestones .label, #tags .label {
+    margin-left: 5px;
 }
 
 @media screen and (min-width: 768px) {
