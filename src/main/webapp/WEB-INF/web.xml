@@ -30,5 +30,26 @@
         </servlet-class>
     </servlet>
 
+    <module-name>basicauth</module-name>
+     
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>consult</role-name>
+        </auth-constraint>
+    </security-constraint>
+ 
+    <login-config>
+        <auth-method>KEYCLOAK</auth-method>
+        <realm-name>checklist</realm-name>
+    </login-config>
+ 
+    <security-role>
+        <role-name>consult</role-name>
+        <role-name>modify</role-name>
+        <role-name>admin</role-name>
+    </security-role>
 
 </web-app>

@@ -1,0 +1,7 @@
+{
+  "realm": "checklist",
+  "auth-server-url": "http://keycloak:8085/auth",
+  "ssl-required": "none",
+  "resource": "checklist",
+  "public-client": true
+}
