@@ -18,6 +18,7 @@
   <link href="css/bootstrap-theme.min.css" rel="stylesheet">
   <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
   <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
+  <link href="css/checklist.css" rel="stylesheet">
   <script src="clientjs/app.js"></script>
 </head>
 
@@ -38,6 +39,9 @@
           <li><a href="./help.html" target="_self">Help</a></li>
         </ul>
       </div>
+      <div class="navbar-header pull-right" ng-controller="userController as user">
+          <span class="userName" title="roles : {{userInfo.roles}}">{{userInfo.name}}</span>          
+      </div>          
       <!-- /.nav-collapse-->
     </div>
   </div>

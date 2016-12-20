@@ -39,6 +39,9 @@
           <li><a href="./help.html" target="_self">Help</a></li>
         </ul>
       </div>
+      <div class="navbar-header pull-right" ng-controller="userController as user">
+          <span class="userName" title="roles : {{userInfo.roles}}">{{userInfo.name}}</span>          
+      </div>          
       <!-- /.nav-collapse-->
     </div>
   </div>

@@ -58,6 +58,15 @@
   }]);
 
 
+  app.controller('userController', function ($scope, $http, $window) {
+      $http.get('rest/userInfo')
+               .success(function (data, status, headers, config) {
+                 $scope.userInfo = data
+               }).error(function (data, status, headers, config) {
+            console.log('Error getting rest/userInfo');
+          });
+  });
+
   app.controller('templateController', function ($scope, $http, $window) {
         // init stuff... get data from backend
         var init = function () {
@@ -69,7 +78,7 @@
                  $scope.rawItems = data;
                  toggleShowSubchecklists($scope.subCLshown, false);
                }).error(function (data, status, headers, config) {
-            console.log('Error getting rest/template/list');
+            console.log('Error getting rest/templates');
           });
         };
 

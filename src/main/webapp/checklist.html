@@ -29,7 +29,8 @@
       <div class="navbar-header">
         <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
           <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
-          <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme--></div>
+          <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme-->
+      </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li><a href="./templates.html" target="_self">Templates</a></li>
@@ -37,9 +38,12 @@
           <li><a href="./select.html" target="_self">Select</a></li>
           <li><a href="./tag.html" target="_self">Tags</a></li>
           <li><a href="./help.html" target="_self">Help</a></li>
-        </ul>
-      </div>
-      <!-- /.nav-collapse-->
+        </ul>          
+      </div>               
+      <!-- /.nav-collapse-->      
+    </div>
+    <div class="navbar-header pull-right" ng-controller="userController as user">
+          <span class="userName" title="roles : {{userInfo.roles}}">{{userInfo.name}}</span>          
     </div>
   </div>
   <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">
