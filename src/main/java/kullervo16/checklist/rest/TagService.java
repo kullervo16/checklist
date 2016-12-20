@@ -3,7 +3,9 @@ package kullervo16.checklist.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,7 +24,7 @@ import kullervo16.checklist.repository.ChecklistRepository;
  * @author jef
  */
 @Path("/tags")
-@Stateless
+@RequestScoped
 public class TagService {
 
     // use singleton repository to make sure we are all working on the same backend (@Singleton does not seem to do that job like it should)    
@@ -37,6 +39,7 @@ public class TagService {
     
     @DELETE   
     @Path("/{tagName}")
+    @RolesAllowed("modify")
     public Response deleteTag(@PathParam("tagName") final String tagName, @QueryParam("newName") final String newName) throws URISyntaxException {
         
         

@@ -3,6 +3,7 @@ package kullervo16.checklist.rest;
 
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -17,7 +18,7 @@ import kullervo16.checklist.repository.ChecklistRepository;
  * @author jef
  */
 @Path("/milestones")
-@Stateless
+@RequestScoped
 public class MilestoneService {
     
     // use singleton repository to make sure we are all working on the same backend (@Singleton does not seem to do that job like it should)    

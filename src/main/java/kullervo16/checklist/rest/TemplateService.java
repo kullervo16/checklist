@@ -9,7 +9,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -41,7 +43,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
  * @author jef
  */
 @Path("/templates")
-@Stateless
+@RequestScoped
 public class TemplateService {
 
     // use singleton repository to make sure we are all working on the same backend (@Singleton does not seem to do that job like it should)    
@@ -91,6 +93,7 @@ public class TemplateService {
     @DELETE
     @Path("/{folder}/{name}")
     @Produces(MediaType.TEXT_PLAIN)
+    @RolesAllowed("admin")
     public String deleteTemplate(@PathParam("folder") final String folder, @PathParam("name") final String name) throws URISyntaxException, TemplateReferencedByAnotherTemplateException {
 
         final Template template = templateRepository.getTemplate(folder, name);
@@ -108,6 +111,7 @@ public class TemplateService {
     @PUT
     @Path("/{folder}/{name}")
     @Consumes("multipart/form-data")
+    @RolesAllowed("admin")
     public List<ErrorMessage> uploadFile(final MultipartFormDataInput input, @PathParam("folder") final String folder, @PathParam("name") final String name) {
 
         final Map<String, List<InputPart>> uploadForm = input.getFormDataMap();

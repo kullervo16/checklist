@@ -6,7 +6,9 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
 import javax.json.JsonReader;
 import javax.ws.rs.DELETE;
@@ -49,7 +51,7 @@ import static kullervo16.checklist.utils.StringUtils.nullifyAndTrim;
  * @author jef
  */
 @Path("/checklists")
-@Stateless
+@RequestScoped
 public class ChecklistService {
 
     // use singleton repository to make sure we are all working on the same backend (@Singleton does not seem to do that job like it should)    
@@ -61,6 +63,7 @@ public class ChecklistService {
     @POST
     @Path("/{folder}/{name}")
     @Produces(MediaType.TEXT_PLAIN)
+    @RolesAllowed("modify")
     public String createChecklist(@PathParam("folder") final String folder, @PathParam("name") final String name, @QueryParam("parent") final String parentName, @QueryParam("step") final String stepName) throws URISyntaxException {
 
         final Template template = templateRepository.getTemplate(folder, name);
@@ -131,6 +134,7 @@ public class ChecklistService {
 
     @DELETE
     @Path("/{id}")
+    @RolesAllowed("modify")
     public Response deleteCL(@PathParam("id") final String id) {
 
         final Checklist cl = checklistRepository.getChecklist(id);
@@ -147,6 +151,7 @@ public class ChecklistService {
 
     @POST
     @Path("/{id}/actions/close")
+    @RolesAllowed("modify")
     public Response closeCL(@PathParam("id") final String id) {
 
         final Checklist cl = checklistRepository.getChecklist(id);
@@ -161,6 +166,7 @@ public class ChecklistService {
     @PUT
     @Path("/{id}/{step}/actionresults/{result}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Checklist setActionResult(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("result") final boolean result) {
 
         final Checklist cl = getChecklist(checklistId);
@@ -178,6 +184,7 @@ public class ChecklistService {
     @PUT
     @Path("/{id}/{step}/validate")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Checklist revalidate(@PathParam("id") final String checklistId, @PathParam("step") final String stepId) {
 
         final Checklist cl = getChecklist(checklistId);
@@ -196,6 +203,7 @@ public class ChecklistService {
     @PUT
     @Path("/{id}/{step}/reopen")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Checklist reopen(@PathParam("id") final String checklistId, @PathParam("step") final String stepId) {
 
         final Checklist cl = getChecklist(checklistId);
@@ -224,6 +232,7 @@ public class ChecklistService {
     @PUT
     @Path("/{id}/{step}/start")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Checklist startStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId) {
 
         final Checklist cl = getChecklist(checklistId);
@@ -243,6 +252,7 @@ public class ChecklistService {
     @PUT
     @Path("/{id}/{step}/checkresults/{result}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Checklist setCheckResult(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("result") final boolean result) {
 
         final Checklist cl = getChecklist(checklistId);
@@ -257,6 +267,7 @@ public class ChecklistService {
     @POST
     @Path("/{id}/{step}/errors")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Checklist addErrorToStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, final String error) {
 
         final Checklist cl = getChecklist(checklistId);
@@ -286,6 +297,7 @@ public class ChecklistService {
     @POST
     @Path("/{id}/{step}/answers")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Checklist addAnwswerToStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, final String answer) {
 
         if (answer == null || "".equals(answer)) {
@@ -318,6 +330,7 @@ public class ChecklistService {
     @PUT
     @Path("/{id}/tags/{tag}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Response addTag(@PathParam("id") final String checklistId, @PathParam("tag") final String tagCandidate) {
 
         final Checklist cl = getChecklist(checklistId);
@@ -359,6 +372,7 @@ public class ChecklistService {
     @DELETE
     @Path("/{id}/tags/{tag}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Response removeTag(@PathParam("id") final String checklistId, @PathParam("tag") final String tag) {
 
         final Checklist cl = getChecklist(checklistId);
@@ -393,6 +407,7 @@ public class ChecklistService {
     @PUT
     @Path("/{id}/{step}/options/{choice}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("modify")
     public Checklist setStepOption(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("choice") final String choice) {
 
         final Checklist cl = getChecklist(checklistId);
