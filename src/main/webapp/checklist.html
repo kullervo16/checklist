@@ -22,7 +22,7 @@
   <script src="clientjs/app.js"></script>
 </head>
 
-<body role="document" ng-app="read">
+<body role="document" ng-app="read" ng-controller="userController as user">
   <!-- Fixed navbar-->
   <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -42,12 +42,12 @@
       </div>               
       <!-- /.nav-collapse-->      
     </div>
-    <div class="navbar-header pull-right" ng-controller="userController as user">
+    <div class="navbar-header pull-right">
           <span class="userName" title="roles : {{userInfo.roles}}">{{userInfo.name}}</span>          
     </div>
   </div>
   <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">
-    <div class="jumbotron" ng-controller="userController as user">
+    <div class="jumbotron">
       <h1>{{data.displayName}}</h1>
       <h3>{{data.description}}</h3>
       <h4 ng-if="data.user">Created by {{data.user}} on {{data.creationTime | date:'dd/MM/yyyy HH:mm:ss Z'}}</h4>
@@ -81,7 +81,7 @@
         <span ng-repeat="milestone in data.milestones">&nbsp;<span ng-class="getClassForMilestone(milestone)">{{milestone.name}}</span>&nbsp;</span>
       </p>
     </div>
-    <div ng-show="data.tags.length" ng-controller="userController as user">
+    <div ng-show="data.tags.length">
       <p><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
         <span ng-repeat="tag in data.tags | orderBy: tag">&nbsp;<span class="label label-primary" ng-click="removeTagFromChecklist(tag)">{{tag}}</span>&nbsp;</span>
         <button id="addTagButton" type="button" class="btn btn-default btn-sm" title="Add tag" ng-click="showModal('#tagModal')" ng-show="mode === 'checklist' && canModify()">
@@ -95,7 +95,7 @@
     </div>
     <div ng-show="showMainBody()">
       <div class="list-group" ng-repeat="step in data.steps">
-        <div ng-class="getClassForStep(step)" ng-controller="userController as user">
+        <div ng-class="getClassForStep(step)">
           <!-- put an anchor for the auto-focus -->
           <a id="{{step.id}}" name="{{step.id}}" class="anchor"></a>
 

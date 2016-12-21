@@ -22,7 +22,7 @@
   <script src="clientjs/app.js"></script>
 </head>
 
-<body role="document" ng-app="read">
+<body role="document" ng-app="read" ng-controller="userController as user">
   <!-- Fixed navbar-->
   <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -39,14 +39,14 @@
           <li><a href="./help.html" target="_self">Help</a></li>
         </ul>
       </div>
-      <div class="navbar-header pull-right" ng-controller="userController as user">
+      <div class="navbar-header pull-right">
           <span class="userName" title="roles : {{userInfo.roles}}">{{userInfo.name}}</span>          
       </div>          
       <!-- /.nav-collapse-->
     </div>
   </div>
   <div role="main" class="container theme-showcase" ng-controller="templateController as template">
-    <div class="jumbotron" ng-controller="userController as user">
+    <div class="jumbotron">
       <h1>Available templates</h1>
       <p>Show subchecklists : <input type="checkbox" name="showSubchecklists" onchange="angular.element(this).scope().toggleShowSubchecklists(this.checked, true)"/></p>
       <h3 ng-if="isAdmin()">
@@ -86,7 +86,7 @@
                 </button>
             </div>
             &nbsp;&nbsp;        
-            <div class="btn-group btn-group" role="group" aria-label="operations"  ng-controller="userController as user" >
+            <div class="btn-group btn-group" role="group" aria-label="operations">
                 <button type="button" class="btn btn-default" title="Download" ng-click="downloadTemplate(t.id);" ng-if="isAdmin()">
                     <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                 </button>
