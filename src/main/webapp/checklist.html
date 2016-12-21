@@ -100,11 +100,11 @@
 
           <h3 class="list-group-item-heading stepId" ng-if="mode === 'template'">{{step.id}}</h3>
 
-          <h4 class="responsible" ng-if="step.responsible">
+          <!-- show either the responsible group, or a specific user when we know one -->
+          <h4 class="responsible" ng-if="step.responsible && ! step.user"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{step.responsible}}</h4>
+          <h4 class="responsible" ng-if="step.user"> 
               <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-              <span ng-if="step.user">{{step.user}}&nbsp;(</span>
-              {{step.responsible}}
-              <span ng-if="step.user">)</span>
+              <span title="responsible group: {{step.responsible}}">{{step.user}}</span>
           </h4>
 
           <h4 class="documentation" ng-if="showDocumentation(step)"><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target="_blank">Documentation</a></h4>
