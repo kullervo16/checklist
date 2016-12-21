@@ -65,6 +65,18 @@
                }).error(function (data, status, headers, config) {
             console.log('Error getting rest/userInfo');
           });
+          
+        function isAdmin() {
+            if($scope.userInfo !== undefined) {
+                for (var i = 0; i < $scope.userInfo.roles.length; i++) {
+                  if ($scope.userInfo.roles[i] === 'admin') {
+                    return true;
+                  }
+                }
+            }
+            return false;
+        }
+        $scope.isAdmin = isAdmin;
   });
 
   app.controller('templateController', function ($scope, $http, $window) {

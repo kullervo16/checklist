@@ -46,10 +46,10 @@
     </div>
   </div>
   <div role="main" class="container theme-showcase" ng-controller="templateController as template">
-    <div class="jumbotron">
+    <div class="jumbotron" ng-controller="userController as user">
       <h1>Available templates</h1>
       <p>Show subchecklists : <input type="checkbox" name="showSubchecklists" onchange="angular.element(this).scope().toggleShowSubchecklists(this.checked, true)"/></p>
-      <h3>
+      <h3 ng-if="isAdmin()">
         <button onclick="angular.element(this).scope().showModal(true)" data-target="#myModal" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;&nbsp; Add a new template</button>
       </h3>
     </div>
@@ -81,20 +81,20 @@
             <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
           </button>
         </div>
-        &nbsp;&nbsp;
-        <div class="btn-group btn-group" role="group" aria-label="operations">
-          <button type="button" class="btn btn-default" title="Download" ng-click="downloadTemplate(t.id);">
+        &nbsp;&nbsp;        
+        <div class="btn-group btn-group" role="group" aria-label="operations"  ng-controller="userController as user" >
+          <button type="button" class="btn btn-default" title="Download" ng-click="downloadTemplate(t.id);" ng-if="isAdmin()">
             <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
           </button>
-          <button type="button" class="btn btn-default" title="Upload" ng-click="uploadTemplate(t.id)">
+          <button type="button" class="btn btn-default" title="Upload" ng-click="uploadTemplate(t.id)" ng-if="isAdmin()">
             <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
           </button>
-          <button type="button" class="btn btn-default" title="Delete" ng-click="deleteTemplate(t.id)">
+          <button type="button" class="btn btn-default" title="Delete" ng-click="deleteTemplate(t.id)" ng-if="isAdmin()">
             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
           </button>
         </div>
-      </div>
-    </div>
+        </div>
+      </div>    
 
     <div id="myModal" class="modal fade" role="dialog">
       <div class="modal-dialog">
