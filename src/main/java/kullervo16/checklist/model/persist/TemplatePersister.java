@@ -60,6 +60,7 @@ public class TemplatePersister {
     public TemplatePersister(final File file, final Template t) {
         this.file = file;
         template = t;
+        loaded = false;
     }
 
 
@@ -546,9 +547,9 @@ public class TemplatePersister {
     }
 
 
-    public void serialize() {
+    public void serialize(boolean force) {
 
-        if (!loaded) {
+        if (!loaded && !force) {
             // do this to prevent an unloaded version to be erased !
             checkAndLoadDataFromFile();
         }

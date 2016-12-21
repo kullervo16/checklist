@@ -19,8 +19,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.StreamingOutput;
 
 import kullervo16.checklist.exceptions.TemplateReferencedByAnotherTemplateException;
@@ -50,6 +52,8 @@ public class TemplateService {
     private final TemplateRepository templateRepository = TemplateRepository.INSTANCE;
 
     private final ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
+    
+    private UserInfoService userInfo = new UserInfoService();
 
 
     @GET
@@ -112,7 +116,7 @@ public class TemplateService {
     @Path("/{folder}/{name}")
     @Consumes("multipart/form-data")
     @RolesAllowed("admin")
-    public List<ErrorMessage> uploadFile(final MultipartFormDataInput input, @PathParam("folder") final String folder, @PathParam("name") final String name) {
+    public List<ErrorMessage> uploadFile(final MultipartFormDataInput input, @PathParam("folder") final String folder, @PathParam("name") final String name, @Context SecurityContext context) {
 
         final Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
         final List<InputPart> inputParts = uploadForm.get("file");
@@ -121,7 +125,7 @@ public class TemplateService {
 
             try (InputStream inputStream = inputPart.getBody(InputStream.class, null)) {
 
-                return templateRepository.validateAndUpdate('/' + folder + '/' + name, inputStream);
+                return templateRepository.validateAndUpdate('/' + folder + '/' + name, inputStream, userInfo.getUserName(context));
 
             } catch (final IOException e) {
                 e.printStackTrace();

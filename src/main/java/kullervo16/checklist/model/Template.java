@@ -169,8 +169,8 @@ public class Template {
     }
 
 
-    public void persist() {
-        persister.serialize();
+    public void persist(boolean force) {
+        persister.serialize(force);
     }
 
 

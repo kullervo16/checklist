@@ -96,7 +96,7 @@ public class ChecklistTest {
         Checklist cl = (Checklist)this.repository.getChecklist("deployment_20151126.yml");
         
         // serialize cl
-        cl.getPersister().serialize();
+        cl.getPersister().serialize(false);
         
         ChecklistRepository.loadData("./target/test-classes/data/checklists");
 

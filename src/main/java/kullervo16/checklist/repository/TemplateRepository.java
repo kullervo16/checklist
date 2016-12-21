@@ -116,6 +116,7 @@ public enum TemplateRepository {
             ti.setMilestones(entry.getValue().getMilestones());
             ti.setTags(entry.getValue().getTags());
             ti.setSubchecklistOnly(entry.getValue().isSubchecklistOnly());
+            ti.setUser(entry.getValue().getUser());
 
             result.add(ti);
         }
@@ -126,7 +127,7 @@ public enum TemplateRepository {
     }
 
 
-    public List<ErrorMessage> validateAndUpdate(String name, final InputStream inputStream) throws IOException {
+    public List<ErrorMessage> validateAndUpdate(String name, final InputStream inputStream, final String userName) throws IOException {
 
         final String content = IOUtils.toString(inputStream);
         final List<ErrorMessage> errors = TemplatePersister.validateTemplate(content);
@@ -201,8 +202,12 @@ public enum TemplateRepository {
 
             IOUtils.write(content, fos);
             t = new Template(targetFile);
+            t.getDisplayName(); // trigger read
             data.put(name, t);
             t.setId(name);
+            t.setUser(userName);
+            t.setCreationTime(new Date().getTime());
+            t.persist(true); // force the username and date on it
 
         } catch (final IOException ioe) {
             errors.add(new ErrorMessage("Cannot write template to file", ErrorMessage.Severity.CRITICAL, ioe.getMessage()));

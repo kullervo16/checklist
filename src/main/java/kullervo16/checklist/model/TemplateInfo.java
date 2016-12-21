@@ -23,6 +23,8 @@ public class TemplateInfo implements Comparable<TemplateInfo> {
     private String id;
 
     private boolean subchecklistOnly;
+    
+    private String user;
 
 
     public String getId() {
@@ -90,5 +92,15 @@ public class TemplateInfo implements Comparable<TemplateInfo> {
 
         return getId().compareTo(t.getId());
     }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+    
+    
 
 }
