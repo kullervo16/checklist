@@ -231,12 +231,13 @@ public class Checklist extends Template {
     }
 
 
-    public void updateStepState(final Step step, final State state) {
+    public void updateStepState(final Step step, final State state, final String userName) {
 
         final State previousState = step.state;
         final Condition condition = step.getCondition();
 
         step.setState(state);
+        step.setUser(userName);
 
         if (state == OK) {
 
@@ -257,9 +258,9 @@ public class Checklist extends Template {
                 if (stepWalkerCondition != null && stepWalkerCondition.getStep() == step) {
 
                     if (stepWalkerCondition.isConditionReachable()) {
-                        updateStepState(stepWalker, State.UNKNOWN);
+                        updateStepState(stepWalker, State.UNKNOWN, userName);
                     } else {
-                        updateStepState(stepWalker, stepWalkerCondition.getSelectedOption() == null ? State.NOT_YET_APPLICABLE : State.NOT_APPLICABLE);
+                        updateStepState(stepWalker, stepWalkerCondition.getSelectedOption() == null ? State.NOT_YET_APPLICABLE : State.NOT_APPLICABLE, userName);
                     }
                 }
 
@@ -294,7 +295,7 @@ public class Checklist extends Template {
                                     // we update the first not completed step with the proper template (this allows the same template to be used
                                     // multiple times as subchecklist in a single instance. We call it recursively because this template may also
                                     // have a parent...
-                                    parentCl.updateStepState(parentClStepsWalker, state.isError() ? EXECUTION_FAILED : OK);
+                                    parentCl.updateStepState(parentClStepsWalker, state.isError() ? EXECUTION_FAILED : OK, userName);
                                     ActorRepository.getPersistenceActor().tell(new PersistenceRequest(parentCl.getId()), null);
                                 }
                             }
@@ -312,7 +313,7 @@ public class Checklist extends Template {
 
                     if (childCl != null) {
 
-                        childCl.close();
+                        childCl.close(userName);
                     }
                 }
             }
@@ -362,14 +363,14 @@ public class Checklist extends Template {
     }
 
 
-    public void close() {
+    public void close(String userName) {
 
         for (final Step step : this.steps) {
 
             if (step.getState().isComplete()) {
                 step.setReopenable(false);
             } else {
-                updateStepState(step, ABORTED);
+                updateStepState(step, ABORTED, userName);
             }
         }
     }

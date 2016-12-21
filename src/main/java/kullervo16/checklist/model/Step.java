@@ -54,6 +54,7 @@ public class Step {
     private String child;
 
     protected boolean reopenable;
+    private String user;
 
 
     public Step() {
@@ -131,6 +132,7 @@ public class Step {
         answerType = (String) stepMap.get("answerType");
         child = (String) stepMap.get("child");
         weight = stepMap.get("weight") == null ? 1 : Integer.parseInt(stepMap.get("weight").toString());
+        user = (String) stepMap.get("user");
 
         if (stepMap.get("check") != null) {
 
@@ -526,4 +528,13 @@ public class Step {
 
         return this.condition.getStep() == step;
     }
+
+    public void setUser(String userName) {
+        this.user = userName;
+    }
+
+    public String getUser() {
+        return user;
+    }
+        
 }

@@ -7,6 +7,7 @@ package kullervo16.checklist.rest;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.Produces;
@@ -48,11 +49,19 @@ public class UserInfoService {
                   result.put("roles", kp.getKeycloakSecurityContext().getToken().getRealmAccess().getRoles());
             } else {
                 result.put("userName",context.getUserPrincipal().getName());
+                result.put("name", "unknown"); 
+                List<String> roles = new LinkedList<>();
+                roles.add("admin");
+                roles.add("modify");
+                roles.add("consult");
+                result.put("roles", roles); // no generic way to get the roles based on this information... so add them all for the GUI to show, the backend will refuse when needed 
             }
         }
         
         return result;
     }
-
     
+    public String getUserName(SecurityContext context) {
+        return (String) this.getUserInfo(context).get("name");
+    }
 }

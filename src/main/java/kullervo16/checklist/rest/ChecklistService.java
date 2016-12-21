@@ -20,8 +20,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.Checklist;
@@ -58,13 +60,15 @@ public class ChecklistService {
     private final ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
 
     private final TemplateRepository templateRepository = TemplateRepository.INSTANCE;
+    
+    private UserInfoService userInfo = new UserInfoService();
 
 
     @POST
     @Path("/{folder}/{name}")
     @Produces(MediaType.TEXT_PLAIN)
     @RolesAllowed("modify")
-    public String createChecklist(@PathParam("folder") final String folder, @PathParam("name") final String name, @QueryParam("parent") final String parentName, @QueryParam("step") final String stepName) throws URISyntaxException {
+    public String createChecklist(@PathParam("folder") final String folder, @PathParam("name") final String name, @QueryParam("parent") final String parentName, @QueryParam("step") final String stepName, @Context SecurityContext context) throws URISyntaxException {
 
         final Template template = templateRepository.getTemplate(folder, name);
 
@@ -83,7 +87,7 @@ public class ChecklistService {
             for (final Step step : parent.getSteps()) {
 
                 if (step.getId().equals(stepName)) {
-                    parent.updateStepState(step, State.IN_PROGRESS);
+                    parent.updateStepState(step, State.IN_PROGRESS, userInfo.getUserName(context));
                     step.setChild(childUUID);
                 }
             }
@@ -135,7 +139,7 @@ public class ChecklistService {
     @DELETE
     @Path("/{id}")
     @RolesAllowed("modify")
-    public Response deleteCL(@PathParam("id") final String id) {
+    public Response deleteCL(@PathParam("id") final String id, @Context SecurityContext context) {
 
         final Checklist cl = checklistRepository.getChecklist(id);
 
@@ -143,7 +147,7 @@ public class ChecklistService {
             return Response.status(Response.Status.GONE).build();
         }
 
-        checklistRepository.deleteChecklist(cl);
+        checklistRepository.deleteChecklist(cl, userInfo.getUserName(context));
 
         return Response.ok().build();
     }
@@ -152,11 +156,11 @@ public class ChecklistService {
     @POST
     @Path("/{id}/actions/close")
     @RolesAllowed("modify")
-    public Response closeCL(@PathParam("id") final String id) {
+    public Response closeCL(@PathParam("id") final String id, @Context SecurityContext context) {
 
         final Checklist cl = checklistRepository.getChecklist(id);
 
-        cl.close();
+        cl.close(userInfo.getUserName(context));
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(id), null);
 
         return Response.ok().build();
@@ -167,13 +171,13 @@ public class ChecklistService {
     @Path("/{id}/{step}/actionresults/{result}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("modify")
-    public Checklist setActionResult(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("result") final boolean result) {
+    public Checklist setActionResult(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("result") final boolean result, @Context SecurityContext context) {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
 
         cl.updateStepState(step, result ? step.getChecks().isEmpty() ? OK : EXECUTED
-                                        : EXECUTION_FAILED_NO_COMMENT);
+                                        : EXECUTION_FAILED_NO_COMMENT, userInfo.getUserName(context));
 
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
@@ -185,14 +189,14 @@ public class ChecklistService {
     @Path("/{id}/{step}/validate")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("modify")
-    public Checklist revalidate(@PathParam("id") final String checklistId, @PathParam("step") final String stepId) {
+    public Checklist revalidate(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @Context SecurityContext context) {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
 
         // revalidate only allowed when in check failed... otherwise we ignore the request
         if (CHECK_FAILED.equals(step.getState())) {
-            cl.updateStepState(step, EXECUTED);
+            cl.updateStepState(step, EXECUTED, userInfo.getUserName(context));
             ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         }
 
@@ -204,12 +208,12 @@ public class ChecklistService {
     @Path("/{id}/{step}/reopen")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("modify")
-    public Checklist reopen(@PathParam("id") final String checklistId, @PathParam("step") final String stepId) {
+    public Checklist reopen(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @Context SecurityContext context) {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
 
-        cl.updateStepState(step, UNKNOWN);
+        cl.updateStepState(step, UNKNOWN, userInfo.getUserName(context));
         step.setAnswers(new LinkedList<>());
         step.setErrors(new LinkedList<>());
         step.setSelectedOption(null);
@@ -233,14 +237,14 @@ public class ChecklistService {
     @Path("/{id}/{step}/start")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("modify")
-    public Checklist startStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId) {
+    public Checklist startStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @Context SecurityContext context) {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
 
         // If the step can be marker as IN_PROGRESS
         if (step.getAction() != null && step.getState() == UNKNOWN) {
-            cl.updateStepState(step, IN_PROGRESS);
+            cl.updateStepState(step, IN_PROGRESS, userInfo.getUserName(context));
         }
 
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
@@ -253,11 +257,11 @@ public class ChecklistService {
     @Path("/{id}/{step}/checkresults/{result}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("modify")
-    public Checklist setCheckResult(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("result") final boolean result) {
+    public Checklist setCheckResult(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("result") final boolean result, @Context SecurityContext context) {
 
         final Checklist cl = getChecklist(checklistId);
 
-        cl.updateStepState(getStep(cl, stepId), result ? OK : CHECK_FAILED_NO_COMMENT);
+        cl.updateStepState(getStep(cl, stepId), result ? OK : CHECK_FAILED_NO_COMMENT, userInfo.getUserName(context));
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
         return cl;
@@ -268,7 +272,7 @@ public class ChecklistService {
     @Path("/{id}/{step}/errors")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("modify")
-    public Checklist addErrorToStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, final String error) {
+    public Checklist addErrorToStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, final String error, @Context SecurityContext context) {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
@@ -276,11 +280,11 @@ public class ChecklistService {
         switch (step.getState()) {
 
             case EXECUTION_FAILED_NO_COMMENT:
-                cl.updateStepState(step, EXECUTION_FAILED);
+                cl.updateStepState(step, EXECUTION_FAILED, userInfo.getUserName(context));
                 break;
 
             case CHECK_FAILED_NO_COMMENT:
-                cl.updateStepState(step, CHECK_FAILED);
+                cl.updateStepState(step, CHECK_FAILED, userInfo.getUserName(context));
                 break;
 
             default:
@@ -298,7 +302,7 @@ public class ChecklistService {
     @Path("/{id}/{step}/answers")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("modify")
-    public Checklist addAnwswerToStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, final String answer) {
+    public Checklist addAnwswerToStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, final String answer, @Context SecurityContext context) {
 
         if (answer == null || "".equals(answer)) {
             throw new IllegalArgumentException("The answer should be non-empty");
@@ -309,7 +313,7 @@ public class ChecklistService {
 
         if (step.getQuestion() != null) {
 
-            cl.updateStepState(step, step.getChecks().isEmpty() ? OK : EXECUTED);
+            cl.updateStepState(step, step.getChecks().isEmpty() ? OK : EXECUTED, userInfo.getUserName(context));
 
             try {
                 final JsonReader jsonReader = Json.createReader(new StringReader(answer));
@@ -408,7 +412,7 @@ public class ChecklistService {
     @Path("/{id}/{step}/options/{choice}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("modify")
-    public Checklist setStepOption(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("choice") final String choice) {
+    public Checklist setStepOption(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("choice") final String choice, @Context SecurityContext context) {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
@@ -418,7 +422,7 @@ public class ChecklistService {
         }
 
         step.setSelectedOption(choice);
-        cl.updateStepState(step, OK);
+        cl.updateStepState(step, OK, userInfo.getUserName(context));
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
         return cl;

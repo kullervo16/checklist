@@ -371,7 +371,7 @@ public enum ChecklistRepository {
      *
      * @param cl The checklist to delete.
      */
-    public void deleteChecklist(final Checklist cl) {
+    public void deleteChecklist(final Checklist cl, final String userName) {
 
         if (cl == null) {
             return;
@@ -392,7 +392,7 @@ public enum ChecklistRepository {
                 // Set the parent to null to avoid the deleteChecklist call to update this checklist
                 childCl.setParent(null);
 
-                deleteChecklist(childCl);
+                deleteChecklist(childCl, userName);
             }
         }
 
@@ -408,7 +408,7 @@ public enum ChecklistRepository {
 
                     if (clId.equals(stepWalker.getChild())) {
                         stepWalker.setChild(null);
-                        parentCl.updateStepState(stepWalker, State.UNKNOWN);
+                        parentCl.updateStepState(stepWalker, State.UNKNOWN, userName);
                         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(parentClId), null);
                         break;
                     }

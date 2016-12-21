@@ -507,7 +507,7 @@ public class TemplatePersister {
 
 
 
-    private void printLine(final PrintWriter writer, final String name, final String value) {
+    protected void printLine(final PrintWriter writer, final String name, final String value) {
 
         if (value != null) {
             appendEscaped(writer.append("  ").append(name).append(": "), value.replaceAll("\n", "##NEWLINE##").replaceAll("\"", "'")).append('\n');
