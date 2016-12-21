@@ -76,7 +76,18 @@
             }
             return false;
         }
+        function canModify() {
+            if($scope.userInfo !== undefined) {
+                for (var i = 0; i < $scope.userInfo.roles.length; i++) {
+                  if ($scope.userInfo.roles[i] === 'modify') {
+                    return true;
+                  }
+                }
+            }
+            return false;
+        }
         $scope.isAdmin = isAdmin;
+        $scope.canModify = canModify;
   });
 
   app.controller('templateController', function ($scope, $http, $window) {
