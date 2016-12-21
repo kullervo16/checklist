@@ -76,7 +76,7 @@ public class ChecklistService {
             throw new IllegalArgumentException("Unknown template " + folder + '/' + name);
         }
 
-        final String childUUID = checklistRepository.createFromTemplate(folder, name, template, parentName);
+        final String childUUID = checklistRepository.createFromTemplate(folder, name, template, parentName, userInfo.getUserName(context));
 
         if (parentName != null) {
 

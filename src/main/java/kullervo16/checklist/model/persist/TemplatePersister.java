@@ -90,6 +90,7 @@ public class TemplatePersister {
                 lastCheck = System.currentTimeMillis();
                 fileModifTime = file.lastModified();
                 template.setCreationTime(fileModifTime);
+                template.setUser((String) templateMap.get("user"));
                 afterRead();
             } catch (final Exception ex) {
 
@@ -515,8 +516,8 @@ public class TemplatePersister {
     }
 
 
-    protected PrintWriter appendEscaped(final PrintWriter writer, final String content) {
-        return writer.append("\"").append(content.replaceAll("\"", "'")).append("\"");
+    protected PrintWriter appendEscaped(final PrintWriter writer, final String content) {        
+        return writer.append("\"").append(content != null ? content.replaceAll("\"", "'") : "").append("\"");
     }
 
 
@@ -541,6 +542,7 @@ public class TemplatePersister {
                 appendEscaped(writer.append("    - "), tag).append('\n');
             });
         }
+        appendEscaped(writer.append("user: "), template.getUser()).append('\n');
     }
 
 

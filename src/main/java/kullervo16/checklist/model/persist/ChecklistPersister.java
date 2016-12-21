@@ -63,7 +63,7 @@ public class ChecklistPersister extends TemplatePersister {
         } else {
             // backwards compatibility : if not set, say true...
             cl.setUniqueTagcombination(true);
-        }        
+        }               
     }
 
 

@@ -30,7 +30,7 @@ public class Checklist extends Template {
 
     private String template;
 
-    private boolean uniqueTagcombination;
+    private boolean uniqueTagcombination;    
 
 
     public Checklist() {
@@ -373,5 +373,5 @@ public class Checklist extends Template {
                 updateStepState(step, ABORTED, userName);
             }
         }
-    }
+    }        
 }
