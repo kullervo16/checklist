@@ -1,4 +1,4 @@
-<html lang="en" ng-app="checklist">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,10 +19,11 @@
   <link href="css/checklist.css" rel="stylesheet">
   <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
   <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
+  <script src="clientjs/keycloak.js"></script>
   <script src="clientjs/app.js"></script>
 </head>
 
-<body role="document" ng-app="read" ng-controller="userController as user">
+<body role="document" ng-controller="userController as user">
   <!-- Fixed navbar-->
   <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -43,7 +44,7 @@
       <!-- /.nav-collapse-->      
     </div>
     <div class="navbar-header pull-right">
-          <span class="userName" title="roles : {{userInfo.roles}}">{{userInfo.name}}</span>          
+          <span class="userName" title="roles : {{getRoles()}}">{{ getUserName() }}</span>                   
     </div>
   </div>
   <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">
@@ -291,5 +292,6 @@
       <!-- ==================================================-->
       <!-- Placed at the end of the document so the pages load faster-->
       <script src="clientjs/holder.js"></script>
+      <script src="clientjs/login.js"></script>
 </body>
 </html>

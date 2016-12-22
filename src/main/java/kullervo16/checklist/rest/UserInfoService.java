@@ -44,8 +44,15 @@ public class UserInfoService {
                 KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>)  context.getUserPrincipal();
 
                   // this is how to get the real userName (or rather the login name)
-                  result.put("userName",kp.getKeycloakSecurityContext().getIdToken().getPreferredUsername());
-                  result.put("name", kp.getKeycloakSecurityContext().getIdToken().getName());
+                  if(kp.getKeycloakSecurityContext().getIdToken() != null) {
+                      // webapp style login
+                      result.put("userName",kp.getKeycloakSecurityContext().getIdToken().getPreferredUsername());
+                      result.put("name", kp.getKeycloakSecurityContext().getIdToken().getName());
+                  } else {
+                      // oAuth2 style
+                      result.put("userName",kp.getKeycloakSecurityContext().getToken().getPreferredUsername());
+                      result.put("name", kp.getKeycloakSecurityContext().getToken().getName());
+                  }
                   result.put("roles", kp.getKeycloakSecurityContext().getToken().getRealmAccess().getRoles());
             } else {
                 result.put("userName",context.getUserPrincipal().getName());

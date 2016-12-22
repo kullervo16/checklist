@@ -1,4 +1,4 @@
-<html lang="en" ng-app="checklist">
+<html lang="en" >
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,10 +21,11 @@
   <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
   <script src="clientjs/jqcloud.js"></script>
   <link rel="stylesheet" href="css/jqcloud.css">
+  <script src="clientjs/keycloak.js"></script>
   <script src="clientjs/app.js"></script>
 </head>
 
-<body role="document" ng-app="read">
+<body role="document">
   <!-- Fixed navbar-->
   <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -42,7 +43,7 @@
         </ul>
       </div>
       <div class="navbar-header pull-right" ng-controller="userController as user">
-          <span class="userName" title="roles : {{userInfo.roles}}">{{userInfo.name}}</span>          
+          <span class="userName" title="roles : {{getRoles()}}">{{ getUserName() }}</span>                    
       </div>          
       <!-- /.nav-collapse-->
     </div>
@@ -83,5 +84,6 @@
   <!-- ==================================================-->
   <!-- Placed at the end of the document so the pages load faster-->
   <script src="clientjs/holder.js"></script>
+  <script src="clientjs/login.js"></script>
 </body>
 </html>
