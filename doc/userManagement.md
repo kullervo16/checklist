@@ -13,7 +13,7 @@ For the checklist usermanagement we use [Keycloak](http://www.keycloak.org/). Th
 ## How to setup.
 
 The general setup can be found in the [keycloak documentation](https://keycloak.gitbooks.io/getting-started-tutorials/content/v/2.4/index.html). However, to make it a bit easier, we provide
-an out-of-the-box docker image with keycloak already configured for basic usage
+an [out-of-the-box docker image](https://hub.docker.com/r/kullervo16/keycloak4cl/) with keycloak already configured for basic usage
 
 This includes :
 * 3 typical users
