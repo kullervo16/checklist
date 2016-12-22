@@ -1,0 +1,7 @@
+{
+  "realm": "checklist",
+  "auth-server-url": "${env.KEYCLOAK_SERVER}",
+  "ssl-required": "none",
+  "resource": "checklist",
+  "public-client": true
+}

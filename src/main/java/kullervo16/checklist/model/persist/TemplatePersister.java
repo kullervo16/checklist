@@ -60,6 +60,7 @@ public class TemplatePersister {
     public TemplatePersister(final File file, final Template t) {
         this.file = file;
         template = t;
+        loaded = false;
     }
 
 
@@ -90,6 +91,7 @@ public class TemplatePersister {
                 lastCheck = System.currentTimeMillis();
                 fileModifTime = file.lastModified();
                 template.setCreationTime(fileModifTime);
+                template.setUser((String) templateMap.get("user"));
                 afterRead();
             } catch (final Exception ex) {
 
@@ -507,7 +509,7 @@ public class TemplatePersister {
 
 
 
-    private void printLine(final PrintWriter writer, final String name, final String value) {
+    protected void printLine(final PrintWriter writer, final String name, final String value) {
 
         if (value != null) {
             appendEscaped(writer.append("  ").append(name).append(": "), value.replaceAll("\n", "##NEWLINE##").replaceAll("\"", "'")).append('\n');
@@ -515,8 +517,8 @@ public class TemplatePersister {
     }
 
 
-    protected PrintWriter appendEscaped(final PrintWriter writer, final String content) {
-        return writer.append("\"").append(content.replaceAll("\"", "'")).append("\"");
+    protected PrintWriter appendEscaped(final PrintWriter writer, final String content) {        
+        return writer.append("\"").append(content != null ? content.replaceAll("\"", "'") : "").append("\"");
     }
 
 
@@ -541,12 +543,13 @@ public class TemplatePersister {
                 appendEscaped(writer.append("    - "), tag).append('\n');
             });
         }
+        appendEscaped(writer.append("user: "), template.getUser()).append('\n');
     }
 
 
-    public void serialize() {
+    public void serialize(boolean force) {
 
-        if (!loaded) {
+        if (!loaded && !force) {
             // do this to prevent an unloaded version to be erased !
             checkAndLoadDataFromFile();
         }

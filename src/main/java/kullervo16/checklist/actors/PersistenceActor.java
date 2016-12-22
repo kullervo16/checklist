@@ -24,6 +24,6 @@ public class PersistenceActor extends UntypedActor {
 
 
     private void persist(final String uuid) {
-        ChecklistRepository.INSTANCE.getChecklist(uuid).persist();
+        ChecklistRepository.INSTANCE.getChecklist(uuid).persist(false);
     }
 }

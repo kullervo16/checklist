@@ -1,7 +1,7 @@
 (function () {
 
   var app = angular.module('checklist', ['ui.bootstrap', 'ngResource']);
-
+  
   app.config(['$locationProvider', function ($locationProvider) {
     $locationProvider.html5Mode({
       enabled: true,
@@ -21,6 +21,11 @@
       });
     };
   });
+  
+  app.config(['$httpProvider', function($httpProvider) {
+    var token = window._keycloak.token;     
+    $httpProvider.defaults.headers.common['Authorization'] = 'BEARER ' + token;
+  }]);
 
 
   app.filter("trust", ['$sce', function ($sce) {
@@ -58,6 +63,40 @@
   }]);
 
 
+  app.controller('userController', function ($scope, $http, $window) {
+
+          
+        function getUserName() {
+            return $window._keycloak.idTokenParsed.name;
+        }
+        
+        function getRoles() {
+            return $window._keycloak.realmAccess.roles;
+        }
+          
+        function isAdmin() {            
+            for (var i = 0; i < $window._keycloak.realmAccess.roles.length; i++) {
+              if ($window._keycloak.realmAccess.roles[i] === 'admin') {
+                return true;
+              }
+            }
+
+            return false;
+        }
+        function canModify() {            
+            for (var i = 0; i < $window._keycloak.realmAccess.roles.length; i++) {
+              if ($window._keycloak.realmAccess.roles[i] === 'modify') {
+                return true;
+              }
+            }            
+            return false;
+        }
+        $scope.isAdmin = isAdmin;
+        $scope.canModify = canModify;
+        $scope.getUserName = getUserName;
+        $scope.getRoles = getRoles;
+  });
+
   app.controller('templateController', function ($scope, $http, $window) {
         // init stuff... get data from backend
         var init = function () {
@@ -69,7 +108,7 @@
                  $scope.rawItems = data;
                  toggleShowSubchecklists($scope.subCLshown, false);
                }).error(function (data, status, headers, config) {
-            console.log('Error getting rest/template/list');
+            console.log('Error getting rest/templates');
           });
         };
 
@@ -931,7 +970,7 @@
           }
           $scope.beginLetters.sort();
           for (var i = 0; i < $scope.beginLetters.length; i++) {
-            $scope.groupedData[scope.beginLetters[i]].sort();
+            $scope.groupedData[$scope.beginLetters[i]].sort();
           }
           console.log($scope.beginLetters);
           console.log($scope.groupedData);

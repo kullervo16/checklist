@@ -63,7 +63,7 @@ public class ChecklistPersister extends TemplatePersister {
         } else {
             // backwards compatibility : if not set, say true...
             cl.setUniqueTagcombination(true);
-        }
+        }               
     }
 
 
@@ -89,6 +89,7 @@ public class ChecklistPersister extends TemplatePersister {
                 appendEscaped(writer.append(SEPARATOR_1).append(SEPARATOR_2), answer).append('\n');
             });
         }
+        printLine(writer, "  user", step.getUser());
     }
 
 

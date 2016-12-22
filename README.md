@@ -19,6 +19,10 @@ Here you can find the [Release notes for the different versions](https://github.
 
 The easiest way to use the project is by launching it in a container. You can find all released versions on <a href="https://hub.docker.com/r/kullervo16/checklist/" target="_blank">dockerhub</a>.
 
+## User management
+
+The usermanagement is explained [here](doc/userManagement.md).
+
 ## Templates
 
 The templates are defined in  YAML. This is the syntax :

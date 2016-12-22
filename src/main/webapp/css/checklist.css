@@ -202,3 +202,14 @@ input[type=radio], input[type=checkbox] {
         padding-bottom: 30px;
     }
 }
+
+.navbar-inverse .navbar-nav>li>a {
+    color: #ddd;
+}
+
+.userName {
+    color: white; 
+    position:absolute; 
+    top:15; 
+    right: 50;
+}

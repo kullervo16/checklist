@@ -1,4 +1,4 @@
-<html lang="en" ng-app="checklist">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,17 +19,19 @@
   <link href="css/checklist.css" rel="stylesheet">
   <script src="clientjs/ui-bootstrap-0.14.3.js"></script>
   <script src="clientjs/ui-bootstrap-tpls-0.14.3.js"></script>
+  <script src="clientjs/keycloak.js"></script>
   <script src="clientjs/app.js"></script>
 </head>
 
-<body role="document" ng-app="read">
+<body role="document" ng-controller="userController as user">
   <!-- Fixed navbar-->
   <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
         <button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle">
           <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>
-          <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme--></div>
+          <span class="icon-bar"></span></button><!--a.navbar-brand(href='#') Bootstrap theme-->
+      </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li><a href="./templates.html" target="_self">Templates</a></li>
@@ -37,16 +39,20 @@
           <li><a href="./select.html" target="_self">Select</a></li>
           <li><a href="./tag.html" target="_self">Tags</a></li>
           <li><a href="./help.html" target="_self">Help</a></li>
-        </ul>
-      </div>
-      <!-- /.nav-collapse-->
+        </ul>          
+      </div>               
+      <!-- /.nav-collapse-->      
+    </div>
+    <div class="navbar-header pull-right">
+          <span class="userName" title="roles : {{getRoles()}}">{{ getUserName() }}</span>                   
     </div>
   </div>
   <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">
     <div class="jumbotron">
       <h1>{{data.displayName}}</h1>
       <h3>{{data.description}}</h3>
-      <div style="height: 30px" ng-if="mode === 'template'">
+      <h4 ng-if="data.user">Created by {{data.user}} on {{data.creationTime | date:'dd/MM/yyyy HH:mm:ss Z'}}</h4>
+      <div style="height: 30px" ng-if="mode === 'template' && canModify()">
         <button type="button" class="btn btn-default btn-sm" title="Create checklist from template" ng-click="instantiateFromTemplate()">
           <span class="glyphicon glyphicon-check" aria-hidden="true"></span>Create checklist
         </button>
@@ -55,10 +61,10 @@
         <p id="autorefreshBlock">Autorefresh :
           <input type="checkbox" name="autoRefresh" onchange="angular.element(this).scope().toggleRefresh(this.checked)" ng-if="refreshState" checked/>
           <input type="checkbox" name="autoRefresh" onchange="angular.element(this).scope().toggleRefresh(this.checked)" ng-if="!refreshState"/>
-          <button id="deleteClButton" type="button" class="btn btn-default" title="Delete" ng-click="deleteChecklist()">
+          <button id="deleteClButton" type="button" class="btn btn-default" title="Delete" ng-click="deleteChecklist()" ng-if="canModify()">
             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
           </button>
-          <button id="closeClButton" type="button" class="btn btn-default" title="Close" ng-click="closeChecklist()" ng-if="data.progress < 100">
+          <button id="closeClButton" type="button" class="btn btn-default" title="Close" ng-click="closeChecklist()" ng-if="data.progress < 100 && canModify()">
             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
           </button>
           <button id="gotoParentClButton" type="button" class="btn btn-default" title="Go to parent" ng-if="data.parent" ng-click="gotoChecklist(data.parent)">
@@ -76,7 +82,7 @@
     <div ng-show="data.tags.length">
       <p><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
         <span id="tags" ng-repeat="tag in data.tags | orderBy: tag"><span class="label label-primary" ng-click="removeTagFromChecklist(tag)">{{tag}}</span></span>
-        <button id="addTagButton" type="button" class="btn btn-default btn-sm" title="Add tag" ng-click="showModal('#tagModal')" ng-show="mode === 'checklist'">
+        <button id="addTagButton" type="button" class="btn btn-default btn-sm" title="Add tag" ng-click="showModal('#tagModal')" ng-show="mode === 'checklist' && canModify()">
           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         </button>
       </p>
@@ -93,7 +99,12 @@
 
           <h3 class="list-group-item-heading stepId" ng-if="mode === 'template'">{{step.id}}</h3>
 
-          <h4 class="responsible" ng-if="step.responsible"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>{{step.responsible}}</h4>
+          <!-- show either the responsible group, or a specific user when we know one -->
+          <h4 class="responsible" ng-if="step.responsible && ! step.user"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{step.responsible}}</h4>
+          <h4 class="responsible" ng-if="step.user"> 
+              <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+              <span title="responsible group: {{step.responsible}}">{{step.user}}</span>
+          </h4>
 
           <h4 class="documentation" ng-if="showDocumentation(step)"><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target="_blank">Documentation</a></h4>
 
@@ -105,16 +116,16 @@
 
           <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child != null"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoChecklist(step.child)">{{step.subChecklist}}</a></h4>
 
-          <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child == null"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="launchSubChecklist(step)">{{step.subChecklist}}</a></h4>
+          <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child == null && canModify()"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="launchSubChecklist(step)">{{step.subChecklist}}</a></h4>
 
           <div class="answer" ng-if="step.question">
-            <p ng-if="showAnswerTextBox(step)">
+            <p ng-if="showAnswerTextBox(step) && canModify()">
               <textarea ng-model="answerText" rows="4" cols="50"></textarea>
               <button ng-if="isInChecklistMode()" type="button" class="btn btn-default addAnswer" aria-label="ok" ng-click="addAnswer(step, answerText);">
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
               </button>
             </p>
-            <div ng-if="showAnswerRadioButton(step)">
+            <div ng-if="showAnswerRadioButton(step) && canModify()">
               <p ng-repeat="option in step.options">
                 <label>
                   <input type="radio" name="option" ng-model="$parent.radioAnswer" ng-value="option"/> {{option}}
@@ -124,7 +135,7 @@
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
               </button>
             </div>
-            <div ng-if="showAnswerChecklists(step)">
+            <div ng-if="showAnswerChecklists(step) && canModify()">
               <p ng-repeat="option in step.options">
                 <label>
                   <input type="checkbox" name="option" ng-model="$parent.checkboxAnswer[option]" ng-value="option"/> {{option}}
@@ -143,12 +154,12 @@
             </p>
           </div>
 
-          <div role="group" aria-label="operations" ng-if="showStartProgress(step)">
+          <div role="group" aria-label="operations" ng-if="showStartProgress(step) && canModify()">
             <button type="button" class="btn btn-default" aria-label="Start" ng-click="startAction(step);">
               <span class="glyphicon glyphicon-play" aria-hidden="true">Start</span>
             </button>
           </div>
-          <div ng-if="showOptions(step)">
+          <div ng-if="showOptions(step) && canModify()">
             <h4><span class="glyphicon glyphicon-question-sign questionAction" aria-hidden="true"></span>Please select an option</h4>
             <div class="btn-group" uib-dropdown>
               <button id="split-button" type="button" class="btn">Available options</button>
@@ -173,7 +184,7 @@
             </h4>
 
           </div>
-          <div role="group" aria-label="operations" ng-if="showActionButtons(step)">
+          <div role="group" aria-label="operations" ng-if="showActionButtons(step) && canModify()">
             <p>Action result :</p>
             <button type="button" class="btn btn-default" aria-label="ok" ng-click="updateAction(step, true);">
               <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>OK
@@ -182,7 +193,7 @@
               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>Problem
             </button>
           </div>
-          <div class='errorBlock' ng-if="showErrorDialog(step)" ng-class="unknown">
+          <div class='errorBlock' ng-if="showErrorDialog(step) && canModify()" ng-class="unknown">
             <p>Please enter the details of the problem :</p>
             <p>
               <textarea ng-model="currentError" rows="4" cols="50"></textarea>
@@ -207,13 +218,16 @@
               </li>
             </ul>
           </div>
-          <div role="group" aria-label="operations">
+          <div role="group" aria-label="operations" ng-if="canModify()">
             <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="revalidate(step);" ng-if="showRevalidateButton(step)">
               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>Revalidate
             </button>
             <button type="button" class="btn btn-default" aria-label="reopen" ng-click="reopen(step);" ng-if="showReopenButton(step)">
               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>Reopen
             </button>
+          </div>
+          <div ng-if="!canModify()">
+              <!-- block needed to compensate the action blocks that were hidden... otherwise the layout screws up -->
           </div>
         </div>
       </div>
@@ -268,5 +282,6 @@
       <!-- ==================================================-->
       <!-- Placed at the end of the document so the pages load faster-->
       <script src="clientjs/holder.js"></script>
+      <script src="clientjs/login.js"></script>
 </body>
 </html>

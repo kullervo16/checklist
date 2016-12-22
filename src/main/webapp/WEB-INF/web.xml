@@ -16,6 +16,11 @@
         <param-name>resteasy.servlet.mapping.prefix</param-name>
         <param-value>/rest</param-value>
     </context-param>
+    
+    <context-param>
+        <param-name>resteasy.role.based.security</param-name>
+        <param-value>true</param-value>
+    </context-param>
  
     <listener>
         <listener-class>
@@ -30,5 +35,26 @@
         </servlet-class>
     </servlet>
 
+    <module-name>basicauth</module-name>
+     
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/rest/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>consult</role-name>
+        </auth-constraint>
+    </security-constraint> 
+ 
+    <login-config>
+        <auth-method>KEYCLOAK</auth-method>
+        <realm-name>checklist</realm-name>
+    </login-config>
+ 
+    <security-role>
+        <role-name>consult</role-name>
+        <role-name>modify</role-name>
+        <role-name>admin</role-name>
+    </security-role>
 
 </web-app>

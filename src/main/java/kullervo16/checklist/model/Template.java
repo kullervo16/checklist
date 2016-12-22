@@ -38,6 +38,8 @@ public class Template {
     protected boolean subchecklistOnly;
 
     protected long creationTime;
+    
+    protected String user;
 
 
     public Template() {
@@ -167,8 +169,8 @@ public class Template {
     }
 
 
-    public void persist() {
-        persister.serialize();
+    public void persist(boolean force) {
+        persister.serialize(force);
     }
 
 
@@ -200,5 +202,13 @@ public class Template {
 
     public void setCreationTime(final long creationTime) {
         this.creationTime = creationTime;
+    }
+    
+    public void setUser(String userName) {
+        this.user = userName;
+    }
+
+    public String getUser() {
+        return user;
     }
 }
