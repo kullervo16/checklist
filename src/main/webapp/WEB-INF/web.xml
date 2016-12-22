@@ -37,14 +37,14 @@
 
     <module-name>basicauth</module-name>
      
-    <!-- <security-constraint>
+    <security-constraint>
         <web-resource-collection>
-            <url-pattern>/*</url-pattern>
+            <url-pattern>/rest/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>consult</role-name>
         </auth-constraint>
-    </security-constraint> -->
+    </security-constraint> 
  
     <login-config>
         <auth-method>KEYCLOAK</auth-method>

@@ -64,12 +64,7 @@
 
 
   app.controller('userController', function ($scope, $http, $window) {
-//      $http.get('rest/userInfo')
-//               .success(function (data, status, headers, config) {
-//                 $scope.userInfo = data
-//               }).error(function (data, status, headers, config) {
-//            console.log('Error getting rest/userInfo');
-//          });
+
           
         function getUserName() {
             return $window._keycloak.idTokenParsed.name;
@@ -99,6 +94,7 @@
         $scope.isAdmin = isAdmin;
         $scope.canModify = canModify;
         $scope.getUserName = getUserName;
+        $scope.getRoles = getRoles;
   });
 
   app.controller('templateController', function ($scope, $http, $window) {
