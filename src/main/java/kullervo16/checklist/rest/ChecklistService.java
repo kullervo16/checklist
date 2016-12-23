@@ -388,11 +388,10 @@ public class ChecklistService {
 
         // check that the tag is checklist specific, don't delete tags from the template...
         {
-            final String templateId = cl.getTemplate();
-            final Template template = templateRepository.getTemplate(templateId);
+            final String templateId = cl.getTemplate();            
             final String[] tagsFromTemplateId = Checklist.getTagsFromTemplateId(templateId);
 
-            if (template.getTags().contains(tag) || tag.equals(tagsFromTemplateId[0]) || tag.equals(tagsFromTemplateId[1])) {
+            if (cl.getOriginalTemplateTags().contains(tag) || tag.equals(tagsFromTemplateId[0]) || tag.equals(tagsFromTemplateId[1])) {
                 return Response.status(Response.Status.NOT_ACCEPTABLE).entity("{\"error\":\"You cannot delete a tag defined by the template\"}").build();
             }
         }

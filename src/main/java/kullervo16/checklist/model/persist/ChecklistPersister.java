@@ -3,11 +3,11 @@ package kullervo16.checklist.model.persist;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import kullervo16.checklist.model.Checklist;
 import kullervo16.checklist.model.Milestone;
-import kullervo16.checklist.model.State;
 import kullervo16.checklist.model.Step;
 
 /**
@@ -36,6 +36,12 @@ public class ChecklistPersister extends TemplatePersister {
         writer.append("template: ").append(cl.getTemplate()).append('\n')
               .append("specificTagSet: ").append(Boolean.toString(cl.isSpecificTagSet())).append('\n')
               .append("uniqueTagcombination: ").append(Boolean.toString(cl.isUniqueTagcombination())).append('\n');
+        if (!cl.getOriginalTemplateTags().isEmpty()) {
+            writer.append("originalTemplateTags: ").append('\n');
+            cl.getOriginalTemplateTags().forEach((tag) -> {
+                appendEscaped(writer.append("    - "), tag).append('\n');
+            });
+        }
     }
 
 
@@ -63,7 +69,12 @@ public class ChecklistPersister extends TemplatePersister {
         } else {
             // backwards compatibility : if not set, say true...
             cl.setUniqueTagcombination(true);
-        }               
+        }      
+        List<String> originalTemplateTags = new LinkedList<>();
+        if(templateMap.containsKey("originalTemplateTags")) {
+            originalTemplateTags.addAll((List<String>)templateMap.get("originalTemplateTags"));
+        }
+        cl.setOriginalTemplateTags(originalTemplateTags);
     }
 
 

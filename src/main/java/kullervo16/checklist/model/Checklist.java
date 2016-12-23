@@ -31,6 +31,8 @@ public class Checklist extends Template {
     private String template;
 
     private boolean uniqueTagcombination;    
+    
+    private List<String> originalTemplateTags;
 
 
     public Checklist() {
@@ -54,20 +56,21 @@ public class Checklist extends Template {
         // deep copy... we're working completely in memory here, don't want to link references...  
 
         // Add the tags from the template
-        tags = new LinkedList<>(template.getTags());
+        this.originalTemplateTags = new LinkedList<>(template.getTags());
 
         // Add the template ID to the tag list if it is not yet a tag
         {
             final String[] templateIdTags = getTagsFromTemplateId(this.template);
 
-            if (!tags.contains(templateIdTags[0])) {
-                tags.add(templateIdTags[0]);
+            if (!this.originalTemplateTags.contains(templateIdTags[0])) {
+                this.originalTemplateTags.add(templateIdTags[0]);
             }
 
-            if (!tags.contains(templateIdTags[1])) {
-                tags.add(templateIdTags[1]);
+            if (!this.originalTemplateTags.contains(templateIdTags[1])) {
+                this.originalTemplateTags.add(templateIdTags[1]);
             }
         }
+        this.tags.addAll(this.originalTemplateTags);
 
         milestones = new LinkedList<>();
         steps = new LinkedList<>();
@@ -374,4 +377,14 @@ public class Checklist extends Template {
             }
         }
     }        
+
+    public List<String> getOriginalTemplateTags() {
+        return originalTemplateTags;
+    }
+
+    public void setOriginalTemplateTags(List<String> originalTemplateTags) {
+        this.originalTemplateTags = originalTemplateTags;
+    }
+    
+    
 }
