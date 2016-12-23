@@ -206,3 +206,20 @@ There is also a simple stats implemented that shows you which steps of your temp
 You can find your checklists based on the tags and reached milestones. They are presented in the tagcloud in the select page
 ![alt text](doc/screenshot_tagcloud.png "the tagcloud page")
 
+## REST interface
+
+All data is exposed via a REST interface. We support following resources :
+
+* /checklists
+* /templates
+* /milestones
+* /tags
+* /userInfo
+
+These resources can be accessed on **/rest/<resource name>**.
+
+## Health
+
+We also expose the health of the application via **/health**. It will report HTTP 200 when ok (with some human readable information), and HTTP 500 otherwise. 
+
+This information can be used to create a monitoring page or in a system like Openshift to allow the system to take action when the application becomes unhealthy.

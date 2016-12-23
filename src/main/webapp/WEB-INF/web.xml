@@ -44,7 +44,7 @@
         <auth-constraint>
             <role-name>consult</role-name>
         </auth-constraint>
-    </security-constraint> 
+    </security-constraint>
  
     <login-config>
         <auth-method>KEYCLOAK</auth-method>
@@ -52,9 +52,7 @@
     </login-config>
  
     <security-role>
-        <role-name>consult</role-name>
-        <role-name>modify</role-name>
-        <role-name>admin</role-name>
+        <role-name>consult</role-name>        
     </security-role>
 
 </web-app>
