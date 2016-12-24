@@ -51,7 +51,7 @@
     <div class="jumbotron">
       <h1>{{data.displayName}}</h1>
       <h3>{{data.description}}</h3>
-      <h4 ng-if="data.user">Created by {{data.user}} on {{data.creationTime | date:'dd/MM/yyyy HH:mm:ss Z'}}</h4>
+      <h4 ng-if="data.user">Created by {{data.user}} on {{data.creationTime | date:'dd/MM/yyyy HH:mm:ss'}}</h4>
       <div style="height: 30px" ng-if="mode === 'template' && canModify()">
         <button type="button" class="btn btn-default btn-sm" title="Create checklist from template" ng-click="instantiateFromTemplate()">
           <span class="glyphicon glyphicon-check" aria-hidden="true"></span>Create checklist
@@ -105,6 +105,7 @@
               <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
               <span title="responsible group: {{step.responsible}}">{{step.user}}</span>
           </h4>
+          <h4 ng-if="step.lastUpdate" class="time"><span class="glyphicon glyphicon-time" aria-hidden="true" title="{{step.lastUpdate | date:'dd/MM/yyyy HH:mm:ss'}}"></span></h4>
 
           <h4 class="documentation" ng-if="showDocumentation(step)"><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target="_blank">Documentation</a></h4>
 
