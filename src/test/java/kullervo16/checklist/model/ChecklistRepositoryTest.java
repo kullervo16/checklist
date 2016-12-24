@@ -58,7 +58,7 @@ public class ChecklistRepositoryTest {
         List<String> tagList = new LinkedList<>();
         tagList.add("odt");
         List<ChecklistInfo> cli = this.repository.getChecklistInformation(tagList, null, false);
-        assertEquals(2, cli.size());        
+        assertEquals(3, cli.size());        
         assertNotNull(cli.get(0).getUuid());        
         assertNotNull(cli.get(0).getTags());    
         tagList.clear();
@@ -129,18 +129,18 @@ public class ChecklistRepositoryTest {
     public void testGetTagInfo() {
         List<TagcloudEntry> tagInfo = new ArrayList<>(this.repository.getTagInfo(null).getEntries());
         assertEquals(2, tagInfo.size());
-        assertEquals("cl1", tagInfo.get(0).getText());
-        assertEquals(1, tagInfo.get(0).getWeight());
-        assertEquals("odt", tagInfo.get(1).getText());
-        assertEquals(2, tagInfo.get(1).getWeight());
+        assertEquals("firstDeployment", tagInfo.get(0).getText());
+        assertEquals(2, tagInfo.get(0).getWeight());
+        assertEquals("cl1", tagInfo.get(1).getText());
+        assertEquals(1, tagInfo.get(1).getWeight());
 
         // now with a filter
         tagInfo = new ArrayList<>(this.repository.getTagInfo("openshift").getEntries());
         assertEquals(2, tagInfo.size());
-        assertEquals("cl1", tagInfo.get(0).getText());
-        assertEquals(1, tagInfo.get(0).getWeight());
-        assertEquals("odt", tagInfo.get(1).getText());
-        assertEquals(2, tagInfo.get(1).getWeight());
+        assertEquals("firstDeployment", tagInfo.get(0).getText());
+        assertEquals(2, tagInfo.get(0).getWeight());
+        assertEquals("cl1", tagInfo.get(1).getText());
+        assertEquals(1, tagInfo.get(1).getWeight());
 
         tagInfo = new ArrayList<>(this.repository.getTagInfo("cl1").getEntries());
         assertEquals(0, tagInfo.size());

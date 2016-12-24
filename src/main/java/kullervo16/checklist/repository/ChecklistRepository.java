@@ -62,7 +62,7 @@ public enum ChecklistRepository {
                     } else {
 
                         final Checklist cl = new Checklist(f);
-
+                                                
                         cl.setId(f.getName());
                         newModel.put(cl.getId(), cl);
                     }
@@ -466,12 +466,19 @@ public enum ChecklistRepository {
         return true;
     }
 
+    /**
+     * Removes the old tag (when not an originalTemplateTag) and adds the new one.
+     * @param tagName
+     * @param mergeInto 
+     */
     public void mergeTag(String tagName, String mergeInto) {
        
         synchronized (lock) {
             for(Checklist walker : data.values()) {
                 if(walker.getTags().contains(tagName)) {
-                    walker.getTags().remove(tagName);
+                    if(!walker.getOriginalTemplateTags().contains(tagName)) {
+                        walker.getTags().remove(tagName);
+                    }                    
                     if(!walker.getTags().contains(mergeInto)) {
                         walker.getTags().add(mergeInto);
                     }                    
@@ -481,10 +488,14 @@ public enum ChecklistRepository {
         }
     }
 
+    /**
+     * Deletes the tags from the checklists (where that tag is not an originalTemplateTag)
+     * @param tagName 
+     */
     public void deleteTag(String tagName) {
         synchronized (lock) {
             for(Checklist walker : data.values()) {
-                if(walker.getTags().contains(tagName)) {
+                if(walker.getTags().contains(tagName) && !walker.getOriginalTemplateTags().contains(tagName)) {
                     walker.getTags().remove(tagName);
                     ActorRepository.getPersistenceActor().tell(new PersistenceRequest(walker.getId()), null);                    
                 }

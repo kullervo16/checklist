@@ -10,10 +10,12 @@ import kullervo16.checklist.messages.PersistenceRequest;
 import kullervo16.checklist.model.persist.ChecklistPersister;
 import kullervo16.checklist.repository.ActorRepository;
 import kullervo16.checklist.repository.ChecklistRepository;
+import kullervo16.checklist.repository.TemplateRepository;
 
 import static kullervo16.checklist.model.State.ABORTED;
 import static kullervo16.checklist.model.State.EXECUTION_FAILED;
 import static kullervo16.checklist.model.State.OK;
+
 
 /**
  * Data object class to model a Checklist... it is backed by a YAML file.
@@ -32,7 +34,7 @@ public class Checklist extends Template {
 
     private boolean uniqueTagcombination;    
     
-    private List<String> originalTemplateTags;
+    private List<String> originalTemplateTags = new LinkedList<>();
 
 
     public Checklist() {
@@ -52,24 +54,10 @@ public class Checklist extends Template {
         description = template.getDescription();
         displayName = template.getDisplayName();
         this.template = template.getId();
-
-        // deep copy... we're working completely in memory here, don't want to link references...  
-
+        
+        // deep copy... we're working completely in memory here, don't want to link references...
         // Add the tags from the template
-        this.originalTemplateTags = new LinkedList<>(template.getTags());
-
-        // Add the template ID to the tag list if it is not yet a tag
-        {
-            final String[] templateIdTags = getTagsFromTemplateId(this.template);
-
-            if (!this.originalTemplateTags.contains(templateIdTags[0])) {
-                this.originalTemplateTags.add(templateIdTags[0]);
-            }
-
-            if (!this.originalTemplateTags.contains(templateIdTags[1])) {
-                this.originalTemplateTags.add(templateIdTags[1]);
-            }
-        }
+        this.originalTemplateTags = getTagsFromTemplate(template);
         this.tags.addAll(this.originalTemplateTags);
 
         milestones = new LinkedList<>();
@@ -110,6 +98,50 @@ public class Checklist extends Template {
         } else {
             hasSpecificTags = false;
         }
+    }
+
+    @Override
+    protected void checkAndLoadDataFromFile() {
+        super.checkAndLoadDataFromFile(); 
+        
+        // migration : if the originalTemplateTags are empty but the template has tags, add them at this moment (otherwise the tag management does not work as it should)
+        if( this.getOriginalTemplateTags().isEmpty()) {
+            Template template = TemplateRepository.INSTANCE.getTemplate(this.template);
+            this.setOriginalTemplateTags(this.getTagsFromTemplate(template));
+            for(String ttag : this.originalTemplateTags) {
+                if(!this.tags.contains(ttag)) {
+                    this.tags.add(ttag); // also add the tag to the taglist (like it should have been done at creation)
+                }
+            }
+        }
+    }
+    
+    
+
+    /**
+     * Get the complete tags from a template. This contains both the tags in the template as the ones that are calculated on the id.
+     * Note that this returns the current value of the template. If you want the values that were present at creation, use <code>getOriginalTemplateTags</code>
+     * @param template 
+     */
+    public List<String> getTagsFromTemplate(final Template template) {
+        
+        List<String> tagList = new LinkedList<>();
+        if(template != null) {
+            tagList.addAll(template.getTags());
+            // Add the template ID to the tag list if it is not yet a tag
+
+            final String[] templateIdTags = getTagsFromTemplateId(this.template);
+
+            if (!tagList.contains(templateIdTags[0])) {
+                tagList.add(templateIdTags[0]);
+            }
+
+            if (!tagList.contains(templateIdTags[1])) {
+                tagList.add(templateIdTags[1]);
+            }
+        }
+        return tagList;
+    
     }
 
 
@@ -378,6 +410,10 @@ public class Checklist extends Template {
         }
     }        
 
+    /**
+     * 
+     * @return the tags on the template at creation. If you're interested in the current value, use <code>getTagsFromTemplate</code>
+     */
     public List<String> getOriginalTemplateTags() {
         return originalTemplateTags;
     }
