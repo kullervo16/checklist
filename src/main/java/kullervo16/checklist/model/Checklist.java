@@ -32,8 +32,8 @@ public class Checklist extends Template {
 
     private String template;
 
-    private boolean uniqueTagcombination;    
-    
+    private boolean uniqueTagcombination;
+
     private List<String> originalTemplateTags = new LinkedList<>();
 
 
@@ -54,7 +54,7 @@ public class Checklist extends Template {
         description = template.getDescription();
         displayName = template.getDisplayName();
         this.template = template.getId();
-        
+
         // deep copy... we're working completely in memory here, don't want to link references...
         // Add the tags from the template
         this.originalTemplateTags = getTagsFromTemplate(template);
@@ -102,8 +102,8 @@ public class Checklist extends Template {
 
     @Override
     protected void checkAndLoadDataFromFile() {
-        super.checkAndLoadDataFromFile(); 
-        
+        super.checkAndLoadDataFromFile();
+
         // migration : if the originalTemplateTags are empty but the template has tags, add them at this moment (otherwise the tag management does not work as it should)
         if( this.getOriginalTemplateTags().isEmpty()) {
             Template template = TemplateRepository.INSTANCE.getTemplate(this.template);
@@ -115,16 +115,16 @@ public class Checklist extends Template {
             }
         }
     }
-    
-    
+
+
 
     /**
      * Get the complete tags from a template. This contains both the tags in the template as the ones that are calculated on the id.
      * Note that this returns the current value of the template. If you want the values that were present at creation, use <code>getOriginalTemplateTags</code>
-     * @param template 
+     * @param template
      */
     public List<String> getTagsFromTemplate(final Template template) {
-        
+
         List<String> tagList = new LinkedList<>();
         if(template != null) {
             tagList.addAll(template.getTags());
@@ -141,7 +141,7 @@ public class Checklist extends Template {
             }
         }
         return tagList;
-    
+
     }
 
 
@@ -295,7 +295,11 @@ public class Checklist extends Template {
                     if (stepWalkerCondition.isConditionReachable()) {
                         updateStepState(stepWalker, State.UNKNOWN, userName);
                     } else {
-                        updateStepState(stepWalker, stepWalkerCondition.getSelectedOption() == null ? State.NOT_YET_APPLICABLE : State.NOT_APPLICABLE, userName);
+                        if (stepWalkerCondition.getStep().getState().isComplete()) {
+                            updateStepState(stepWalker, State.NOT_APPLICABLE, userName);
+                        } else {
+                            updateStepState(stepWalker, State.NOT_YET_APPLICABLE, userName);
+                        }
                     }
                 }
 
@@ -408,10 +412,10 @@ public class Checklist extends Template {
                 updateStepState(step, ABORTED, userName);
             }
         }
-    }        
+    }
 
     /**
-     * 
+     *
      * @return the tags on the template at creation. If you're interested in the current value, use <code>getTagsFromTemplate</code>
      */
     public List<String> getOriginalTemplateTags() {
@@ -421,6 +425,6 @@ public class Checklist extends Template {
     public void setOriginalTemplateTags(List<String> originalTemplateTags) {
         this.originalTemplateTags = originalTemplateTags;
     }
-    
-    
+
+
 }

@@ -10,7 +10,9 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -60,7 +62,7 @@ public class ChecklistService {
     private final ChecklistRepository checklistRepository = ChecklistRepository.INSTANCE;
 
     private final TemplateRepository templateRepository = TemplateRepository.INSTANCE;
-    
+
     private UserInfoService userInfo = new UserInfoService();
 
 
@@ -214,9 +216,7 @@ public class ChecklistService {
         final Step step = getStep(cl, stepId);
 
         cl.updateStepState(step, UNKNOWN, userInfo.getUserName(context));
-        step.setAnswers(new LinkedList<>());
         step.setErrors(new LinkedList<>());
-        step.setSelectedOption(null);
 
         // Remove the milestone if any
         {
@@ -298,11 +298,11 @@ public class ChecklistService {
     }
 
 
-    @POST
+    @PUT
     @Path("/{id}/{step}/answers")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("modify")
-    public Checklist addAnwswerToStep(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, final String answer, @Context SecurityContext context) {
+    public Checklist setStepAnswer(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, final String answer, @Context SecurityContext context) {
 
         if (answer == null || "".equals(answer)) {
             throw new IllegalArgumentException("The answer should be non-empty");
@@ -313,17 +313,26 @@ public class ChecklistService {
 
         if (step.getQuestion() != null) {
 
-            cl.updateStepState(step, step.getChecks().isEmpty() ? OK : EXECUTED, userInfo.getUserName(context));
+            final List<String> answers = step.getAnswers();
+
+            answers.clear();
 
             try {
                 final JsonReader jsonReader = Json.createReader(new StringReader(answer));
-                step.getAnswers().addAll(jsonReader.readObject().keySet());
+                final JsonArray jsonValues = jsonReader.readArray();
+
+                for( int i = 0; i < jsonValues.size(); i++) {
+                    answers.add(jsonValues.getString(i));
+                }
+
                 jsonReader.close();
+
             } catch (final Exception e) {
                 // single answer...
-                step.getAnswers().add(answer);
+                answers.add(answer);
             }
 
+            cl.updateStepState(step, step.getChecks().isEmpty() ? OK : EXECUTED, userInfo.getUserName(context));
             ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         }
 
@@ -388,7 +397,7 @@ public class ChecklistService {
 
         // check that the tag is checklist specific, don't delete tags from the template...
         {
-            final String templateId = cl.getTemplate();            
+            final String templateId = cl.getTemplate();
             final String[] tagsFromTemplateId = Checklist.getTagsFromTemplateId(templateId);
 
             if (cl.getOriginalTemplateTags().contains(tag) || tag.equals(tagsFromTemplateId[0]) || tag.equals(tagsFromTemplateId[1])) {
@@ -404,27 +413,6 @@ public class ChecklistService {
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
         return Response.status(Response.Status.OK).entity(cl).build();
-    }
-
-
-    @PUT
-    @Path("/{id}/{step}/options/{choice}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed("modify")
-    public Checklist setStepOption(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("choice") final String choice, @Context SecurityContext context) {
-
-        final Checklist cl = getChecklist(checklistId);
-        final Step step = getStep(cl, stepId);
-
-        if (step.getSelectedOption() != null && !choice.equals(step.getSelectedOption())) {
-            throw new IllegalStateException("trying to reset the state... for step " + stepId);
-        }
-
-        step.setSelectedOption(choice);
-        cl.updateStepState(step, OK, userInfo.getUserName(context));
-        ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
-
-        return cl;
     }
 
 

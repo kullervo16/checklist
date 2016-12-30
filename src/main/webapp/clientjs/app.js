@@ -415,10 +415,6 @@
           return $scope.mode !== 'template';
         }
 
-        function showOptions(step) {
-          return step.options && ($scope.mode === 'template' || !step.selectedOption) && !step.answerType && !(step.state === 'ABORTED' || step.state === 'NOT_YET_APPLICABLE');
-        }
-
         function showRevalidateButton(step) {
           return step.state === 'CHECK_FAILED';
         }
@@ -544,14 +540,27 @@
           });
         }
 
-        function addAnswer(step, answer) {
-          $http.post('rest/checklists/' + $location.search().id + "/" + step.id + '/answers', answer)
+        function setAnswers(step, answer) {
+          $http.put('rest/checklists/' + $location.search().id + "/" + step.id + '/answers', answer)
                .success(function (data, status, headers, config) {
                  $scope.data = data;
                  reposition();
                }).error(function (data, status, headers, config) {
             console.log('Error updating step ' + step.id);
           });
+        }
+
+        function updateAnswer(step, answer, event) {
+          if( event.target.checked) {
+            if( step.answers.indexOf(answer) === -1) {
+              step.answers.push(answer);
+            }
+          } else {
+            var indexOfAnswer = step.answers.indexOf(answer);
+            if( indexOfAnswer !== -1) {
+              step.answers.splice(indexOfAnswer,1);
+            }
+          }
         }
 
         function addTag(tag) {
@@ -586,18 +595,6 @@
               combinedResult &= $scope.checkResults[step.id][key];
             }
             $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/checkresults/" + (combinedResult === 1))
-                 .success(function (data, status, headers, config) {
-                   $scope.data = data;
-                   reposition();
-                 }).error(function (data, status, headers, config) {
-              console.log('Error updating step ' + step.id);
-            });
-          }
-        }
-
-        function setStepOption(step, choice) {
-          if (isInChecklistMode()) {
-            $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/options/" + choice)
                  .success(function (data, status, headers, config) {
                    $scope.data = data;
                    reposition();
@@ -894,7 +891,6 @@
         $scope.showChecks             = showChecks;
         $scope.showCheckButtons       = showCheckButtons;
         $scope.showSubchecklist       = showSubchecklist;
-        $scope.showOptions            = showOptions;
         $scope.showMainBody           = showMainBody;
         $scope.showProgressBar        = showProgressBar;
         $scope.showAnswerChecklists   = showAnswerChecklists;
@@ -917,10 +913,10 @@
         $scope.startAction        = startAction;
         $scope.updateAction       = updateAction;
         $scope.addErrorAction     = addErrorAction;
-        $scope.addAnswer          = addAnswer;
+        $scope.setAnswers         = setAnswers;
+        $scope.updateAnswer       = updateAnswer;
         $scope.setCheckResult     = setCheckResult;
         $scope.addTag             = addTag;
-        $scope.setStepOption      = setStepOption;
         $scope.revalidate         = revalidate;
         $scope.reopen             = reopen;
         $scope.deleteChecklist    = deleteChecklist;

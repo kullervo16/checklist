@@ -1,10 +1,14 @@
 package kullervo16.checklist.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static kullervo16.checklist.utils.CollectionUtils.isCollectionNullOrEmpty;
+import static kullervo16.checklist.utils.StringUtils.isStringNullOrEmptyOrBlank;
 
 /**
  * Data object to model a step in a template/checklist.
@@ -40,8 +44,6 @@ public class Step {
     protected String subChecklist;
 
     protected List<String> options;
-
-    protected String selectionOption;
 
     protected Condition condition;
 
@@ -83,7 +85,6 @@ public class Step {
         documentation = step.getDocumentation();
         subChecklist = step.getSubChecklist();
         options = step.getOptions();
-        selectionOption = step.getSelectedOption();
         question = step.getQuestion();
         answerType = step.getAnswerType();
         child = step.getChild();
@@ -101,7 +102,7 @@ public class Step {
             }
 
             state = State.NOT_YET_APPLICABLE;
-            condition = new Condition(selectionPoint, step.getCondition().getSelectedOption());
+            condition = new Condition(selectionPoint, step.getCondition().getAnswer());
         }
     }
 
@@ -229,6 +230,18 @@ public class Step {
             options = new LinkedList<>((List<String>) stepMap.get("options"));
         }
 
+        // If it is an action with options
+        // then we convert it into a question
+        if (!isStringNullOrEmptyOrBlank(action) && !isCollectionNullOrEmpty(options)) {
+            question = action;
+            answerType = "onlyOne";
+            action = null;
+        }
+
+        if (!isStringNullOrEmptyOrBlank(question) && isStringNullOrEmptyOrBlank(answerType)) {
+            answerType = "onlyOne";
+        }
+
         if (stepMap.containsKey("condition")) {
 
             Step selectionPoint = null;
@@ -252,8 +265,9 @@ public class Step {
             lastUpdate = new Date(Long.valueOf((String) stepMap.get("lastUpdate")));
         }
 
-        if (stepMap.containsKey("selectedOption")) {
-            selectionOption = (String) stepMap.get("selectedOption");
+        if (stepMap.containsKey("selectedOption") && answers.isEmpty()) {
+            answers.add((String) stepMap.get("selectedOption"));
+            stepMap.remove("selectedOption");
         }
     }
 
@@ -447,16 +461,6 @@ public class Step {
 
     public void setOptions(final List<String> options) {
         this.options = options;
-    }
-
-
-    public String getSelectedOption() {
-        return selectionOption;
-    }
-
-
-    public void setSelectedOption(final String selectionOption) {
-        this.selectionOption = selectionOption;
     }
 
 

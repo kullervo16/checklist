@@ -25,7 +25,7 @@ The usermanagement is explained [here](doc/userManagement.md).
 
 ## Templates
 
-The templates are defined in  YAML. This is the syntax :
+The templates are defined in YAML. This is the syntax :
 
 ```yaml
 # description of the procedure that the checklist will support
@@ -41,7 +41,7 @@ steps :
     - id: createDeploymentEnvironment
       # who should perform this action
       responsible: deployer
-      # the action to be performed. You should either have an action or a subchecklist (see further)      
+      # the action to be performed. You should either have an action, a question or a subchecklist (see further)      
       action: request the deployment environment
       # the verification to be executed when the action is performed. Can be a single item or a list (see next step for example)
       check: log on the deployment station
@@ -69,7 +69,14 @@ steps :
 
 ### Simple flow control
 There is also the option to create a simple IF function in your checklists.. This allows you to apply some simple flow control and prevents you from creating
-multiple templates that do practically the same thing (which will become a burden to keep them in synch when you want to enhance them). This is an example
+multiple templates that do practically the same thing (which will become a burden to keep them in synch when you want to enhance them).
+
+If you do not specify any option in the condition, the step will be reachable if the step referenced by the selectionPoint is finished or not applicable.
+
+If you specify an option in the condition, the step will be reachable if the step referenced by the selectionPoint is finished and if the user selected the
+specified option.
+
+This is an example
 
 ```yaml
 description: Checklist to verify a deployment
@@ -81,6 +88,7 @@ subchecklistOnly: false
 steps :    
     - id: step1
       responsible: resp1
+      question: Question 1
       options:
           - option1
           - option2
@@ -90,7 +98,7 @@ steps :
       condition:
           - selectionPoint: step1
           - option: option1
-      action: action1
+      action: action2
       check: check1
       milestone: milestone2
     - id: step3
@@ -98,7 +106,7 @@ steps :
       condition:
           - selectionPoint: step1
           - option: option2
-      action: action1
+      action: action3
       check: check1
       milestone: milestone3
     - id: step4
@@ -106,12 +114,19 @@ steps :
       condition:
           - selectionPoint: step1
           - option: option2
-      action: action1
+      action: action4
       check: check1
       milestone: milestone4
     - id: step5
       responsible: resp1
-      action: action1
+      action: action5
+      check: check1
+      milestone: milestone5      
+    - id: step6
+      responsible: resp1
+      condition:
+          - selectionPoint: step1
+      action: action6
       check: check1
       milestone: milestone5      
 ```

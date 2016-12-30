@@ -15,4 +15,13 @@ public class StringUtils {
 
         return string;
     }
+
+    public static boolean isStringNullOrEmptyOrBlank(final String string) {
+
+        if (string == null) {
+            return true;
+        }
+
+        return string.trim().isEmpty();
+    }
 }

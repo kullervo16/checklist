@@ -12,19 +12,19 @@ public class Condition {
 
     private final Step step;
 
-    private final String selectedOption;
+    private final String answer;
 
 
-    public Condition(final Step step, final String selectedOption) {
+    public Condition(final Step step, final String answer) {
         this.step = step;
-        this.selectedOption = selectedOption;
+        this.answer = answer;
     }
 
 
     public boolean isConditionReachable() {
 
-        // If the step state is NOT_APPLICABLE, we consider the condition is reachable
-        if (this.step.getState() == State.NOT_APPLICABLE) {
+        // If the step state is NOT_APPLICABLE and there is no answer to match, we consider the condition is reachable
+        if (this.step.getState() == State.NOT_APPLICABLE && this.answer == null) {
             return true;
         }
 
@@ -33,7 +33,7 @@ public class Condition {
             return false;
         }
 
-        return this.selectedOption == null || this.selectedOption.equals(this.step.getSelectedOption());
+        return this.answer == null || (this.step.getAnswers() != null && this.step.getAnswers().contains(this.answer));
     }
 
 
@@ -42,7 +42,7 @@ public class Condition {
     }
 
 
-    public String getSelectedOption() {
-        return selectedOption;
+    public String getAnswer() {
+        return answer;
     }
 }

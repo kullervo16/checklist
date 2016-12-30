@@ -39,12 +39,12 @@
           <li><a href="./select.html" target="_self">Select</a></li>
           <li><a href="./tag.html" target="_self">Tags</a></li>
           <li><a href="./help.html" target="_self">Help</a></li>
-        </ul>          
-      </div>               
-      <!-- /.nav-collapse-->      
+        </ul>
+      </div>
+      <!-- /.nav-collapse-->
     </div>
     <div class="navbar-header pull-right">
-          <span class="userName" title="roles : {{getRoles()}}">{{ getUserName() }}</span>                   
+          <span class="userName" title="roles : {{getRoles()}}">{{ getUserName() }}</span>
     </div>
   </div>
   <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">
@@ -87,7 +87,6 @@
         </button>
       </p>
     </div>
-
     <div class="progress" ng-show="showProgressBar()">
       <uib-progressbar animate="false" value="data.progress" type="success"><b>{{data.progress}}%</b></uib-progressbar>
     </div>
@@ -101,7 +100,7 @@
 
           <!-- show either the responsible group, or a specific user when we know one -->
           <h4 class="responsible" ng-if="step.responsible && ! step.user"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{step.responsible}}</h4>
-          <h4 class="responsible" ng-if="step.user"> 
+          <h4 class="responsible" ng-if="step.user">
               <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
               <span title="responsible group: {{step.responsible}}">{{step.user}}</span>
           </h4>
@@ -121,69 +120,47 @@
 
           <div class="answer" ng-if="step.question">
             <p ng-if="showAnswerTextBox(step) && canModify()">
-              <textarea ng-model="answerText" rows="4" cols="50"></textarea>
-              <button ng-if="isInChecklistMode()" type="button" class="btn btn-default addAnswer" aria-label="ok" ng-click="addAnswer(step, answerText);">
+              <textarea ng-model="step.answers[0]" rows="4" cols="50"></textarea>
+              <button ng-if="isInChecklistMode()" type="button" class="btn btn-default setAnswers" aria-label="ok" ng-click="setAnswers(step, step.answers[0]);">
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
               </button>
             </p>
             <div ng-if="showAnswerRadioButton(step) && canModify()">
               <p ng-repeat="option in step.options">
                 <label>
-                  <input type="radio" name="option" ng-model="$parent.radioAnswer" ng-value="option"/> {{option}}
+                  <input type="radio" name="option" ng-model="step.answers[0]" ng-value="option"/> {{option}}
                 </label>
               </p>
-              <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, radioAnswer);">
+              <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="setAnswers(step, step.answers[0]);">
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
               </button>
             </div>
             <div ng-if="showAnswerChecklists(step) && canModify()">
               <p ng-repeat="option in step.options">
                 <label>
-                  <input type="checkbox" name="option" ng-model="$parent.checkboxAnswer[option]" ng-value="option"/> {{option}}
+                  <input type="checkbox" name="option" ng-checked="step.answers.includes(option)" ng-click="updateAnswer(step,option,$event);"/> {{option}}
                 </label>
               </p>
-              <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="addAnswer(step, checkboxAnswer);">
+              <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="setAnswers(step, step.answers);">
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
               </button>
             </div>
             <p>
-            <ul ng-repeat="answer in step.answers">
+            <ul ng-repeat="answer in step.answers" ng-show="step.state === 'OK' || step.state === 'EXECUTED'">
               <li>
-                <div ng-bind-html="answer | createLinks | trust"/>
+                <div ng-bind-html="answer | createLinks | trust"></div>
               </li>
             </ul>
-            </p>
           </div>
-
           <div role="group" aria-label="operations" ng-if="showStartProgress(step) && canModify()">
             <button type="button" class="btn btn-default" aria-label="Start" ng-click="startAction(step);">
               <span class="glyphicon glyphicon-play" aria-hidden="true">Start</span>
             </button>
           </div>
-          <div ng-if="showOptions(step) && canModify()">
-            <h4><span class="glyphicon glyphicon-question-sign questionAction" aria-hidden="true"></span>Please select an option</h4>
-            <div class="btn-group" uib-dropdown>
-              <button id="split-button" type="button" class="btn">Available options</button>
-              <button type="button" class="btn" uib-dropdown-toggle>
-                <span class="caret"></span>
-                <span class="sr-only">Split button!</span>
-              </button>
-
-              <ul class="uib-dropdown-menu" role="menu" aria-labelledby="split-button">
-                <li ng-repeat="choice in step.options">
-                  <a href ng-click="setStepOption(step,choice)">{{choice}}</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div ng-if="step.selectedOption">
-            <h4>Selected option : {{step.selectedOption}}</h4>
-          </div>
           <div ng-if="step.errors.length">
             <h4>
               <span class="glyphicon glyphicon-warning-sign errors-sign"></span>Errors:<span class="badge errors-badge" ng-click="showErrors(step);">{{step.errors.length}}</span>
             </h4>
-
           </div>
           <div role="group" aria-label="operations" ng-if="showActionButtons(step) && canModify()">
             <p>Action result :</p>
@@ -269,14 +246,16 @@
           <div class="modal-body">
             <ul ng-repeat="error in shownStep.errors">
               <li>
-                <div ng-bind-html="error | createLinks | trust"/>
+                <div ng-bind-html="error | createLinks | trust"></div>
               </li>
             </ul>
           </div>
         </div>
       </div>
-      <!-- for the case when all steps are done.. position on the bottom -->
-      <a name="complete" id="complete" class="anchor"></a>
+    </div>
+  </div>
+  <!-- for the case when all steps are done.. position on the bottom -->
+  <a name="complete" id="complete" class="anchor"></a>
 
       <!-- /container-->
       <!-- Bootstrap core JavaScript-->

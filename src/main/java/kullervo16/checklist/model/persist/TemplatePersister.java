@@ -456,7 +456,6 @@ public class TemplatePersister {
         printLine(writer, "  documentation", step.getDocumentation());
         printLine(writer, "  subchecklist", step.getSubChecklist());
         printLine(writer, "  weight", "" + step.getWeight());
-        printLine(writer, "  selectedOption", step.getSelectedOption());
         printLine(writer, "  question", step.getQuestion());
         printLine(writer, "  answerType", step.getAnswerType());
         printLine(writer, "  child", step.getChild());
@@ -499,8 +498,8 @@ public class TemplatePersister {
                 writer.append(SEPARATOR_1).append("condition:\n");
                 writer.append(SEPARATOR_1).append(SEPARATOR_2).append("selectionPoint: ").append(condition.getStep().getId()).append('\n');
 
-                if (condition.getSelectedOption() != null) {
-                    writer.append(SEPARATOR_1).append(SEPARATOR_2).append("option: ").append(condition.getSelectedOption()).append('\n');
+                if (condition.getAnswer() != null) {
+                    writer.append(SEPARATOR_1).append(SEPARATOR_2).append("option: ").append(condition.getAnswer()).append('\n');
                 }
             }
         }
