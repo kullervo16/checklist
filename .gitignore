@@ -1,4 +1,13 @@
+# IntelliJ files
 /.idea/
-/target/
 *.iml
+
+# Maven's generated files
+/target/
+
+# .local files
+/.local
+!/.local/data/checklists/.gitkeep
+!/.local/data/templates/
+
 nb-configuration.xml

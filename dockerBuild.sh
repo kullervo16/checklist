@@ -1,1 +1,7 @@
-sudo docker build -t checklist .
+DOCKER_CMD="sudo docker"
+
+if [ "${USER}" = "kernixski" ]; then
+    DOCKER_CMD="docker"
+fi
+
+${DOCKER_CMD} build -t checklist .

@@ -1,0 +1,90 @@
+description: Checklist to verify a deployment
+tags:
+    - tag1
+    - tag2    
+steps :    
+    - id: stepa
+      responsible: dev
+      question: stepa - Text question
+      answerType: text
+      documentation: http://www.google.be
+    - id: stepb
+      responsible: dev
+      question: stepb - Single choice question depending on stepa
+      answerType: onlyOne      
+      options:
+          - option1
+          - option2
+      condition:
+          - selectionPoint: stepa
+      documentation: http://www.google.be
+    - id: stepb2
+      responsible: dev
+      action: stepb2 - Action depending on stepa.ok
+      condition:
+          - selectionPoint: stepa
+          - option: ok
+      documentation: http://www.google.be
+    - id: stepc
+      responsible: dev
+      question: stepc - Multiple choice question depending on stepb.option1
+      answerType: multiple      
+      options:
+          - option1
+          - option2
+      condition:
+          - selectionPoint: stepb
+          - option: option1
+      documentation: http://www.google.be
+    - id: step1
+      responsible: resp1
+      options:
+          - option1
+          - option2
+      action: step1 - Action with options depending on stepc.option1
+      milestone: milestone1
+      condition:
+          - selectionPoint: stepc
+          - option: option1
+      documentation: http://www.google.be
+    - id: step2
+      responsible: resp1
+      condition:
+          - selectionPoint: step1
+      action: step2 - Action depending on step1
+      check: check1
+      milestone: milestone2
+      documentation: http://www.google.be
+    - id: step3
+      responsible: resp1
+      condition:
+          - selectionPoint: step1
+          - option: option2
+      action: step3 - Action with 2 checks depending on step1.option2
+      check:
+          - step: open webconsole in the proper zone
+          - step: application should be present and green
+      milestone: milestone3
+      documentation: http://www.google.be
+    - id: step4
+      responsible: resp1
+      condition:
+          - selectionPoint: step3
+      action: step4 - Action with one check depending on step3
+      check: check1
+      milestone: milestone4
+      documentation: http://www.google.be
+    - id: step5
+      responsible: resp1
+      action: step5 - Action depending on step1
+      check: check1
+      milestone: milestone5      
+      condition:
+          - selectionPoint: step1
+      documentation: http://www.google.be
+#    - id: verifyFunctioning
+#      responsible: development
+#      subchecklist: /development/verifyDeployment
+#      condition:
+#          - selectionPoint: step1
+#          - option: option2
