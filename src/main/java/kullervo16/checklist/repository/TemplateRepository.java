@@ -69,6 +69,10 @@ public enum TemplateRepository {
 
             for (final File f : files) {
 
+                if (f.getName().startsWith(".")) {
+                    continue;
+                }
+
                 if (f.isDirectory()) {
 
                     scanDirectoryForTemplates(f, prefix + '/' + f.getName(), newModel);

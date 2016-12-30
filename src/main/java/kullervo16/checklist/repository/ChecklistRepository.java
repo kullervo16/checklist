@@ -53,6 +53,10 @@ public enum ChecklistRepository {
 
             for (final File f : files) {
 
+                if (f.getName().startsWith(".")) {
+                    continue;
+                }
+
                 try {
 
                     if (f.isDirectory()) {
