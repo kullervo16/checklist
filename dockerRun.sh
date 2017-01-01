@@ -14,7 +14,7 @@ ${DOCKER_CMD} run --name checklist -ti                           \
                   -p 8084:8080                                   \
                   -p 8787:8787                                   \
                   -p 9994:9990                                   \
-                  -v ${PROJECT_DIR}/.local/data:/opt/checklist   \
+                  -v ${DATA_DIR}:/opt/checklist   \
                   -e DEBUG=true                                  \
                   -e KEYCLOAK_SERVER=http://keycloak:8080/auth   \
                   checklist:latest

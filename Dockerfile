@@ -7,3 +7,7 @@ CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0
 ADD standalone.xml /opt/jboss/wildfly/standalone/configuration/standalone.xml
 ADD index.html /opt/jboss/wildfly/welcome-content/index.html
 ADD target/checklist-*.war /opt/jboss/wildfly/standalone/deployments/checklist.war
+USER root
+RUN chown jboss.jboss /opt/jboss/wildfly/standalone/configuration/standalone.xml /opt/jboss/wildfly/welcome-content/index.html /opt/jboss/wildfly/standalone/deployments/checklist.war
+USER jboss
+
