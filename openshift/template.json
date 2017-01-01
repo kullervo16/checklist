@@ -1,0 +1,174 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "checklist",
+    "annotations": {
+      "openshift.io/display-name": "Checklist",
+      "description": "Checklist to be used with an external keycloak service",
+      "iconClass": "icon-mariadb",
+      "tags": "instant-app,checklist"
+    }
+  },
+  "message": "Created the checklist application",
+  "labels": {
+    "template": "checklist-template"
+  },
+  "objects": [
+    {
+          "kind": "Route",
+          "apiVersion": "v1",
+          "metadata": {
+            "name": "checklist"
+          },
+          "spec": {
+            "host": "${CHECKLIST_URL}",
+            "to": {
+              "kind": "Service",
+              "name": "checklist"
+            }
+          }
+        },
+    {
+          "kind": "Service",
+          "apiVersion": "v1",
+          "metadata": {
+            "name": "checklist",
+            "annotations": {},
+            "creationTimestamp": null
+          },
+          "spec": {
+            "ports": [
+              {
+                "name": "web",
+                "protocol": "TCP",
+                "port": 8080,
+                "targetPort": 8080,
+                "nodePort": 0
+              }
+            ],
+            "selector": {
+              "name": "checklist"
+            },
+            "type": "ClusterIP",
+            "sessionAffinity": "None"
+          }
+        },
+{
+    "kind": "DeploymentConfig",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "checklist",
+        "labels": {
+            "app": "checklist"
+        }
+    },
+    "spec": {
+        "strategy": {
+            "type": "Recreate",
+            "recreateParams": {
+                "timeoutSeconds": 600
+            },
+            "resources": {}
+        },
+        "triggers": [
+            {
+                "type": "ConfigChange"
+            }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+            "name": "checklist"
+        },
+        "template": {
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "name": "checklist"
+                }
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "checklist-data",
+                        "emptyDir": {}
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "checklist",
+                        "image": "kullervo16/checklist",
+                        "env": [
+                            {
+                                "name": "KEYCLOAK_SERVER",
+                                "value": "${KEYCLOAK_SERVER}"
+                            }
+
+                        ],
+                        "resources": {
+                            "limits": {
+                                "memory": "512Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "checklist-data",
+                                "mountPath": "/opt/checklist"
+                            }
+                        ],
+                        "livenessProbe": {
+                            "httpGet": {
+                                "path": "/checklist/health",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 120,
+                            "timeoutSeconds": 3,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "failureThreshold": 3
+                        },
+                        "readinessProbe": {
+                            "httpGet": {
+                                "path": "/checklist/health",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 3,
+                            "timeoutSeconds": 3,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "failureThreshold": 3
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "imagePullPolicy": "Always",
+                        "securityContext": {
+                            "capabilities": {},
+                            "privileged": false
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "securityContext": {}
+            }
+        }
+    }
+}],
+  "parameters": [
+    {
+      "name": "KEYCLOAK_SERVER",
+      "displayName": "Keycloak server URL",
+      "description": "The URL (resolvable by your clients and by the application) of your keycloak server",
+      "required": true
+    },
+    {
+      "name": "CHECKLIST_URL",
+      "displayName": "Checklist URL",
+      "description": "The URL on which you want to access the application (without protocol, so no http:// in front)",
+      "required": true
+    }
+  ]
+}

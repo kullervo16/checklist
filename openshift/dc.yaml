@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+
+  generation: 2
+  labels:
+    app: checklist
+  name: checklist
+
+spec:
+  replicas: 1
+  selector:
+    name: checklist
+  strategy:
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: checklist
+    spec:
+      containers:
+      - env:
+        - name: JENKINS_PASSWORD
+          value: wVslOtC2hcyISOPA
+        - name: KUBERNETES_MASTER
+          value: https://kubernetes.default:443
+        - name: KUBERNETES_TRUST_CERTIFICATES
+          value: "true"
+        - name: JNLP_SERVICE_NAME
+          value: jenkins-jnlp
+        image: kullervo16/checklist
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /checklist/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: checklist
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /checklist/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            memory: 512Mi
+        securityContext:
+          capabilities: {}
+          privileged: false
+        terminationMessagePath: /dev/termination-log
+        volumeMounts:
+        - mountPath: /opt/checklist
+          name: checklist-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: checklist-data
+  test: false
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - checklist
+      from:
+        kind: ImageStreamTag
+        name: checklist:latest
+        namespace: kullervo16
+      lastTriggeredImage: kullervo16/checklist
+    type: ImageChange
+  - type: ConfigChange
+status:
+  availableReplicas: 1
+  details:
+    causes:
+    - imageTrigger:
+        from:
+          kind: ImageStreamTag
+          name: checklist:latest
+          namespace: kullevo16
+      type: ImageChange
+    message: caused by an image change
+  latestVersion: 1
+  observedGeneration: 2
+  replicas: 1
+  updatedReplicas: 1
