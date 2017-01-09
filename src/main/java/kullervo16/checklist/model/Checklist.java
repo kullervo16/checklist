@@ -272,7 +272,10 @@ public class Checklist extends Template {
         final Condition condition = step.getCondition();
 
         step.setState(state);
-        step.setUser(userName);
+
+        if (userName != null) {
+            step.setUser(userName);
+        }
 
         if (state == OK) {
 
@@ -293,12 +296,12 @@ public class Checklist extends Template {
                 if (stepWalkerCondition != null && stepWalkerCondition.getStep() == step) {
 
                     if (stepWalkerCondition.isConditionReachable()) {
-                        updateStepState(stepWalker, State.UNKNOWN, userName);
+                        updateStepState(stepWalker, State.UNKNOWN, null);
                     } else {
                         if (stepWalkerCondition.getStep().getState().isComplete()) {
-                            updateStepState(stepWalker, State.NOT_APPLICABLE, userName);
+                            updateStepState(stepWalker, State.NOT_APPLICABLE, null);
                         } else {
-                            updateStepState(stepWalker, State.NOT_YET_APPLICABLE, userName);
+                            updateStepState(stepWalker, State.NOT_YET_APPLICABLE, null);
                         }
                     }
                 }
