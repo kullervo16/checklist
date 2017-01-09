@@ -1,6 +1,7 @@
 package kullervo16.checklist.model;
 
 import java.io.File;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -275,6 +276,7 @@ public class Checklist extends Template {
 
         if (userName != null) {
             step.setUser(userName);
+            step.setLastUpdate(new Date());
         }
 
         if (state == OK) {

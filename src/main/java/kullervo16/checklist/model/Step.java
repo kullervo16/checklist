@@ -347,7 +347,6 @@ public class Step {
      */
     public void setState(final State state) {
         this.state = state;
-        lastUpdate = new Date();
     }
 
 
