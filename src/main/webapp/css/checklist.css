@@ -134,7 +134,6 @@ button.btn-xs .glyphicon:before, #addTagButton .glyphicon:before, #deleteClButto
 
 .question, .action, .subchecklist {
     display: inline-flex;
-    float: left;
     margin: 0;
 }
 
@@ -210,6 +209,22 @@ input[type=radio], input[type=checkbox] {
 .userName {
     color: white; 
     position:absolute; 
-    top:15; 
+    top:15;
     right: 50;
+}
+
+.answer .singleAnswer {
+    background-color: #409040;
+    padding: 0 0.5em;
+    margin-left: 0;
+}
+
+.answer ul {
+    background-color: #409040;
+    margin-bottom: 0;
+    padding-left: 1.5em;
+}
+
+.stepOperations {
+    margin-top: 0.7em;
 }
