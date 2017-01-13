@@ -175,10 +175,10 @@
             <p>Please enter the details of the problem :</p>
             <p>
               <textarea ng-model="currentError" rows="4" cols="50"></textarea>
-              <button type="button" class="btn btn-default" aria-label="ok" ng-click="addErrorAction(step, currentError);">
-                <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
-              </button>
             </p>
+            <button type="button" class="btn btn-default" aria-label="ok" ng-click="addErrorAction(step, currentError);">
+              <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
+            </button>
           </div>
           <div ng-if="showChecks(step)">
             <p>Please verify following condition(s):</p>
