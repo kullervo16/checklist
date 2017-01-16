@@ -23,6 +23,51 @@
   });
   
   app.config(['$httpProvider', function($httpProvider) {
+    
+      $httpProvider.interceptors.push(function authInterceptor($q) {
+            return {
+                request: function (config) {
+                    if (window._keycloak.token) {
+                        var deferred = $q.defer();
+                        window._keycloak.updateToken(30).success(function() {
+                            config.headers = config.headers || {};
+                            config.headers.Authorization = 'Bearer ' + window._keycloak.token;
+
+                            deferred.resolve(config);
+                        }).error(function() {
+                            location.reload();
+                        });
+                        return deferred.promise;
+                    } else {
+                        return config;
+                    }
+                }
+            };
+        });
+
+        $httpProvider.interceptors.push(function errorInterceptor($rootScope, $q) {
+            return {
+                responseError: function(response) {
+                    if (!response.config.ignoreAuthModule) {
+                        switch (response.status) {
+                            case 0: // cors issue
+                            case 401:
+                                console.log("Received 401.... re-authenticate");
+                                var deferred = $q.defer();
+                                $rootScope.$broadcast('event:auth-loginRequired', response);
+                                return deferred.promise;
+                            case 403:
+                                $rootScope.$broadcast('event:auth-forbidden', response);
+                                break;
+                        }
+                    }
+                    return $q.reject(response);
+                }
+            };
+        });
+     }]);
+  
+  app.config(['$httpProvider', function($httpProvider) {
     var token = window._keycloak.token;     
     $httpProvider.defaults.headers.common['Authorization'] = 'BEARER ' + token;
   }]);
