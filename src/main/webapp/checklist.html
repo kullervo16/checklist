@@ -146,13 +146,13 @@
               </button>
             </div>
             <p>
-            <ul ng-repeat="answer in step.answers" ng-show="step.state === 'OK' || step.state === 'EXECUTED'">
-              <li>
-                <div ng-bind-html="answer | createLinks | trust"></div>
-              </li>
+            <ul ng-show="(step.state === 'OK' || step.state === 'EXECUTED') && step.answerType === 'multiple'">
+              <li ng-repeat="answer in step.answers">{{answer}}</li>
             </ul>
+            <div class="singleAnswer" ng-show="(step.state === 'OK' || step.state === 'EXECUTED') && step.answerType === 'onlyOne'">{{step.answers[0]}}</div>
+            <div class="singleAnswer" ng-show="(step.state === 'OK' || step.state === 'EXECUTED') && step.answerType === 'text'" ng-bind-html="step.answers[0] | createLinks | trust"></div>
           </div>
-          <div role="group" aria-label="operations" ng-if="showStartProgress(step) && canModify()">
+          <div class="stepOperations" role="group" aria-label="operations" ng-if="showStartProgress(step) && canModify()">
             <button type="button" class="btn btn-default" aria-label="Start" ng-click="startAction(step);">
               <span class="glyphicon glyphicon-play" aria-hidden="true">Start</span>
             </button>
@@ -162,7 +162,7 @@
               <span class="glyphicon glyphicon-warning-sign errors-sign"></span>Errors:<span class="badge errors-badge" ng-click="showErrors(step);">{{step.errors.length}}</span>
             </h4>
           </div>
-          <div role="group" aria-label="operations" ng-if="showActionButtons(step) && canModify()">
+          <div class="stepOperations" role="group" aria-label="operations" ng-if="showActionButtons(step) && canModify()">
             <p>Action result :</p>
             <button type="button" class="btn btn-default" aria-label="ok" ng-click="updateAction(step, true);">
               <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>OK
@@ -175,10 +175,10 @@
             <p>Please enter the details of the problem :</p>
             <p>
               <textarea ng-model="currentError" rows="4" cols="50"></textarea>
-              <button type="button" class="btn btn-default" aria-label="ok" ng-click="addErrorAction(step, currentError);">
-                <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
-              </button>
             </p>
+            <button type="button" class="btn btn-default" aria-label="ok" ng-click="addErrorAction(step, currentError);">
+              <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
+            </button>
           </div>
           <div ng-if="showChecks(step)">
             <p>Please verify following condition(s):</p>
@@ -196,7 +196,7 @@
               </li>
             </ul>
           </div>
-          <div role="group" aria-label="operations" ng-if="canModify()">
+          <div class="stepOperations" role="group" aria-label="operations" ng-if="canModify() && (showRevalidateButton(step) || showReopenButton(step))">
             <button type="button" class="btn btn-default" aria-label="revalidate" ng-click="revalidate(step);" ng-if="showRevalidateButton(step)">
               <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>Revalidate
             </button>
