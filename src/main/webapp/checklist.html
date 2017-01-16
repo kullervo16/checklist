@@ -150,7 +150,7 @@
               <li ng-repeat="answer in step.answers">{{answer}}</li>
             </ul>
             <div class="singleAnswer" ng-show="(step.state === 'OK' || step.state === 'EXECUTED') && step.answerType === 'onlyOne'">{{step.answers[0]}}</div>
-            <div class="singleAnswer" ng-show="(step.state === 'OK' || step.state === 'EXECUTED') && step.answerType === 'text'" ng-bind-html="step.answers[0] | createLinks | trust"></div>
+            <div class="singleAnswer" ng-if="(step.state === 'OK' || step.state === 'EXECUTED') && step.answerType === 'text'" ng-bind-html="step.answers[0] | htmlEncode | createLinks | trust"></div>
           </div>
           <div class="stepOperations" role="group" aria-label="operations" ng-if="showStartProgress(step) && canModify()">
             <button type="button" class="btn btn-default" aria-label="Start" ng-click="startAction(step);">

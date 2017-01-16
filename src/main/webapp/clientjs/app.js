@@ -73,6 +73,12 @@
   }]);
 
 
+  app.filter("htmlEncode", ['$sce', function ($sce) {
+    return function (htmlCode) {
+      return htmlCode.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+}
+  }]);
+
   app.filter("trust", ['$sce', function ($sce) {
     return function (htmlCode) {
       return $sce.trustAsHtml(htmlCode);
