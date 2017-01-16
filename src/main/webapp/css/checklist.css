@@ -33,7 +33,7 @@ div.executed a {
 
 div.unknown {
     color:black;
-    background-color: ivory;
+    background-color: lightgoldenrodyellow;
 }
 
 div.unknown a {
@@ -78,7 +78,7 @@ div.notApplicable a {
 
 div.notYetApplicable {
     color:black;
-    background-color: lightgoldenrodyellow;
+    background-color: ivory;
 }
 
 div.notYetApplicable a {
