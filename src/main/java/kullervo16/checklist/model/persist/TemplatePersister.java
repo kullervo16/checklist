@@ -517,7 +517,11 @@ public class TemplatePersister {
 
 
     protected PrintWriter appendEscaped(final PrintWriter writer, final String content) {        
-        return writer.append("\"").append(content != null ? content.replaceAll("\"", "'") : "").append("\"");
+        return writer.append("\"")
+                     .append(content != null ? content.replaceAll("\"", "'")
+                                                      .replaceAll("\\n","\\\\n")
+                                             : "")
+                     .append("\"");
     }
 
 

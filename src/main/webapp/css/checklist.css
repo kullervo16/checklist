@@ -148,6 +148,10 @@ button.btn-xs .glyphicon:before, #addTagButton .glyphicon:before, #deleteClButto
     margin-bottom: 0.5em;
 }
 
+.answer textarea {
+    height: 9em;
+}
+
 .answer > div {
     margin-left: 1em;
 }
@@ -217,6 +221,7 @@ input[type=radio], input[type=checkbox] {
     background-color: #409040;
     padding: 0 0.5em;
     margin-left: 0;
+    white-space: pre-wrap;
 }
 
 .answer ul {

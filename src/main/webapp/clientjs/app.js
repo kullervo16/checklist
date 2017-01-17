@@ -21,9 +21,9 @@
       });
     };
   });
-  
+
   app.config(['$httpProvider', function($httpProvider) {
-    
+
       $httpProvider.interceptors.push(function authInterceptor($q) {
             return {
                 request: function (config) {
@@ -66,17 +66,17 @@
             };
         });
      }]);
-  
+
   app.config(['$httpProvider', function($httpProvider) {
-    var token = window._keycloak.token;     
+    var token = window._keycloak.token;
     $httpProvider.defaults.headers.common['Authorization'] = 'BEARER ' + token;
   }]);
 
 
   app.filter("htmlEncode", ['$sce', function ($sce) {
     return function (htmlCode) {
-      return htmlCode.replace(/&/g,"&amp;").replace(/</g,"&lt;");
-}
+      return htmlCode.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    }
   }]);
 
   app.filter("trust", ['$sce', function ($sce) {
@@ -92,20 +92,20 @@
     };
 
     function parseProtocol(protocol, text) {
-      var newText = "";
-      while (text.indexOf(protocol) >= 0) {
-        newText += text.substring(0, text.indexOf(protocol));
-        var url = text.substring(text.indexOf(protocol));
-        if (url.indexOf(" ") > 0) {
-          // normal case... other words after
-          url = url.substring(0, url.indexOf(" "));
-        } else {
-          // border case... text ends with URL
-          // TODO: is it really necessary ???
-          url = url;
+      var newText     = "";
+      var protocolPos = text.indexOf(protocol);
+      while (protocolPos >= 0) {
+        newText += text.substring(0, protocolPos);
+        var url              = text.substring(protocolPos);
+        var nextSpacePos     = url.indexOf(" ");
+        var nextEndOfLinePos = url.indexOf("\n");
+        var endOfUrlPos      = nextSpacePos < nextEndOfLinePos ? nextSpacePos : nextEndOfLinePos;
+        if (endOfUrlPos > 0) {
+          url = url.substring(0, endOfUrlPos);
         }
         newText += "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>";
-        text = text.substring(text.indexOf(protocol) + url.length);
+        text = text.substring(protocolPos + url.length);
+        protocolPos = text.indexOf(protocol);
       }
       // now set the remainer (which may be the complete string when no URLs in it :-)
       newText += text;
@@ -116,16 +116,16 @@
 
   app.controller('userController', function ($scope, $http, $window) {
 
-          
+
         function getUserName() {
             return $window._keycloak.idTokenParsed.name;
         }
-        
+
         function getRoles() {
             return $window._keycloak.realmAccess.roles;
         }
-          
-        function isAdmin() {            
+
+        function isAdmin() {
             for (var i = 0; i < $window._keycloak.realmAccess.roles.length; i++) {
               if ($window._keycloak.realmAccess.roles[i] === 'admin') {
                 return true;
@@ -134,12 +134,12 @@
 
             return false;
         }
-        function canModify() {            
+        function canModify() {
             for (var i = 0; i < $window._keycloak.realmAccess.roles.length; i++) {
               if ($window._keycloak.realmAccess.roles[i] === 'modify') {
                 return true;
               }
-            }            
+            }
             return false;
         }
         $scope.isAdmin = isAdmin;
