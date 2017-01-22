@@ -88,13 +88,13 @@
             </div>
             &nbsp;&nbsp;        
             <div class="btn-group btn-group" role="group" aria-label="operations">
-                <button type="button" class="btn btn-default" title="Download" ng-click="downloadTemplate(t.id);" ng-if="isAdmin()">
+                <button type="button" class="btn btn-default" title="Download" ng-click="downloadTemplate(t.id);" id="{{t.id}}_download" ng-if="isAdmin()">
                     <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-default" title="Upload" ng-click="uploadTemplate(t.id)" ng-if="isAdmin()">
+                <button type="button" class="btn btn-default" title="Upload" ng-click="uploadTemplate(t.id)" id="{{t.id}}_upload" ng-if="isAdmin()">
                     <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-default" title="Delete" ng-click="deleteTemplate(t.id)" ng-if="isAdmin()">
+                <button type="button" class="btn btn-default" title="Delete" ng-click="deleteTemplate(t.id)" id="{{t.id}}_delete" ng-if="isAdmin()">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </button>
             </div>            

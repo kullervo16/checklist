@@ -238,3 +238,7 @@ These resources can be accessed on **/rest/<resource name>**.
 We also expose the health of the application via **/health**. It will report HTTP 200 when ok (with some human readable information), and HTTP 500 otherwise. 
 
 This information can be used to create a monitoring page or in a system like Openshift to allow the system to take action when the application becomes unhealthy.
+
+## Testing
+
+This is described in [the testing documentation](doc/test.md)

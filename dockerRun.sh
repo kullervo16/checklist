@@ -1,7 +1,7 @@
 PROJECT_DIR="$(pwd)"
 DATA_DIR="/home/jef/data/checklist"
 DOCKER_CMD="sudo docker"
-KEYCLOAK_SERVER=http://keycloak:8080/auth
+KEYCLOAK_SERVER=http://keycloak:8085/auth
 
 if [ "${USER}" = "kernixski" ]; then
     DATA_DIR="${PROJECT_DIR}/.local/data"
