@@ -61,28 +61,28 @@
                 <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
                 <span>{{t.user}}</span>
             </h4>
-            <p><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;&nbsp;{{t.description}}
+            <p id="{{t.id}}_description"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;&nbsp;{{t.description}}
                 <span class="pull-right label label-info" ng-if="t.subchecklistOnly">subchecklist</span>
             </p>
 
             <div ng-show="t.tags.length" class="pull-right">
                 <p><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
-                    <span ng-repeat="tag in t.tags">&nbsp;<span class="label label-primary">{{tag}}</span>&nbsp;</span>
+                    <span ng-repeat="tag in t.tags">&nbsp;<span class="label label-primary" id="{{t.id}}_tag_{{tag}}">{{tag}}</span>&nbsp;</span>
                 </p>
             </div>
             <div ng-show="t.milestones.length" class="pull-right">
-                <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><span ng-repeat="milestone in t.milestones">&nbsp;<span ng-class="getClassForMilestone(milestone)">{{milestone.name}}</span>&nbsp;</span>
+                <p><span class="glyphicon glyphicon-flag" aria-hidden="true"></span><span ng-repeat="milestone in t.milestones">&nbsp;<span ng-class="getClassForMilestone(milestone)" id="{{t.id}}_ms_{{milestone.name}}">{{milestone.name}}</span>&nbsp;</span>
                 </p>
             </div>
 
             <div class="btn-group btn-group" role="group" aria-label="operations">
-                <button type="button" class="btn btn-default" title="New checklist" ng-click="createChecklist(t.id);" ng-disabled="t.subchecklistOnly">
+                <button type="button" class="btn btn-default" title="New checklist" ng-click="createChecklist(t.id);" ng-disabled="t.subchecklistOnly" id="{{t.id}}_new">
                     <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-default" title="Inspect" ng-click="showTemplate(t.id)">
+                <button type="button" class="btn btn-default" title="Inspect" ng-click="showTemplate(t.id)" id="{{t.id}}_inspect">
                     <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-default" title="Stats" ng-click="showStats(t.id)">
+                <button type="button" class="btn btn-default" title="Stats" ng-click="showStats(t.id)" id="{{t.id}}_stats">
                     <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
                 </button>
             </div>

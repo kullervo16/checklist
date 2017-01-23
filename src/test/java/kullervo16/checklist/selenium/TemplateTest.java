@@ -1,74 +1,21 @@
 package kullervo16.checklist.selenium;
 
-import org.junit.After;
+import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  *
  * @author jef
  */
-public class TemplateTest {
-
-    private WebDriver driver;
-    private WebDriverWait wait;
-    private final static String BASE_URL = "http://localhost:8084/checklist/";
+public class TemplateTest extends BaseSeleniumTest {
 
     @Before
-    public void setUp() throws Exception {               
-        driver = new FirefoxDriver();   
-        wait = new WebDriverWait(driver, 2);
-    }
-    
-    @After
-    public void tearDown() throws Exception {
-        driver.close();
-    }
-    
-    private void getPage(String page) {
-        driver.get(BASE_URL+page);
-    }
-    
-    private void login(String user, String pwd) {
-        WebElement userNameField = driver.findElement(By.id("username"));
-        assertNotNull("No username field",userNameField);
-        userNameField.sendKeys(user);
-        WebElement passwordField = driver.findElement(By.id("password"));
-        assertNotNull("No password field",passwordField);
-        passwordField.sendKeys(pwd);
-        WebElement login = driver.findElement(By.id("kc-login"));
-        assertNotNull("No login button", login);
-        login.click();
-    }
-    
-    private WebElement getDynamicElement(String id) {
-        return getDynamicElement(id, true);
-    }
-    
-    private WebElement getDynamicElement(String id, boolean executeWait) {
-        if(executeWait) {
-            try {
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(id)));
-            }catch(TimeoutException te) {
-                return null;
-            }
-        }
-        try {
-            return driver.findElement(By.id(id));
-        }catch(NoSuchElementException nse) {
-            return null;
-        }
+    public void loadData() throws IOException {
+        this.instrumentBackend("./src/test/resources/data/templates", null);
     }
     
     @Test
@@ -79,10 +26,37 @@ public class TemplateTest {
         login("alice", "secret");
         
         assertEquals("Templates",driver.getTitle());
+        
+        // buttons available for all
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_new", true)); // first call... be patient
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_inspect")); 
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_stats"));
 
-        assertNotNull(getDynamicElement("/deployment/deployment_delete"));
-        assertNotNull(getDynamicElement("/deployment/deployment_upload"));
-        assertNotNull(getDynamicElement("/deployment/deployment_download"));
+        // buttons available in our role
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_delete"));
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_upload"));
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_download"));
+        
+        // check the tags
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_tag_deployment"));
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_tag_software"));
+        
+         // check the milestones
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_ms_readyForDeployment"));
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_ms_deployed"));
+        
+        // check second template
+        assertNotNull(getDynamicElement("/development/startProject_new")); 
+        assertNotNull(getDynamicElement("/development/startProject_inspect")); 
+        assertNotNull(getDynamicElement("/development/startProject_stats"));
+        
+        // check third template
+        assertNotNull(getDynamicElement("/development/verifyDeployment_new")); 
+        assertNotNull(getDynamicElement("/development/verifyDeployment_inspect")); 
+        assertNotNull(getDynamicElement("/development/verifyDeployment_stats"));
+        
+        // check description
+        assertEquals("Checklist to verify a deployment",getDynamicElement("/development/verifyDeployment_description").getText().trim());
     }
     
     @Test
@@ -94,8 +68,35 @@ public class TemplateTest {
         
         assertEquals("Templates",driver.getTitle());
         
-        assertNull(getDynamicElement("/deployment/deployment_delete"));
-        assertNull(getDynamicElement("/deployment/deployment_upload", false)); // already waited
-        assertNull(getDynamicElement("/deployment/deployment_download", false));
+        // buttons available for all
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_new", true)); // first call... be patient
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_inspect")); 
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_stats"));
+        
+         // buttons NOT available in our role
+        assertNull(getDynamicElement("/deployment/firstDeployment_delete"));
+        assertNull(getDynamicElement("/deployment/firstDeployment_upload")); 
+        assertNull(getDynamicElement("/deployment/firstDeployment_download"));
+        
+        // check the tags
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_tag_deployment"));
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_tag_software"));
+        
+         // check the milestones
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_ms_readyForDeployment"));
+        assertNotNull(getDynamicElement("/deployment/firstDeployment_ms_deployed"));
+        
+        // check second template
+        assertNotNull(getDynamicElement("/development/startProject_new")); 
+        assertNotNull(getDynamicElement("/development/startProject_inspect")); 
+        assertNotNull(getDynamicElement("/development/startProject_stats"));
+        
+        // check third template
+        assertNotNull(getDynamicElement("/development/verifyDeployment_new")); 
+        assertNotNull(getDynamicElement("/development/verifyDeployment_inspect")); 
+        assertNotNull(getDynamicElement("/development/verifyDeployment_stats"));
+        
+        // check description
+        assertEquals("Checklist to verify a deployment",getDynamicElement("/development/verifyDeployment_description").getText().trim());
     }
 }

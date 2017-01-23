@@ -24,8 +24,7 @@ public enum ChecklistRepository {
     private final static Object lock = new Object();
 
     static {
-        // fixed path... target is to work in a docker container, you can mount it via a volume to whatever you want
-        loadData("/opt/checklist/checklists");
+        clearAndLoad();
     }
 
     /**
@@ -504,6 +503,14 @@ public enum ChecklistRepository {
                     ActorRepository.getPersistenceActor().tell(new PersistenceRequest(walker.getId()), null);                    
                 }
             }
+        }
+    }
+
+    public static void clearAndLoad() {
+        synchronized(lock) {
+            data.clear();
+            // fixed path... target is to work in a docker container, you can mount it via a volume to whatever you want
+            loadData("/opt/checklist/checklists");
         }
     }
 }

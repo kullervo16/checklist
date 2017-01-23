@@ -42,8 +42,7 @@ public enum TemplateRepository {
     private static final String BACKUP_DIR = "/opt/checklist/backup";
 
     static {
-        // fixed path ... target is to work in a docker container, you can mount it via a volume to whatever you want
-        loadData(TEMPLATE_DIR);
+        clearAndLoad();
     }
 
     /**
@@ -243,5 +242,11 @@ public enum TemplateRepository {
             // TODO: the result of the delete call is ignored
             template.getPersister().getFile().delete();
         }
+    }
+
+    public static void clearAndLoad() {
+        data.clear();
+        // fixed path ... target is to work in a docker container, you can mount it via a volume to whatever you want
+        loadData(TEMPLATE_DIR);
     }
 }
