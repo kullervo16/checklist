@@ -3,11 +3,13 @@ package kullervo16.checklist.selenium;
 import java.io.File;
 import java.io.IOException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Alert;
 
 /**
  * End-to-End tests based on the template page.
@@ -132,6 +134,47 @@ public class TemplateTest extends BaseSeleniumTest {
         String checklistId = getChecklistId();
         assertTrue(new File(TARGETDATA+"/checklists/deployment/firstDeployment/"+checklistId).exists());
         
+    }
+    
+    @Test
+    public void testDelete() throws Exception {
+        assertTrue(new File(TARGETDATA+"/templates/development/verifyDeployment.yml").exists());
+        getPage("templates.html");
+        assertEquals("Log in to Checklist",driver.getTitle());
+        
+        login("alice", "secret");
+        
+        assertEquals("Templates",driver.getTitle());
+
+        getDynamicElement("/development/verifyDeployment_delete",true).click();
+                
+        // confirm that we know what we're doing
+        Alert alert = driver.switchTo().alert();
+        
+        assertEquals("Are you sure you want to delete template /development/verifyDeployment? This action cannot be undone...", alert.getText());
+        alert.accept();
+        
+        // damn, we're not allowed to delete this one... ok
+        alert = driver.switchTo().alert();
+        assertEquals("The template /development/verifyDeployment is referenced by the template /development/verifyDeployment. Please remove the link between those 2 templates before deleting /development/verifyDeployment.",alert.getText());
+        alert.dismiss();
+        
+        
+        // so delete another one
+        getDynamicElement("/deployment/firstDeployment_delete").click();
+        
+        alert = driver.switchTo().alert();
+        assertEquals("Are you sure you want to delete template /deployment/firstDeployment? This action cannot be undone...", alert.getText());
+        alert.accept();
+         
+        // give some time to update the disk
+        Thread.sleep(250);
+        
+        // verify the second template is gone on disk as well (but the first is still there)
+        assertTrue(new File(TARGETDATA+"/templates/development/verifyDeployment.yml").exists());
+        assertFalse(new File(TARGETDATA+"/templates/deployment/firstDeployment.yml").exists());
+        
+        assertNull(getDynamicElement("/deployment/firstDeployment_new"));
     }
 
 }
