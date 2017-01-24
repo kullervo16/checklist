@@ -15,3 +15,7 @@ container where the persistence is linked to the target folder. This way the sel
 be executed in isolation.
 
 The selenium tests are only executed when you specify the ```-P selenium``` maven profile.
+
+## Testability
+
+In order to make accessing elements more easy, please make sure to give all relevant items a unique id.

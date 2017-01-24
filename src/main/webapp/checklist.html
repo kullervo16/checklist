@@ -59,7 +59,7 @@
       <h3>{{data.description}}</h3>
       <h4 ng-if="data.user">Created by {{data.user}} on {{data.creationTime | date:'dd/MM/yyyy HH:mm:ss'}}</h4>
       <div style="height: 30px" ng-if="mode === 'template' && canModify()">
-        <button type="button" class="btn btn-default btn-sm" title="Create checklist from template" ng-click="instantiateFromTemplate()">
+        <button type="button" class="btn btn-default btn-sm" title="Create checklist from template" ng-click="instantiateFromTemplate()" id="instantiate">
           <span class="glyphicon glyphicon-check" aria-hidden="true"></span>Create checklist
         </button>
       </div>
@@ -98,15 +98,15 @@
     </div>
     <div ng-show="showMainBody()">
       <div class="list-group" ng-repeat="step in data.steps">
-        <div ng-class="getClassForStep(step)">
+        <div ng-class="getClassForStep(step)" id="_{{step.id}}">
           <!-- put an anchor for the auto-focus -->
           <a id="{{step.id}}" name="{{step.id}}" class="anchor"></a>
 
-          <h3 class="list-group-item-heading stepId" ng-if="mode === 'template'">{{step.id}}</h3>
+          <h3 class="list-group-item-heading stepId" ng-if="mode === 'template'" id="{{step.id}}_id">{{step.id}}</h3>
 
           <!-- show either the responsible group, or a specific user when we know one -->
-          <h4 class="responsible" ng-if="step.responsible && ! step.user"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{step.responsible}}</h4>
-          <h4 class="responsible" ng-if="step.user">
+          <h4 class="responsible" ng-if="step.responsible && ! step.user" id="{{step.id}}_responsible"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{step.responsible}}</h4>
+          <h4 class="responsible" ng-if="step.user" id="{{step.id}}_user">
               <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
               <span title="responsible group: {{step.responsible}}">{{step.user}}</span>
           </h4>
@@ -114,30 +114,30 @@
 
           <h4 class="documentation" ng-if="showDocumentation(step)"><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target="_blank">Documentation</a></h4>
 
-          <h4 class="action" ng-if="step.action"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>{{step.action}}</h4>
+          <h4 class="action" ng-if="step.action" id="{{step.id}}_action"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>{{step.action}}</h4>
 
-          <h4 class="question" ng-if="step.question"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>{{step.question}}</h4>
+          <h4 class="question" ng-if="step.question" id="{{step.id}}_question"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>{{step.question}}</h4>
 
           <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'template'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoTemplate(step.subChecklist)">{{step.subChecklist}}</a></h4>
 
-          <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child != null"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoChecklist(step.child)">{{step.subChecklist}}</a></h4>
+          <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child != null" id="{{step.id}}_subcl1"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoChecklist(step.child)">{{step.subChecklist}}</a></h4>
 
-          <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child == null && canModify()"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="launchSubChecklist(step)">{{step.subChecklist}}</a></h4>
+          <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child == null && canModify()" id="{{step.id}}_subcl2"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="launchSubChecklist(step)">{{step.subChecklist}}</a></h4>
 
-          <div class="answer" ng-if="step.question">
-            <p ng-if="showAnswerTextBox(step) && canModify()">
+          <div class="answer" ng-if="step.question" id="{{step.id}}_answer">
+            <p ng-if="showAnswerTextBox(step) && canModify()" id="{{step.id}}_answer_txt">
               <textarea ng-model="step.answers[0]" onkeyup="autoGrow(this)" onclick="autoGrow(this)"></textarea>
               <button ng-if="isInChecklistMode()" type="button" class="btn btn-default setAnswers" aria-label="ok" ng-click="setAnswers(step, step.answers[0]);">
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
               </button>
             </p>
-            <div ng-if="showAnswerRadioButton(step) && canModify()">
+            <div ng-if="showAnswerRadioButton(step) && canModify()" id="{{step.id}}_answer_radio">
               <p ng-repeat="option in step.options">
                 <label>
                   <input type="radio" name="option" ng-model="step.answers[0]" ng-value="option"/> {{option}}
                 </label>
               </p>
-              <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="setAnswers(step, step.answers[0]);">
+              <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="setAnswers(step, step.answers[0]);" id="{{step.id}}_answer_button">
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
               </button>
             </div>
@@ -233,8 +233,8 @@
             <div ng-show="mode !== 'template'">
               <h4>Add tags to your specific checklist. These tags will help you retrieve your instance later on. You can add as many as you like</h4>
               <p>Good examples are a specific project name, a version, a period ....</p>
-              <input ng-model="newTag" ng-enter="addTag(newTag)" autofocus/>
-              <button type="button" class="btn btn-default" aria-label="ok" ng-click="addTag(newTag)">
+              <input id="newTagInput" ng-model="newTag" ng-enter="addTag(newTag)" autofocus/>
+              <button id="newTagButton" type="button" class="btn btn-default" aria-label="ok" ng-click="addTag(newTag)">
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>Add
               </button>
             </div>

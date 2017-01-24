@@ -1,4 +1,3 @@
-
 package kullervo16.checklist.selenium;
 
 import java.io.File;
@@ -22,6 +21,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Base class with some handy methods to be used in all kinds of tests
+ *
  * @author jef
  */
 public abstract class BaseSeleniumTest {
@@ -29,7 +29,7 @@ public abstract class BaseSeleniumTest {
     protected static final String BASE_URL = "http://localhost:8084/checklist/";
     protected WebDriver driver;
     protected WebDriverWait wait;
-    
+
     @Before
     public void setUp() throws Exception {
         driver = new FirefoxDriver();
@@ -42,18 +42,21 @@ public abstract class BaseSeleniumTest {
     }
 
     /**
-     * Get an element by ID without waiting (so when you already have spent your initial wait)
+     * Get an element by ID without waiting (so when you already have spent your
+     * initial wait)
+     *
      * @param id
-     * @return 
+     * @return
      */
     protected WebElement getDynamicElement(String id) {
         return getDynamicElement(id, false);
     }
 
     /**
-     * Get an element by ID and specify waiting 
+     * Get an element by ID and specify waiting
+     *
      * @param id
-     * @return 
+     * @return
      */
     protected WebElement getDynamicElement(String id, boolean executeWait) {
         if (executeWait) {
@@ -86,45 +89,73 @@ public abstract class BaseSeleniumTest {
         login.click();
     }
 
-    
-
     protected void instrumentBackend(String templateDir, String checklistDir) throws IOException {
-       
+
         // delete current data
-        FileUtils.deleteDirectory(new File(TARGETDATA+"/templates"));
-        FileUtils.deleteDirectory(new File(TARGETDATA+"/checklists"));
-        
+        FileUtils.deleteDirectory(new File(TARGETDATA + "/templates"));
+        FileUtils.deleteDirectory(new File(TARGETDATA + "/checklists"));
+
         // copy requested data to the location
-        File td = new File(TARGETDATA+"/templates");
+        File td = new File(TARGETDATA + "/templates");
         td.mkdirs();
-        if(templateDir != null) {
-            FileUtils.copyDirectory(new File(templateDir), td );
+        if (templateDir != null) {
+            FileUtils.copyDirectory(new File(templateDir), td);
         }
-        File cd = new File(TARGETDATA+"/checklists");
+        File cd = new File(TARGETDATA + "/checklists");
         cd.mkdirs();
-        if(checklistDir != null) {
-            FileUtils.copyDirectory(new File(checklistDir), cd );
+        if (checklistDir != null) {
+            FileUtils.copyDirectory(new File(checklistDir), cd);
         }
-        
+
         // create a secret to be used in the reset command        
         FileWriter writer = null;
         long timestamp = System.currentTimeMillis();
-       
-        
-        File secretfile = new File(TARGETDATA+timestamp);
+
+        File secretfile = new File(TARGETDATA + timestamp);
         writer = new FileWriter(secretfile);
         writer.append("secret");
         writer.flush();
         writer.close();
-        
-        
+
         // execute reload
-        driver.get(BASE_URL+"/reset?"+timestamp);
-        assertEquals("Could not reset properly", "RESET",driver.getTitle());
-        
+        driver.get(BASE_URL + "/reset?" + timestamp);
+        assertEquals("Could not reset properly", "RESET", driver.getTitle());
+
         secretfile.delete();
-        
-        
+
     }
-    private static final String TARGETDATA = "./target/data/";
+
+    public void waitForWindow()
+            throws InterruptedException {
+        //wait until number of window handles become 2 or until 6 seconds are completed.
+        int timecount = 1;
+        do {
+            driver.getWindowHandles();
+            Thread.sleep(200);
+            timecount++;
+            if (timecount > 30) {
+                break;
+            }
+        } while (driver.getWindowHandles().size() != 2);
+
+    }
+
+    public void switchToModalDialog(String parent) {        
+        //Switch to Modal dialog
+        if (driver.getWindowHandles().size() == 2) {
+            for (String window : driver.getWindowHandles()) {
+                if (!window.equals(parent)) {
+                    driver.switchTo().window(window);
+                    System.out.println("Modal dialog found");
+                    break;
+                }
+            }
+        }
+    }
+
+    protected static final String TARGETDATA = "./target/data/";
+
+    protected String getChecklistId() {
+        return driver.getCurrentUrl().split("=")[1].split("#")[0];
+    }
 }
