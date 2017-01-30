@@ -5,12 +5,21 @@
  */
 package kullervo16.checklist.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
+import junit.framework.Assert;
 import kullervo16.checklist.repository.ChecklistRepository;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -129,22 +138,36 @@ public class ChecklistRepositoryTest {
     public void testGetTagInfo() {
         List<TagcloudEntry> tagInfo = new ArrayList<>(this.repository.getTagInfo(null).getEntries());
         assertEquals(2, tagInfo.size());
-        assertEquals("firstDeployment", tagInfo.get(0).getText());
-        assertEquals(2, tagInfo.get(0).getWeight());
-        assertEquals("cl1", tagInfo.get(1).getText());
-        assertEquals(1, tagInfo.get(1).getWeight());
+
+        for (final TagcloudEntry tagcloudEntry : tagInfo) {
+
+            if ("cl1".equals(tagcloudEntry.getText())) {
+                assertEquals(1, tagcloudEntry.getWeight());
+            } else if ("odt".equals(tagcloudEntry.getText())) {
+                assertEquals(2, tagcloudEntry.getWeight());
+            } else {
+                Assert.fail("Unexpected tag: " + tagcloudEntry.getText());
+            }
+        }
 
         // now with a filter
         tagInfo = new ArrayList<>(this.repository.getTagInfo("openshift").getEntries());
         assertEquals(2, tagInfo.size());
-        assertEquals("firstDeployment", tagInfo.get(0).getText());
-        assertEquals(2, tagInfo.get(0).getWeight());
-        assertEquals("cl1", tagInfo.get(1).getText());
-        assertEquals(1, tagInfo.get(1).getWeight());
+
+        for (final TagcloudEntry tagcloudEntry : tagInfo) {
+
+            if ("cl1".equals(tagcloudEntry.getText())) {
+                assertEquals(1, tagcloudEntry.getWeight());
+            } else if ("odt".equals(tagcloudEntry.getText())) {
+                assertEquals(2, tagcloudEntry.getWeight());
+            } else {
+                Assert.fail("Unexpected tag: " + tagcloudEntry.getText());
+            }
+
+        }
 
         tagInfo = new ArrayList<>(this.repository.getTagInfo("cl1").getEntries());
         assertEquals(0, tagInfo.size());
-
     }
     
     @Test
