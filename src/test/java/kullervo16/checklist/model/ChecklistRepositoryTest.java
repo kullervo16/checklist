@@ -58,7 +58,7 @@ public class ChecklistRepositoryTest {
         List<String> tagList = new LinkedList<>();
         tagList.add("odt");
         List<ChecklistInfo> cli = this.repository.getChecklistInformation(tagList, null, false);
-        assertEquals(3, cli.size());        
+        assertEquals(2, cli.size());
         assertNotNull(cli.get(0).getUuid());        
         assertNotNull(cli.get(0).getTags());    
         tagList.clear();
