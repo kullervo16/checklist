@@ -71,9 +71,9 @@ steps :
 There is also the option to create a simple IF function in your checklists.. This allows you to apply some simple flow control and prevents you from creating
 multiple templates that do practically the same thing (which will become a burden to keep them in synch when you want to enhance them).
 
-If you do not specify any option in the condition, the step will be reachable if the step referenced by the selectionPoint is finished or not applicable.
+If you do not specify any answer in the condition, the step will be reachable if the step referenced by the stepId is finished or not applicable.
 
-If you specify an option in the condition, the step will be reachable if the step referenced by the selectionPoint is finished and if the user selected the
+If you specify an answer in the condition, the step will be reachable if the step referenced by the stepId is finished and if the user selected the
 specified option.
 
 This is an example
@@ -95,25 +95,25 @@ steps :
       milestone: milestone1
     - id: step2
       responsible: resp1
-      condition:
-          - selectionPoint: step1
-          - option: option1
+      conditions:
+          - stepId: step1
+            answer: option1
       action: action2
       check: check1
       milestone: milestone2
     - id: step3
       responsible: resp1
-      condition:
-          - selectionPoint: step1
-          - option: option2
+      conditions:
+          - stepId: step1
+          - answer: option2
       action: action3
       check: check1
       milestone: milestone3
     - id: step4
       responsible: resp1
-      condition:
-          - selectionPoint: step1
-          - option: option2
+      conditions:
+          - stepId: step1
+          - answer: option2
       action: action4
       check: check1
       milestone: milestone4
@@ -124,8 +124,8 @@ steps :
       milestone: milestone5      
     - id: step6
       responsible: resp1
-      condition:
-          - selectionPoint: step1
+      conditions:
+          - stepId: step1
       action: action6
       check: check1
       milestone: milestone5      

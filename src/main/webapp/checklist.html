@@ -23,8 +23,8 @@
   <script src="clientjs/app.js"></script>
   <script>
     function autoGrow(element) {
-      element.style.height = "10px";
-      element.style.height = element.scrollHeight + "px";
+      element.style.height = "110px";
+      element.style.height = (element.scrollHeight <= 110 ? 110 : element.scrollHeight) + "px";
     }
   </script>
 </head>
@@ -126,7 +126,7 @@
 
           <div class="answer" ng-if="step.question" id="{{step.id}}_answer">
             <p ng-if="showAnswerTextBox(step) && canModify()" id="{{step.id}}_answer_txt">
-              <textarea ng-model="step.answers[0]" onkeyup="autoGrow(this)" onclick="autoGrow(this)"></textarea>
+              <textarea ng-model="step.answers[0]" onkeyup="autoGrow(this)" onclick="autoGrow(this)" onmouseenter="autoGrow(this)"></textarea>
               <button ng-if="isInChecklistMode()" type="button" class="btn btn-default setAnswers" aria-label="ok" ng-click="setAnswers(step, step.answers[0]);">
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
               </button>
@@ -180,7 +180,7 @@
           <div class='errorBlock' ng-if="showErrorDialog(step) && canModify()" ng-class="unknown">
             <p>Please enter the details of the problem :</p>
             <p>
-              <textarea ng-model="currentError" rows="4" cols="50"></textarea>
+              <textarea ng-model="currentError" onkeyup="autoGrow(this)" onclick="autoGrow(this)" onmouseenter="autoGrow(this)"></textarea>
             </p>
             <button type="button" class="btn btn-default" aria-label="ok" ng-click="addErrorAction(step, currentError);">
               <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>

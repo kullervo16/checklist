@@ -270,7 +270,7 @@ public class Checklist extends Template {
     public void updateStepState(final Step step, final State state, final String userName) {
 
         final State previousState = step.state;
-        final Condition condition = step.getCondition();
+        final List<Condition> conditions = step.getConditions();
 
         step.setState(state);
 
@@ -289,36 +289,15 @@ public class Checklist extends Template {
         // If the state completion has changed or if the step has been opened/unopened
         if (previousState == null || previousState.isComplete() != state.isComplete() || previousState.isOpen() != state.isOpen()) {
 
-            // Update dependent steps
-            for (int stepPos = this.steps.size() - 1; stepPos >= 0; stepPos--) {
-
-                final Step stepWalker = this.steps.get(stepPos);
-                final Condition stepWalkerCondition = stepWalker.getCondition();
-
-                if (stepWalkerCondition != null && stepWalkerCondition.getStep() == step) {
-
-                    if (stepWalkerCondition.isConditionReachable()) {
-                        updateStepState(stepWalker, State.UNKNOWN, null);
-                    } else {
-                        if (stepWalkerCondition.getStep().getState().isComplete()) {
-                            updateStepState(stepWalker, State.NOT_APPLICABLE, null);
-                        } else {
-                            updateStepState(stepWalker, State.NOT_YET_APPLICABLE, null);
-                        }
-                    }
-                }
-
-                if (stepWalker == step) {
-                    break;
-                }
-            }
-
+            updateDependentStepsState(step);
             updateStepReopenable(step);
 
             // Update reopenable for step this step depends on, if any
-            if (condition != null) {
+            if (!conditions.isEmpty()) {
 
-                updateStepReopenable(condition.getStep());
+                for (final Condition condition : conditions) {
+                    updateStepReopenable(condition.getStep());
+                }
             }
 
             if (state.isComplete()) {
@@ -359,6 +338,35 @@ public class Checklist extends Template {
 
                         childCl.close(userName);
                     }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Update the state of the steps that depends on the given step.
+     *
+     * @param step
+     */
+    private void updateDependentStepsState(final Step step) {
+
+        // Start form the end of the list
+        for (int stepPos = this.steps.size() - 1; stepPos >= 0; stepPos--) {
+
+            final Step stepWalker = this.steps.get(stepPos);
+
+            // We reached the step. Because dependent steps are defined after this step, we can leave the loop.
+            if (stepWalker == step) {
+                break;
+            }
+
+            if (stepWalker.dependsOn(step)) {
+
+                final boolean stateUpdated = stepWalker.updateStateDependingOnConditions();
+
+                if (stateUpdated) {
+                    updateDependentStepsState(stepWalker);
                 }
             }
         }

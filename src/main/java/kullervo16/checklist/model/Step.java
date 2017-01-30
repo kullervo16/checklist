@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static kullervo16.checklist.model.State.NOT_APPLICABLE;
+import static kullervo16.checklist.model.State.NOT_YET_APPLICABLE;
+import static kullervo16.checklist.model.State.UNKNOWN;
 import static kullervo16.checklist.utils.CollectionUtils.isCollectionNullOrEmpty;
 import static kullervo16.checklist.utils.StringUtils.isStringNullOrEmptyOrBlank;
 
@@ -45,7 +48,7 @@ public class Step {
 
     protected List<String> options;
 
-    protected Condition condition;
+    protected List<Condition> conditions;
 
     protected String question;
 
@@ -56,6 +59,7 @@ public class Step {
     private String child;
 
     protected boolean reopenable;
+
     private String user;
 
 
@@ -90,19 +94,31 @@ public class Step {
         child = step.getChild();
         reopenable = step.reopenable;
 
-        if (step.getCondition() != null) {
+        // Copy conditions
+        {
+            final List<Condition> originalConditions = step.getConditions();
 
-            Step selectionPoint = null;
+            conditions = new ArrayList<>(originalConditions.size());
 
-            for (final Step walker : stepList) {
+            if (!originalConditions.isEmpty()) {
 
-                if (walker.equals(step.getCondition().getStep())) {
-                    selectionPoint = walker;
+                for (final Condition conditionWalker : originalConditions) {
+
+                    final Step originalSelectPoint = conditionWalker.getStep();
+                    Step selectionPoint = null;
+
+                    for (final Step stepWalker : stepList) {
+
+                        if (stepWalker.equals(originalSelectPoint)) {
+                            selectionPoint = stepWalker;
+                            break;
+                        }
+                    }
+
+                    state = NOT_YET_APPLICABLE;
+                    conditions.add(new Condition(selectionPoint, conditionWalker.getAnswer()));
                 }
             }
-
-            state = State.NOT_YET_APPLICABLE;
-            condition = new Condition(selectionPoint, step.getCondition().getAnswer());
         }
     }
 
@@ -192,7 +208,7 @@ public class Step {
         }
 
         try {
-            state = stepMap.containsKey("state") ? State.valueOf((String) stepMap.get("state")) : State.UNKNOWN;
+            state = stepMap.containsKey("state") ? State.valueOf((String) stepMap.get("state")) : UNKNOWN;
         }catch(IllegalArgumentException iae) {
             // ok, so there is a state that we do not know (anymore). If it's one we know of, it is handled here, otherwise we rethrow
             switch((String)stepMap.get("state")) {
@@ -242,23 +258,71 @@ public class Step {
             answerType = "onlyOne";
         }
 
-        if (stepMap.containsKey("condition")) {
+        // Process condition and conditions
+        // We keep condition for backward compatibility
+        {
+            int nbConditions = 0;
+            final List<Map> conditionFromMap = (List<Map>) stepMap.get("condition");
+            final List<Map<String, Object>> conditionsFromMap = (List<Map<String, Object>>) stepMap.get("conditions");
 
-            Step selectionPoint = null;
+            if (conditionFromMap != null) {
+                nbConditions++;
+            }
 
-            final List<Map> condition = (List<Map>) stepMap.get("condition");
-            for (final Step walker : stepList) {
+            if (conditionsFromMap != null) {
+                nbConditions += conditionsFromMap.size();
+            }
 
-                if (walker.getId().equals(condition.get(0).get("selectionPoint"))) {
-                    selectionPoint = walker;
+            this.conditions = new ArrayList<>(nbConditions);
+
+            if (conditionFromMap != null) {
+
+                Step selectionPoint = null;
+
+                for (final Step stepWalker : stepList) {
+
+                    if (stepWalker.getId().equals(conditionFromMap.get(0).get("selectionPoint"))) {
+                        selectionPoint = stepWalker;
+                    }
+                }
+
+                if (selectionPoint == null) {
+                    throw new IllegalStateException("Unable to meet condition for step " + id);
+                }
+
+                this.conditions.add(new Condition(selectionPoint,
+                                                  conditionFromMap.size() == 1 ? null : (String) conditionFromMap.get(1).get("option")));
+            }
+
+            if (conditionsFromMap != null) {
+
+                for (final Map<String, Object> conditionsFromMapWalker : conditionsFromMap) {
+
+                    final String stepId = (String) conditionsFromMapWalker.get("stepId");
+                    final String answer = (String) conditionsFromMapWalker.get("answer");
+                    Step conditionStep = null;
+
+                    // If there is no stepId defined in the condition: bad format
+                    if (stepId == null) {
+                        throw new IllegalStateException("No stepId defined for at least one condition");
+                    }
+
+                    // Look for the step by its id
+                    for (final Step stepWalker : stepList) {
+
+                        if (stepWalker.getId().equals(stepId)) {
+                            conditionStep = stepWalker;
+                            break;
+                        }
+                    }
+
+                    if (conditionStep == null) {
+                        throw new IllegalStateException("Unable to meet condition for step " + id);
+                    }
+
+                    this.conditions.add(new Condition(conditionStep, answer));
                 }
             }
-
-            if (selectionPoint == null) {
-                throw new IllegalStateException("Unable to meet condition for step " + id);
-            }
-
-            this.condition = new Condition(selectionPoint, condition.size() ==  1 ? null : (String) condition.get(1).get("option"));
         }
 
         if (stepMap.containsKey("lastUpdate")) {
@@ -463,13 +527,8 @@ public class Step {
     }
 
 
-    public Condition getCondition() {
-        return condition;
-    }
-
-
-    public void setCondition(final Condition condition) {
-        this.condition = condition;
+    public List<Condition> getConditions() {
+        return this.conditions;
     }
 
 
@@ -525,11 +584,18 @@ public class Step {
 
     public boolean dependsOn(final Step step) {
 
-        if (this.condition == null) {
+        if (this.conditions.isEmpty()) {
             return false;
         }
 
-        return this.condition.getStep() == step;
+        for (final Condition condition : this.conditions) {
+
+            if (condition.getStep() == step) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void setUser(String userName) {
@@ -539,5 +605,61 @@ public class Step {
     public String getUser() {
         return user;
     }
-        
+
+
+    /**
+     * Update the status of the step if the conditions are reachable or unrecheable.
+     *
+     * @return {@code true} if the status has been updated or {@code false} if the status has not been updated.
+     */
+    public boolean updateStateDependingOnConditions() {
+
+        switch (state) {
+
+            // Do not update the status because the state does not allow the status to be updated
+            case OK:
+            case IN_PROGRESS:
+            case EXECUTED:
+            case EXECUTION_FAILED_NO_COMMENT:
+            case EXECUTION_FAILED:
+            case CHECK_FAILED_NO_COMMENT:
+            case CHECK_FAILED:
+                return false;
+
+            case NOT_YET_APPLICABLE:
+            case NOT_APPLICABLE:
+            case UNKNOWN:
+                break;
+
+            default:
+                throw new UnsupportedOperationException();
+        }
+
+        State potentiallyNewState = null;
+
+        for (final Condition condition : conditions) {
+
+            if (!condition.isConditionReachable()) {
+
+                if (condition.getStep().getState().isComplete()) {
+                    potentiallyNewState = NOT_APPLICABLE;
+                    break;
+                } else if (potentiallyNewState == null) {
+                    potentiallyNewState = NOT_YET_APPLICABLE;
+                }
+            }
+        }
+
+        if (potentiallyNewState == null && (state == NOT_YET_APPLICABLE || state == NOT_APPLICABLE)) {
+            state = UNKNOWN;
+            return true;
+        }
+
+        if (potentiallyNewState != null) {
+            state = potentiallyNewState;
+            return true;
+        }
+
+        return false;
+    }
 }

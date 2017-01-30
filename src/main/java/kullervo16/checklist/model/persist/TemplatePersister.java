@@ -491,15 +491,17 @@ public class TemplatePersister {
         }
 
         {
-            final Condition condition = step.getCondition();
+            if (!step.getConditions().isEmpty()) {
 
-            if (condition != null) {
+                writer.append(SEPARATOR_1).append("conditions:\n");
 
-                writer.append(SEPARATOR_1).append("condition:\n");
-                writer.append(SEPARATOR_1).append(SEPARATOR_2).append("selectionPoint: ").append(condition.getStep().getId()).append('\n');
+                for (final Condition condition : step.getConditions()) {
 
-                if (condition.getAnswer() != null) {
-                    writer.append(SEPARATOR_1).append(SEPARATOR_2).append("option: ").append(condition.getAnswer()).append('\n');
+                    writer.append(SEPARATOR_1).append(SEPARATOR_2).append("stepId: ").append(condition.getStep().getId()).append('\n');
+
+                    if (condition.getAnswer() != null) {
+                        writer.append(SEPARATOR_1).append(SEPARATOR_1).append("answer: ").append(condition.getAnswer()).append('\n');
+                    }
                 }
             }
         }

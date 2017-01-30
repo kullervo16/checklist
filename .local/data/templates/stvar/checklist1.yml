@@ -36,6 +36,19 @@ steps :
           - selectionPoint: stepb
           - option: option1
       documentation: http://www.google.be
+    - id: stepc2
+      responsible: dev
+      action: stepc2 - Action depending on stepc.option1
+      conditions:
+          - stepId: stepc
+            answer: option1
+    - id: stepc3
+      responsible: dev
+      action: stepc3 - Action depending on stepc.option1 and stepc2
+      conditions:
+          - stepId: stepc
+            answer: option1
+          - stepId: stepc2
     - id: step1
       responsible: resp1
       options:

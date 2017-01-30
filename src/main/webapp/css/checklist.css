@@ -149,7 +149,7 @@ button.btn-xs .glyphicon:before, #addTagButton .glyphicon:before, #deleteClButto
 }
 
 .answer textarea {
-    height: 9em;
+    height: 110px;
 }
 
 .answer > div {
