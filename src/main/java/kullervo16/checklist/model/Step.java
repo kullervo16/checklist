@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Collections.singletonList;
 import static kullervo16.checklist.model.State.NOT_APPLICABLE;
 import static kullervo16.checklist.model.State.NOT_YET_APPLICABLE;
 import static kullervo16.checklist.model.State.UNKNOWN;
@@ -116,7 +117,7 @@ public class Step {
                     }
 
                     state = NOT_YET_APPLICABLE;
-                    conditions.add(new Condition(selectionPoint, conditionWalker.getAnswer()));
+                    conditions.add(new Condition(selectionPoint, conditionWalker.getExpectedAnswers()));
                 }
             }
         }
@@ -291,7 +292,8 @@ public class Step {
                 }
 
                 this.conditions.add(new Condition(selectionPoint,
-                                                  conditionFromMap.size() == 1 ? null : (String) conditionFromMap.get(1).get("option")));
+                                                  conditionFromMap.size() == 1 ? null
+                                                                               : singletonList((String) conditionFromMap.get(1).get("option"))));
             }
 
             if (conditionsFromMap != null) {
@@ -299,8 +301,9 @@ public class Step {
                 for (final Map<String, Object> conditionsFromMapWalker : conditionsFromMap) {
 
                     final String stepId = (String) conditionsFromMapWalker.get("stepId");
-                    final String answer = (String) conditionsFromMapWalker.get("answer");
+                    final Object expectedfAnswersObject = conditionsFromMapWalker.get("expectedfAnswers");
                     Step conditionStep = null;
+                    List<String> expectedfAnswers = null;
 
                     // If there is no stepId defined in the condition: bad format
                     if (stepId == null) {
@@ -320,7 +323,17 @@ public class Step {
                         throw new IllegalStateException("Unable to meet condition for step " + id);
                     }
 
-                    this.conditions.add(new Condition(conditionStep, answer));
+                    if (expectedfAnswersObject != null) {
+
+                        // We accept a single string and a string list for conveniency
+                        if (expectedfAnswers instanceof List) {
+                            expectedfAnswers = (List<String>) expectedfAnswersObject;
+                        } else {
+                            expectedfAnswers = singletonList((String) expectedfAnswersObject);
+                        }
+                    }
+
+                    this.conditions.add(new Condition(conditionStep, expectedfAnswers));
                 }
             }
         }

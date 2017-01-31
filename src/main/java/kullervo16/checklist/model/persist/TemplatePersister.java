@@ -499,8 +499,13 @@ public class TemplatePersister {
 
                     writer.append(SEPARATOR_1).append(SEPARATOR_2).append("stepId: ").append(condition.getStep().getId()).append('\n');
 
-                    if (condition.getAnswer() != null) {
-                        writer.append(SEPARATOR_1).append(SEPARATOR_1).append("answer: ").append(condition.getAnswer()).append('\n');
+                    if (condition.getExpectedAnswers() != null) {
+
+                        writer.append(SEPARATOR_1).append(SEPARATOR_1).append("expectedAnswers:\n");
+
+                        for (final String expectedAnswer : condition.getExpectedAnswers()) {
+                            writer.append(SEPARATOR_1).append(SEPARATOR_1).append(SEPARATOR_2).append(expectedAnswer).append('\n');
+                        }
                     }
                 }
             }

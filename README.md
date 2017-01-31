@@ -68,15 +68,18 @@ steps :
 ```
 
 ### Simple flow control
+
 There is also the option to create a simple IF function in your checklists.. This allows you to apply some simple flow control and prevents you from creating
 multiple templates that do practically the same thing (which will become a burden to keep them in synch when you want to enhance them).
 
-If you do not specify any answer in the condition, the step will be reachable if the step referenced by the stepId is finished or not applicable.
+If you do not specify any expected answer in the condition, the step will be reachable if the step referenced by the stepId is finished or not applicable.
 
-If you specify an answer in the condition, the step will be reachable if the step referenced by the stepId is finished and if the user selected the
-specified option.
+If you specify one or more expected answers in the condition, the step will be reachable if the step referenced by the stepId is finished and if the user
+selected at least one of the specified expected answers.
 
-This is an example
+You can specify more than one conditions. In this case, all conditions must be true for the step to be reachable.
+
+This is an example:
 
 ```yaml
 description: Checklist to verify a deployment
@@ -86,49 +89,55 @@ tags:
 # this flag is false per default. If you set it to true, the checklist button will not be shown in the templates page...
 subchecklistOnly: false  
 steps :    
-    - id: step1
-      responsible: resp1
-      question: Question 1
-      options:
+  - id: step1
+    responsible: resp1
+    question: Question 1
+    options:
+      - option1
+      - option2
+    milestone: milestone1
+  - id: step2
+    responsible: resp1
+    conditions:
+      - stepId: step1
+        # We accept lists (for single or multiple expected answers)
+        expectedAnswers:
           - option1
+    action: action2
+    check: check1
+    milestone: milestone2
+  - id: step3
+    responsible: resp1
+    # The 2 conditions must be true (step1.answers should contain 'option2' and step2 should be finished or unreachable) for this step to be startable. 
+    conditions:
+      - stepId: step1
+        # We accept string (for single expected answer)
+        expectedAnswers: option2
+      - stepId: step2
+    action: action3
+    check: check1
+    milestone: milestone3
+  - id: step4
+    responsible: resp1
+    conditions:
+      - stepId: step1
+        expectedAnswers:
           - option2
-      milestone: milestone1
-    - id: step2
-      responsible: resp1
-      conditions:
-          - stepId: step1
-            answer: option1
-      action: action2
-      check: check1
-      milestone: milestone2
-    - id: step3
-      responsible: resp1
-      conditions:
-          - stepId: step1
-          - answer: option2
-      action: action3
-      check: check1
-      milestone: milestone3
-    - id: step4
-      responsible: resp1
-      conditions:
-          - stepId: step1
-          - answer: option2
-      action: action4
-      check: check1
-      milestone: milestone4
-    - id: step5
-      responsible: resp1
-      action: action5
-      check: check1
-      milestone: milestone5      
-    - id: step6
-      responsible: resp1
-      conditions:
-          - stepId: step1
-      action: action6
-      check: check1
-      milestone: milestone5      
+    action: action4
+    check: check1
+    milestone: milestone4
+  - id: step5
+    responsible: resp1
+    action: action5
+    check: check1
+    milestone: milestone5      
+  - id: step6
+    responsible: resp1
+    conditions:
+      - stepId: step1
+    action: action6
+    check: check1
+    milestone: milestone5      
 ```
 In the GUI this is represented like this : the steps that are not reachable anymore based on your choices are marked in grey.
 
