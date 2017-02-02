@@ -77,7 +77,6 @@
             <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
           </button>
         </p>
-
       </div>
     </div>
     <div ng-show="data.milestones.length">
@@ -101,9 +100,7 @@
         <div ng-class="getClassForStep(step)" id="_{{step.id}}">
           <!-- put an anchor for the auto-focus -->
           <a id="{{step.id}}" name="{{step.id}}" class="anchor"></a>
-
           <h3 class="list-group-item-heading stepId" ng-if="mode === 'template'" id="{{step.id}}_id">{{step.id}}</h3>
-
           <!-- show either the responsible group, or a specific user when we know one -->
           <h4 class="responsible" ng-if="step.responsible && ! step.user" id="{{step.id}}_responsible"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{step.responsible}}</h4>
           <h4 class="responsible" ng-if="step.user" id="{{step.id}}_user">
@@ -111,19 +108,12 @@
               <span title="responsible group: {{step.responsible}}">{{step.user}}</span>
           </h4>
           <h4 ng-if="step.lastUpdate" class="time"><span class="glyphicon glyphicon-time" aria-hidden="true" title="{{step.lastUpdate | date:'dd/MM/yyyy HH:mm:ss'}}"></span></h4>
-
           <h4 class="documentation" ng-if="showDocumentation(step)"><span class="glyphicon glyphicon-link"></span><a href="{{step.documentation}}" target="_blank">Documentation</a></h4>
-
           <h4 class="action" ng-if="step.action" id="{{step.id}}_action"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>{{step.action}}</h4>
-
           <h4 class="question" ng-if="step.question" id="{{step.id}}_question"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>{{step.question}}</h4>
-
           <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'template'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoTemplate(step.subChecklist)">{{step.subChecklist}}</a></h4>
-
           <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child != null" id="{{step.id}}_subcl1"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoChecklist(step.child)">{{step.subChecklist}}</a></h4>
-
           <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child == null && canModify()" id="{{step.id}}_subcl2"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="launchSubChecklist(step)">{{step.subChecklist}}</a></h4>
-
           <div class="answer" ng-if="step.question" id="{{step.id}}_answer">
             <p ng-if="showAnswerTextBox(step) && canModify()" id="{{step.id}}_answer_txt">
               <textarea ng-model="step.answers[0]" onkeyup="autoGrow(this)" onclick="autoGrow(this)" onmouseenter="autoGrow(this)"></textarea>
@@ -262,8 +252,7 @@
   </div>
   <!-- for the case when all steps are done.. position on the bottom -->
   <a name="complete" id="complete" class="anchor"></a>
-
-      <!-- /container-->
+                        <!-- /container-->
       <!-- Bootstrap core JavaScript-->
       <!-- ==================================================-->
       <!-- Placed at the end of the document so the pages load faster-->
