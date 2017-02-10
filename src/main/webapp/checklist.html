@@ -48,6 +48,13 @@
         return;
       }
 
+      // Space
+      if (event.keyCode === 32) {
+        scope.repositionToNextUnfinishedStep();
+        event.preventDefault();
+        return;
+      }
+
       // UP arrow
       if (event.keyCode === 38) {
 
