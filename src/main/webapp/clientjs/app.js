@@ -284,6 +284,11 @@
         }
 
         function getClassForStep(step) {
+          if( step.id == getStepIdFromHash()) {
+            return "list-group selectedStep";
+          } else {
+            return "list-group";
+          }
           if (step.successRate === 100) {
             return "success";
           } else if (step.successRate > 90) {
@@ -335,20 +340,20 @@
           }
         }
 
-        $scope.createChecklist         = createChecklist;
-        $scope.getClassForMilestone    = getClassForMilestone;
-        $scope.uploadFile              = uploadFile;
-        $scope.setTemplateName         = setTemplateName;
-        $scope.setFile                 = setFile;
-        $scope.hideModal               = hideModal;
-        $scope.showModal               = showModal;
-        $scope.showTemplate            = showTemplate;
-        $scope.showStats               = showStats;
-        $scope.getClassForStep         = getClassForStep;
-        $scope.uploadTemplate          = uploadTemplate;
-        $scope.downloadTemplate        = downloadTemplate;
-        $scope.deleteTemplate          = deleteTemplate;
-        $scope.toggleShowSubchecklists = toggleShowSubchecklists;
+        $scope.createChecklist          = createChecklist;
+        $scope.getClassForMilestone     = getClassForMilestone;
+        $scope.uploadFile               = uploadFile;
+        $scope.setTemplateName          = setTemplateName;
+        $scope.setFile                  = setFile;
+        $scope.hideModal                = hideModal;
+        $scope.showModal                = showModal;
+        $scope.showTemplate             = showTemplate;
+        $scope.showStats                = showStats;
+        $scope.getClassForStep          = getClassForStep;
+        $scope.uploadTemplate           = uploadTemplate;
+        $scope.downloadTemplate         = downloadTemplate;
+        $scope.deleteTemplate           = deleteTemplate;
+        $scope.toggleShowSubchecklists  = toggleShowSubchecklists;
         init();
       }
   );
@@ -403,25 +408,30 @@
         }
 
         function getClassForStep(step) {
+          var stepClass = "step unknown";
           if (step.state === 'OK') {
-            return "step ok";
+            stepClass = "step ok";
           } else if (step.state === 'EXECUTED') {
-            return "step executed";
+            stepClass = "step executed";
           } else if (step.state === 'IN_PROGRESS') {
-            return "step inProgress";
+            stepClass = "step inProgress";
           } else if (step.state === 'NOT_YET_APPLICABLE') {
-            return "step notYetApplicable";
+            stepClass = "step notYetApplicable";
           } else if (step.state === 'NOT_APPLICABLE') {
-            return "step notApplicable";
+            stepClass = "step notApplicable";
           } else if (step.state === 'ABORTED') {
-            return "step aborted";
+            stepClass = "step aborted";
           } else if (step.state === 'EXECUTION_FAILED'
                      || step.state === 'CHECK_FAILED'
                      || step.state === 'CHECK_FAILED_NO_COMMENT'
                      || step.state === 'EXECUTION_FAILED_NO_COMMENT') {
-            return "step nok";
+            stepClass = "step nok";
           }
-          return "step unknown";
+          if( step.id == getStepIdFromHash()) {
+            return stepClass + " selectedStep";
+          } else {
+            return stepClass;
+          }
         }
 
         // =================================================
@@ -509,37 +519,99 @@
           showModal('#errorModal');
         }
 
-        function reposition() {
-          var activeStep = undefined;
-          // for some odd reason, the links don't work for the last 3 steps... go to complete then
-          for (var i = 0; i < $scope.data.steps.length - 3; i++) {
+        function repositionToLastUpdatedStep() {
+
+          var lastUpdatedStep = null;
+
+          for (var i = 0; i < $scope.data.steps.length; i++) {
+
             var step = $scope.data.steps[i];
-            if (!step.complete) {
-              activeStep = step;
-              break;
+
+            if( step.lastUpdate != null) {
+
+              if( lastUpdatedStep == null || step.lastUpdate >= lastUpdatedStep.lastUpdate) {
+                lastUpdatedStep = step;
+              }
             }
           }
 
-          if (activeStep === undefined) {
-            $window.location.hash = 'complete';
-            console.log('Start new repositioning cycle');
-            $interval(function () {
-              console.log('repos');
-              $anchorScroll();
-            }, 500, 3);
-          } else {
-            $window.location.hash = activeStep.id;
-            console.log('Start new repositioning cycle');
-            $interval(function () {
-              console.log('repos');
-              $anchorScroll();
-            }, 500, 3);
+          if( lastUpdatedStep != null) {
+            repositionTo(lastUpdatedStep.id);
           }
         }
 
-        function repositionTo(step) {
-          $window.location.hash = step.id;
+        function repositionTo(stepId) {
+
+          if (stepId == null) {
+            $window.location.hash = "";
+          } else {
+            $window.location.hash = stepId;
+          }
+
           $anchorScroll();
+        }
+
+        function repositionIfNeeded(step) {
+          if( step.id === getLastStep().id) {
+            if( $scope.hasToBeRepositionedToStep != null) {
+              repositionTo($scope.hasToBeRepositionedToStep)
+              $scope.hasToBeRepositionedToStep = null;
+            }
+          }
+          // Return true to allow this function to be in ng-if with other functions (separated by &&)
+          return true;
+        }
+
+        function repositionToStep(step) {
+
+          if (step == null) {
+            $window.location.hash = "";
+          } else {
+            $window.location.hash = step.id;
+          }
+
+          $anchorScroll();
+        }
+
+        function repositionToNextStep() {
+
+          var stepId = $window.location.hash;
+
+          if( "" === stepId || "#" === stepId) {
+            stepId = null;
+          } else {
+            stepId = stepId.slice(1);
+          }
+
+          repositionTo(getStepAfter(getStepById(stepId)).id);
+        }
+
+        function repositionToPreviousStep() {
+
+          var stepId = $window.location.hash;
+
+          if( "" === stepId) {
+            stepId = null;
+          } else {
+            stepId = stepId.slice(1);
+          }
+
+          repositionTo(getStepBefore(getStepById(stepId)).id);
+        }
+
+        function repositionToNextUnfinishedStep() {
+          repositionToStep(getUnfinishedStepAfter(getStepIdFromHash()));
+        }
+
+        function repositionToPreviousUnfinishedStep() {
+          repositionToStep(getUnfinishedStepBefore(getStepById(getStepIdFromHash())));
+        }
+
+        function getStepIdFromHash() {
+
+          var stepId = $window.location.hash;
+
+          return "" === stepId || "#" === stepId ? null : stepId.slice(1);
         }
 
         function showGoBackToParent() {
@@ -562,11 +634,177 @@
           $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/start")
                .success(function (data, status, headers, config) {
                  $scope.data = data;
-                 repositionTo(step);
                }).error(function (data, status, headers, config) {
             console.log('Error starting step ' + step.id);
           });
         }
+
+        function getStepAfter(step) {
+
+          var firstStep = $scope.data.steps[0];
+
+          if( step == null) {
+            return firstStep;
+          }
+
+          for (var i = 0; i < $scope.data.steps.length; i++) {
+
+            var stepWalker = $scope.data.steps[i];
+
+            if (stepWalker.id === step.id) {
+
+              if( i < $scope.data.steps.length - 1) {
+                return $scope.data.steps[++i];
+              } else {
+                return firstStep;
+              }
+            }
+          }
+
+          // We should never reach this line
+          return firstStep;
+        }
+
+        function getStepBefore(step) {
+
+          // If no step is provided, we return the last step
+          if( step == null) {
+            return getLastStep();
+          }
+
+          var previousStep = getLastStep();
+
+          for (var i = 0; i < $scope.data.steps.length; i++) {
+
+            var stepWalker = $scope.data.steps[i];
+
+            if (stepWalker.id === step.id) {
+              return previousStep;
+            }
+
+            previousStep = stepWalker;
+          }
+
+          // We should never reach this code
+          return getLastStep();
+        }
+
+        function getLastStep() {
+          return $scope.data.steps[$scope.data.steps.length-1];
+        }
+
+        function getUnfinishedStepAfter(stepId, data) {
+
+          if( data == null) {
+            data = $scope.data;
+          }
+
+          var i = getStepPosById(stepId);
+
+          if( i == null) {
+            return getFirstUnfinishedStep();
+          }
+
+          for ( i++; i < data.steps.length; i++) {
+
+            var stepWalker = data.steps[i];
+
+            if (isActionExpected(stepWalker)) {
+              return stepWalker;
+            }
+          }
+
+          return getFirstUnfinishedStep();
+        }
+
+        function getUnfinishedStepBefore(step) {
+
+          var i = getStepPos(step);
+
+          if( i == null) {
+            i = $scope.data.steps.length;
+          }
+
+          for ( i--; i >= 0; i--) {
+
+            var stepWalker = $scope.data.steps[i];
+
+            if (isActionExpected(stepWalker)) {
+              return stepWalker;
+            }
+          }
+
+          return step == null ? null : getUnfinishedStepBefore(null);
+        }
+
+        function getFirstUnfinishedStep(data) {
+
+          if( data == null) {
+            data = $scope.data;
+          }
+
+          for (var i = 0; i < data.steps.length; i++) {
+
+            var stepWalker = data.steps[i];
+
+            if (isActionExpected(stepWalker)) {
+              return stepWalker;
+            }
+          }
+
+          return null;
+        }
+
+        function isActionExpected(step) {
+          return step.actionExpected;
+        }
+
+        function getStepById(stepId, data) {
+
+          if( data == null) {
+            data = $scope.data;
+          }
+
+          if( stepId == null) {
+            return null;
+          }
+
+          for (var i = 0; i < data.steps.length; i++) {
+
+            var stepWalker = data.steps[i];
+
+            if (stepWalker.id === stepId) {
+              return stepWalker;
+            }
+          }
+
+          return null;
+        }
+
+          function getStepPos(step) {
+
+              if( step == null) {
+                return null;
+              }
+
+              return getStepPosById(step.id);
+            }
+
+          function getStepPosById(stepId) {
+
+              if( stepId == null) {
+                return null;
+              }
+
+              for (var i = 0; i < $scope.data.steps.length; i++) {
+
+                if ($scope.data.steps[i].id === stepId) {
+                  return i;
+                }
+              }
+
+              return null;
+            }
 
         /**
          * Action result for a step, send to the backend and reload.
@@ -575,7 +813,6 @@
           $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/actionresults/" + result)
                .success(function (data, status, headers, config) {
                  $scope.data = data;
-                 reposition();
                }).error(function (data, status, headers, config) {
             console.log('Error updating step ' + step.id);
           });
@@ -585,7 +822,6 @@
           $http.post('rest/checklists/' + $location.search().id + "/" + step.id + '/errors', error)
                .success(function (data, status, headers, config) {
                  $scope.data = data;
-                 reposition();
                }).error(function (data, status, headers, config) {
             console.log('Error updating step ' + step.id);
           });
@@ -594,11 +830,17 @@
         function setAnswers(step, answer) {
           $http.put('rest/checklists/' + $location.search().id + "/" + step.id + '/answers', answer)
                .success(function (data, status, headers, config) {
+                 setHasToBeRepositionedToStepIfNeeded(step,data);
                  $scope.data = data;
-                 reposition();
                }).error(function (data, status, headers, config) {
             console.log('Error updating step ' + step.id);
           });
+        }
+
+        function setHasToBeRepositionedToStepIfNeeded(step, data) {
+          if( getStepById(step.id,data).complete && step.id === getStepIdFromHash()) {
+            $scope.hasToBeRepositionedToStep = getUnfinishedStepAfter(step.id, data).id;
+          }
         }
 
         function updateAnswer(step, answer, event) {
@@ -623,7 +865,6 @@
                    showModal('#tagModal');
                  } else {
                    hideModal('#tagModal');
-                   reposition();
                  }
                }).error(function (data, status, headers, config) {
             console.log('Error adding a tag ' + step.id);
@@ -648,7 +889,6 @@
             $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/checkresults/" + (combinedResult === 1))
                  .success(function (data, status, headers, config) {
                    $scope.data = data;
-                   reposition();
                  }).error(function (data, status, headers, config) {
               console.log('Error updating step ' + step.id);
             });
@@ -679,7 +919,6 @@
           $http.put('rest/checklists/' + $location.search().id + "/" + step.id + '/reopen')
                .success(function (data, status, headers, config) {
                  $scope.data = data;
-                 repositionTo(step);
                }).error(function (data, status, headers, config) {
             console.log('Error updating step ' + step.id);
           });
@@ -915,7 +1154,7 @@
                    .success(function (data, status, headers, config) {
                      console.log("Data loaded");
                      $scope.data = data;
-                     reposition();
+                     repositionToLastUpdatedStep();
                    }).error(function (data, status, headers, config) {
                 console.log('Error getting rest/checklist/get');
               });
@@ -985,6 +1224,12 @@
         $scope.instantiateFromTemplate = instantiateFromTemplate;
 
         $scope.toggleRefresh = toggleRefresh;
+        $scope.getStepById = getStepById;
+        $scope.repositionIfNeeded = repositionIfNeeded;
+        $scope.repositionToNextStep = repositionToNextStep;
+        $scope.repositionToPreviousStep = repositionToPreviousStep;
+        $scope.repositionToNextUnfinishedStep = repositionToNextUnfinishedStep;
+        $scope.repositionToPreviousUnfinishedStep = repositionToPreviousUnfinishedStep;
 
         $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
       }

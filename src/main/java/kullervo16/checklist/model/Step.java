@@ -439,6 +439,11 @@ public class Step {
     }
 
 
+    public boolean isActionExpected() {
+        return this.state == UNKNOWN || this.state.isOpen();
+    }
+
+
     public void setComment(final String text) {
         comment = text;
     }

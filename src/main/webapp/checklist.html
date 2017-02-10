@@ -26,10 +26,56 @@
       element.style.height = "110px";
       element.style.height = (element.scrollHeight <= 110 ? 110 : element.scrollHeight) + "px";
     }
+
+    function cl_keyDown(event) {
+
+      if( event.target.type === "textarea" || event.target.type === "input" ) {
+        return;
+      }
+
+      var scope = angular.element($("#main")).scope();
+/*
+      var stepId = window.location.hash;
+
+      if( "" === stepId) {
+        stepId = null;
+      }
+*/
+
+      // DOWN arrow
+      if (event.keyCode === 40) {
+
+        if( event.altKey ) {
+          scope.repositionToNextUnfinishedStep();
+        } else {
+          scope.repositionToNextStep();
+        }
+
+        event.preventDefault();
+        return;
+      }
+
+      // UP arrow
+      if (event.keyCode === 38) {
+
+        if( event.altKey ) {
+          scope.repositionToPreviousUnfinishedStep();
+        } else {
+          scope.repositionToPreviousStep();
+        }
+
+        event.preventDefault();
+        return;
+      }
+//      console.log("DOWN  shiftKey : " + event.shiftKey);
+//      console.log("DOWN  altKey   : " + event.altKey);
+//      console.log("DOWN  which    : " + event.which);
+//      console.log("DOWN  keyCode  : " + event.keyCode);
+    }
   </script>
 </head>
 
-<body role="document" ng-controller="userController as user">
+<body role="document" ng-controller="userController as user" onkeydown="cl_keyDown(event)">
   <!-- Fixed navbar-->
   <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -53,7 +99,7 @@
           <span class="userName" title="roles : {{getRoles()}}">{{ getUserName() }}</span>
     </div>
   </div>
-  <div role="main" class="container theme-showcase" ng-controller="checklistController as checklist">
+  <div id="main" role="main" class="container theme-showcase" ng-controller="checklistController as checklist">
     <div class="jumbotron">
       <h1>{{data.displayName}}</h1>
       <h3>{{data.description}}</h3>
@@ -100,7 +146,7 @@
         <div ng-class="getClassForStep(step)" id="_{{step.id}}">
           <!-- put an anchor for the auto-focus -->
           <a id="{{step.id}}" name="{{step.id}}" class="anchor"></a>
-          <h3 class="list-group-item-heading stepId" ng-if="mode === 'template'" id="{{step.id}}_id">{{step.id}}</h3>
+          <h3 class="list-group-item-heading stepId" ng-if="repositionIfNeeded(step) && mode === 'template'" id="{{step.id}}_id">{{step.id}}</h3>
           <!-- show either the responsible group, or a specific user when we know one -->
           <h4 class="responsible" ng-if="step.responsible && ! step.user" id="{{step.id}}_responsible"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{step.responsible}}</h4>
           <h4 class="responsible" ng-if="step.user" id="{{step.id}}_user">
