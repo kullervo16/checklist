@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import static java.util.Collections.singletonList;
 import static kullervo16.checklist.model.State.NOT_APPLICABLE;
 import static kullervo16.checklist.model.State.NOT_YET_APPLICABLE;
@@ -544,7 +546,7 @@ public class Step {
         this.options = options;
     }
 
-
+    @JsonIgnore
     public List<Condition> getConditions() {
         return this.conditions;
     }
