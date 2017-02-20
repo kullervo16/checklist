@@ -230,6 +230,77 @@ There is also a simple stats implemented that shows you which steps of your temp
 You can find your checklists based on the tags and reached milestones. They are presented in the tagcloud in the select page
 ![alt text](doc/screenshot_tagcloud.png "the tagcloud page")
 
+### Keyboard shorcuts
+
+On the checklist page, you can use the keyboard to do some actions:
+
+-   Navigation:
+
+    -   `DOWN` or `TAB`                            : go to next step
+    -   `UP` or `SHIFT+TAB`                        : go to previous step
+    -   `SPACE`, `ALT+DOWN` or `ALT+TAB`           : go to next startable or unfinished step
+    -   `SHIFT+SPACE`, `ALT+UP` or `SHIFT+ALT+TAB` : go to previous
+    -   `P`                                        : go to parent checklist (if exists)
+
+-   Actions:
+
+    -   On a single choice question :
+
+        -   `ENTER` : enter in the step. If no option is selected, selected the first one. Else, focus on the selected one.
+
+        -   When entered in the step:
+
+            -   `DOWN` or `TAB`     : select next option
+            -   `UP` or `SHIFT+TAB` : select previous option
+            -   `ENTER`             : validate the choice and select the next startable or unfinished step
+            -   `ESC`               : leave the step without validating the choice
+
+    -   On a multi-choice question :
+
+        -   `ENTER` : enter in the step andocus on the first option.
+
+        -   When entered in the step:
+
+            -   `DOWN` or `TAB`     : go to next option
+            -   `UP` or `SHIFT+TAB` : go to previous option
+            -   `SPACE` or `X`      : select/unselect the current option
+            -   `ENTER`             : validate the choice and select the next startable or unfinished step
+            -   `ESC`               : leave the step without validating the choice
+
+    -   On a free text question :
+
+        -   `ENTER` : enter in the step and place the cursor at the end of the text area.
+
+        -   When entered in the step:
+
+            -   `ALT+ENTER` or `CTRL+ENTER` : validate the response and select the next startable or unfinished step
+            -   `ESC`                       : leave the step without validating the response
+
+    -   On a startable action :
+
+        -   `ENTER` : start the action
+
+    -   On a started action :
+
+        -   `ENTER` : mark the action as finished without error
+
+    -   On an action marker as finished without error :
+
+        -   `ENTER` : mark the action as finished without error
+
+    -   On a finished action with not validated checks :
+
+        -   `ENTER` : mark the first not validated check as done withotut error.
+                      If no more not validated check, mark the step as finished and select the next startable or unfinished step
+
+    -   On a not started sub-checklist step :
+    
+        -   `ENTER` : launch the sub-checklist
+
+    -   On a not started sub-checklist step :
+
+        -   `ENTER` : go to the sub-checklist
+
 ## REST interface
 
 All data is exposed via a REST interface. We support following resources :

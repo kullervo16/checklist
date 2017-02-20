@@ -29,14 +29,114 @@
 
     function cl_keyDown(event) {
 
-      if( event.target.type === "textarea" || event.target.type === "input" ) {
+      var scope = angular.element($("#main")).scope();
+
+      // If we are in a textarea
+      if( event.target.type === "textarea" ) {
+
+        // CTRL + ENTER or ALT + ENTER
+        if (event.keyCode === 13 && (event.ctrlKey || event.altKey)) {
+          var step = scope.getStepById(event.target.id.replace("_textarea",""));
+          scope.$apply(scope.setAnswers(step, step.answers[0]));
+        }
+
+        // ESC
+        if (event.keyCode === 27) {
+          event.target.blur();
+          event.preventDefault();
+          return;
+        }
+
+        // We don't process other key events for textareas
         return;
       }
 
-      var scope = angular.element($("#main")).scope();
+      // If the user selected a radio button
+      if( event.target.type === "radio") {
 
-      // DOWN arrow
-      if (event.keyCode === 40) {
+        // DOWN or TAB
+        if (event.keyCode === 40 || (event.keyCode === 9 && !event.shiftKey)) {
+          scope.selectNextRadioButton(event.target);
+          event.preventDefault();
+          return;
+        }
+
+        // UP or SHIFT+TAB
+        if (event.keyCode === 38 || (event.keyCode === 9 && event.shiftKey)) {
+          scope.selectPreviousRadioButton(event.target);
+          event.preventDefault();
+          return;
+        }
+
+        // ESC
+        if (event.keyCode === 27) {
+          event.target.blur();
+          event.preventDefault();
+          return;
+        }
+
+        // ENTER
+        if (event.keyCode === 13) {
+          scope.$apply(scope.setAnswersByRadioButton(event.target));
+          event.preventDefault();
+          return;
+        }
+
+        // We ignore other keyboard shorcuts
+        return;
+      }
+
+      // If the user selected a checkbox
+      if( event.target.type === "checkbox") {
+
+        // DOWN or TAB
+        if (event.keyCode === 40 || (event.keyCode === 9 && !event.shiftKey)) {
+          scope.selectNextCheckbox(event.target);
+          event.preventDefault();
+          return;
+        }
+
+        // UP or SHIFT+TAB
+        if (event.keyCode === 38 || (event.keyCode === 9 && event.shiftKey)) {
+          scope.selectPreviousCheckbox(event.target);
+          event.preventDefault();
+          return;
+        }
+
+        // SPACE
+        if (event.keyCode === 32) {
+          // Default behavior
+          return;
+        }
+
+        // X
+        if (event.keyCode === 88) {
+          event.target.click();
+          event.target.focus();
+          event.preventDefault();
+          return;
+        }
+
+        // ESC
+        if (event.keyCode === 27) {
+          event.target.blur();
+          event.preventDefault();
+          return;
+        }
+
+        // ENTER
+        if (event.keyCode === 13) {
+          scope.$apply(scope.setAnswersByCheckbox(event.target));
+          event.preventDefault();
+          return;
+        }
+
+        // We ignore other keyboard shorcuts
+        return;
+      }
+
+        // DOWN or TAB
+      if (event.keyCode === 40 || (event.keyCode === 9 && !event.shiftKey)) {
 
         if( event.altKey ) {
           scope.repositionToNextUnfinishedStep();
@@ -48,15 +148,21 @@
         return;
       }
 
-      // Space
+      // SPACE
       if (event.keyCode === 32) {
-        scope.repositionToNextUnfinishedStep();
+
+        if( event.shiftKey ) {
+          scope.repositionToPreviousUnfinishedStep();
+        } else {
+          scope.repositionToNextUnfinishedStep();
+        }
+
         event.preventDefault();
         return;
       }
 
-      // UP arrow
-      if (event.keyCode === 38) {
+      // UP or SHIFT+TAB
+      if (event.keyCode === 38 || (event.keyCode === 9 && event.shiftKey)) {
 
         if( event.altKey ) {
           scope.repositionToPreviousUnfinishedStep();
@@ -67,10 +173,25 @@
         event.preventDefault();
         return;
       }
-//      console.log("DOWN  shiftKey : " + event.shiftKey);
-//      console.log("DOWN  altKey   : " + event.altKey);
-//      console.log("DOWN  which    : " + event.which);
-//      console.log("DOWN  keyCode  : " + event.keyCode);
+
+      // ENTER
+      if (event.keyCode === 13) {
+        scope.$apply(scope.applyNormalAction());
+        event.preventDefault();
+        return;
+      }
+
+      // P
+      if (event.keyCode === 80) {
+
+        if( scope.data.parent != null) {
+          scope.gotoChecklist(scope.data.parent);
+          event.preventDefault();
+          return;
+        }
+
+        return;
+      }
     }
   </script>
 </head>
@@ -162,7 +283,7 @@
           <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child == null && canModify()" id="{{step.id}}_subcl2"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="launchSubChecklist(step)">{{step.subChecklist}}</a></h4>
           <div class="answer" ng-if="step.question" id="{{step.id}}_answer">
             <p ng-if="showAnswerTextBox(step) && canModify()" id="{{step.id}}_answer_txt">
-              <textarea ng-model="step.answers[0]" onkeyup="autoGrow(this)" onclick="autoGrow(this)" onmouseenter="autoGrow(this)"></textarea>
+              <textarea id="{{step.id}}_textarea" ng-model="step.answers[0]" onkeyup="autoGrow(this)" onclick="autoGrow(this)" onmouseenter="autoGrow(this)"></textarea>
               <button ng-if="isInChecklistMode()" type="button" class="btn btn-default setAnswers" aria-label="ok" ng-click="setAnswers(step, step.answers[0]);">
                 <span class="glyphicon glyphicon-ok-sign" aria-hidden="true">OK</span>
               </button>
@@ -170,7 +291,7 @@
             <div ng-if="showAnswerRadioButton(step) && canModify()" id="{{step.id}}_answer_radio">
               <p ng-repeat="option in step.options">
                 <label>
-                  <input type="radio" name="option" ng-model="step.answers[0]" ng-value="option"/> {{option}}
+                  <input id="{{step.id}}_option_{{$index}}" type="radio" name="option" ng-model="step.answers[0]" ng-value="option"/> {{option}}
                 </label>
               </p>
               <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="setAnswers(step, step.answers[0]);" id="{{step.id}}_answer_button">
@@ -180,7 +301,7 @@
             <div ng-if="showAnswerChecklists(step) && canModify()">
               <p ng-repeat="option in step.options">
                 <label>
-                  <input type="checkbox" name="option" ng-checked="step.answers.includes(option)" ng-click="updateAnswer(step,option,$event);"/> {{option}}
+                  <input id="{{step.id}}_checkbox_{{$index}}" type="checkbox" name="option" ng-checked="step.answers.includes(option)" ng-click="updateAnswer(step,option,$event);"/> {{option}}
                 </label>
               </p>
               <button ng-if="isInChecklistMode()" type="button" class="btn btn-default" aria-label="ok" ng-click="setAnswers(step, step.answers);">

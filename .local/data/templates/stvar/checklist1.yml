@@ -15,6 +15,8 @@ steps :
       options:
           - option1
           - option2
+          - option3
+          - option4
       condition:
           - selectionPoint: stepa
       documentation: http://www.google.be
@@ -36,6 +38,15 @@ steps :
       condition:
           - selectionPoint: stepb
           - option: option1
+      documentation: http://www.google.be
+    - id: stepc1
+      responsible: dev
+      question: stepc1 - Multiple choice question
+      answerType: multiple
+      options:
+          - option1
+          - option2
+          - option3
       documentation: http://www.google.be
     - id: stepc2
       responsible: dev
@@ -98,9 +109,9 @@ steps :
       condition:
           - selectionPoint: step1
       documentation: http://www.google.be
-#    - id: verifyFunctioning
-#      responsible: development
-#      subchecklist: /development/verifyDeployment
-#      condition:
-#          - selectionPoint: step1
-#          - option: option2
+    - id: subchecklist
+      responsible: development
+      subchecklist: /stvar/verifyDeployment
+      condition:
+          - selectionPoint: step1
+          - option: option2

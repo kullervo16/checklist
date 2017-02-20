@@ -626,7 +626,173 @@
           return step.documentation != null;
         }
 
-        // =================================================
+        // Apply the "normal" action to the selected step
+        function applyNormalAction() {
+
+          // Find the selected step
+          var step = getStepById(getStepIdFromHash());
+
+          // If no step selected
+          if( step == null) {
+            return;
+          }
+
+          // If the step is an action
+          if( step.action != null) {
+
+            // If the status is UNKNOWN and if the action is startable
+            if( step.state === "UNKNOWN" && step.actionExpected === true) {
+              startAction(step);
+              return;
+            }
+
+            if( step.state === "IN_PROGRESS") {
+              updateAction(step,true);
+              return;
+            }
+
+            if( step.state === "EXECUTED") {
+              setCheckResult(step,null,true);
+              return;
+            }
+
+            return;
+          }
+
+          // If the step is a question
+          if( step.question != null) {
+
+            if( step.complete) {
+              return;
+            }
+
+            if( step.answerType === "text") {
+              document.getElementById(step.id + "_textarea").focus();
+              return;
+            }
+
+            if( step.answerType === "onlyOne") {
+
+              var selectedOption;
+              var selectedElement;
+              var nbOptions = step.options.length;
+
+              for(var i = 0; i < nbOptions; i++) {
+
+                var optionElementWalker = document.getElementById(step.id + "_option_" + i);
+
+                if( optionElementWalker.checked) {
+                  selectedOption = i;
+                  selectedElement = optionElementWalker;
+                  i = nbOptions;
+                }
+              }
+
+              if( selectedOption == null) {
+                selectedElement = document.getElementById(step.id + "_option_0");
+                selectedElement.checked = true;
+              }
+
+              if( selectedElement != null) {
+                selectedElement.click();
+                selectedElement.focus();
+              }
+
+              return;
+            }
+
+            if( step.answerType === "multiple") {
+              document.getElementById(step.id + "_checkbox_0").focus();
+            }
+
+            return;
+          }
+
+          if( step.subChecklist != null) {
+
+            // If this checklist has already been instancied
+            if( step.child == null) {
+
+              if( step.actionExpected) {
+                launchSubChecklist(step);
+              }
+            } else {
+              gotoChecklist(step.child);
+            }
+          }
+        }
+
+        function selectNextRadioButton(optionElement) {
+
+          var cleanedElementId = optionElement.id.replace("_option", "");
+          var stepId           = cleanedElementId.substring(0, cleanedElementId.lastIndexOf("_"));
+          var optionIndex      = cleanedElementId.substring(cleanedElementId.lastIndexOf("_") + 1);
+          var step             = getStepById(stepId);
+
+          optionIndex++;
+
+          if( optionIndex >= step.options.length) {
+            optionIndex = 0;
+          }
+
+          var newOptionElement = document.getElementById(stepId + "_option_" + optionIndex);
+          newOptionElement.click();
+          newOptionElement.focus();
+        }
+
+        function selectPreviousRadioButton(optionElement) {
+
+          var cleanedElementId = optionElement.id.replace("_option", "");
+          var stepId           = cleanedElementId.substring(0, cleanedElementId.lastIndexOf("_"));
+          var optionIndex      = cleanedElementId.substring(cleanedElementId.lastIndexOf("_") + 1);
+          var step             = getStepById(stepId);
+
+          optionIndex--;
+
+          if( optionIndex < 0) {
+            optionIndex = step.options.length - 1;
+          }
+
+          var newOptionElement = document.getElementById(stepId + "_option_" + optionIndex);
+          newOptionElement.click();
+          newOptionElement.focus();
+        }
+
+        function selectNextCheckbox(checkbox) {
+
+          var cleanedElementId = checkbox.id.replace("_checkbox", "");
+          var stepId           = cleanedElementId.substring(0, cleanedElementId.lastIndexOf("_"));
+          var optionIndex      = cleanedElementId.substring(cleanedElementId.lastIndexOf("_") + 1);
+          var step             = getStepById(stepId);
+
+          optionIndex++;
+
+          if( optionIndex >= step.options.length) {
+            optionIndex = 0;
+          }
+
+          var newCheckbox = document.getElementById(stepId + "_checkbox_" + optionIndex);
+          newCheckbox.focus();
+        }
+
+        function selectPreviousCheckbox(checkbox) {
+
+          var cleanedElementId = checkbox.id.replace("_checkbox", "");
+          var stepId           = cleanedElementId.substring(0, cleanedElementId.lastIndexOf("_"));
+          var optionIndex      = cleanedElementId.substring(cleanedElementId.lastIndexOf("_") + 1);
+          var step             = getStepById(stepId);
+
+          optionIndex--;
+
+          if( optionIndex < 0) {
+            optionIndex = step.options.length - 1;
+          }
+
+          var newCheckbox = document.getElementById(stepId + "_checkbox_" + optionIndex);
+          newCheckbox.focus();
+        }
+
+    // =================================================
         // Backend update operations
         // =================================================
 
@@ -813,6 +979,9 @@
           $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/actionresults/" + result)
                .success(function (data, status, headers, config) {
                  $scope.data = data;
+                 if( getStepIdFromHash() === step.id && getStepById(step.id).complete) {
+                   repositionToNextUnfinishedStep();
+                 }
                }).error(function (data, status, headers, config) {
             console.log('Error updating step ' + step.id);
           });
@@ -835,6 +1004,24 @@
                }).error(function (data, status, headers, config) {
             console.log('Error updating step ' + step.id);
           });
+        }
+
+        function setAnswersByRadioButton(radioButton) {
+
+          var cleanedElementId = radioButton.id.replace("_option", "");
+          var stepId           = cleanedElementId.substring(0, cleanedElementId.lastIndexOf("_"));
+          var step             = getStepById(stepId);
+
+          setAnswers(step, step.answers[0]);
+        }
+
+        function setAnswersByCheckbox(checkbox) {
+
+          var cleanedElementId = checkbox.id.replace("_checkbox", "");
+          var stepId           = cleanedElementId.substring(0, cleanedElementId.lastIndexOf("_"));
+          var step             = getStepById(stepId);
+
+          setAnswers(step, step.answers);
         }
 
         function setHasToBeRepositionedToStepIfNeeded(step, data) {
@@ -871,14 +1058,31 @@
           });
         }
 
+        // If check === -1, then update the next check
         function setCheckResult(step, check, result) {
 
           if (!(step.id in $scope.checkResults)) {
             $scope.checkResults[step.id] = {};
           }
 
-          var stepMap    = $scope.checkResults[step.id];
-          stepMap[check] = result;
+          var stepMap = $scope.checkResults[step.id];
+
+          if( check == null) {
+            // A (probably not necessary) test to make sure that all checks are not yet done
+            if( Object.keys(stepMap).length < step.checks.length) {
+              // Look for the first check that is not in the done checks
+              for( var i = 0; i < step.checks.length; i++) {
+                // If the check has not yet been done
+                if( stepMap[step.checks[i]] == null) {
+                  stepMap[step.checks[i]] = result;
+                  // Skip the loop
+                  i = step.checks.length;
+                }
+              }
+            }
+          } else {
+            stepMap[check] = result;
+          }
 
           if (Object.keys(stepMap).length === step.checks.length) {
             // all results are in... update the backend
@@ -889,6 +1093,9 @@
             $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/checkresults/" + (combinedResult === 1))
                  .success(function (data, status, headers, config) {
                    $scope.data = data;
+                   if( getStepIdFromHash() === step.id && getStepById(step.id).complete) {
+                     repositionToNextUnfinishedStep();
+                   }
                  }).error(function (data, status, headers, config) {
               console.log('Error updating step ' + step.id);
             });
@@ -1230,6 +1437,13 @@
         $scope.repositionToPreviousStep = repositionToPreviousStep;
         $scope.repositionToNextUnfinishedStep = repositionToNextUnfinishedStep;
         $scope.repositionToPreviousUnfinishedStep = repositionToPreviousUnfinishedStep;
+        $scope.applyNormalAction = applyNormalAction;
+        $scope.selectNextRadioButton = selectNextRadioButton;
+        $scope.selectPreviousRadioButton = selectPreviousRadioButton;
+        $scope.setAnswersByRadioButton = setAnswersByRadioButton;
+        $scope.selectNextCheckbox = selectNextCheckbox;
+        $scope.selectPreviousCheckbox = selectPreviousCheckbox;
+        $scope.setAnswersByCheckbox = setAnswersByCheckbox;
 
         $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
       }
