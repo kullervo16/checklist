@@ -1,7 +1,7 @@
 (function () {
 
   var app = angular.module('checklist', ['ui.bootstrap', 'ngResource']);
-  
+
   app.config(['$locationProvider', function ($locationProvider) {
     $locationProvider.html5Mode({
       enabled: true,
@@ -22,53 +22,53 @@
     };
   });
 
-  app.config(['$httpProvider', function($httpProvider) {
+  app.config(['$httpProvider', function ($httpProvider) {
 
-      $httpProvider.interceptors.push(function authInterceptor($q) {
-            return {
-                request: function (config) {
-                    if (window._keycloak.token) {
-                        var deferred = $q.defer();
-                        window._keycloak.updateToken(30).success(function() {
-                            config.headers = config.headers || {};
-                            config.headers.Authorization = 'Bearer ' + window._keycloak.token;
+    $httpProvider.interceptors.push(function authInterceptor($q) {
+      return {
+        request: function (config) {
+          if (window._keycloak.token) {
+            var deferred = $q.defer();
+            window._keycloak.updateToken(30).success(function () {
+              config.headers               = config.headers || {};
+              config.headers.Authorization = 'Bearer ' + window._keycloak.token;
 
-                            deferred.resolve(config);
-                        }).error(function() {
-                            location.reload();
-                        });
-                        return deferred.promise;
-                    } else {
-                        return config;
-                    }
-                }
-            };
-        });
+              deferred.resolve(config);
+            }).error(function () {
+              location.reload();
+            });
+            return deferred.promise;
+          } else {
+            return config;
+          }
+        }
+      };
+    });
 
-        $httpProvider.interceptors.push(function errorInterceptor($rootScope, $q) {
-            return {
-                responseError: function(response) {
-                    if (!response.config.ignoreAuthModule) {
-                        switch (response.status) {
-                            case 0: // cors issue
-                            case 401:
-                                console.log("Received 401.... re-authenticate");
-                                var deferred = $q.defer();
-                                $rootScope.$broadcast('event:auth-loginRequired', response);
-                                return deferred.promise;
-                            case 403:
-                                $rootScope.$broadcast('event:auth-forbidden', response);
-                                break;
-                        }
-                    }
-                    return $q.reject(response);
-                }
-            };
-        });
-     }]);
+    $httpProvider.interceptors.push(function errorInterceptor($rootScope, $q) {
+      return {
+        responseError: function (response) {
+          if (!response.config.ignoreAuthModule) {
+            switch (response.status) {
+              case 0: // cors issue
+              case 401:
+                console.log("Received 401.... re-authenticate");
+                var deferred = $q.defer();
+                $rootScope.$broadcast('event:auth-loginRequired', response);
+                return deferred.promise;
+              case 403:
+                $rootScope.$broadcast('event:auth-forbidden', response);
+                break;
+            }
+          }
+          return $q.reject(response);
+        }
+      };
+    });
+  }]);
 
-  app.config(['$httpProvider', function($httpProvider) {
-    var token = window._keycloak.token;
+  app.config(['$httpProvider', function ($httpProvider) {
+    var token                                              = window._keycloak.token;
     $httpProvider.defaults.headers.common['Authorization'] = 'BEARER ' + token;
   }]);
 
@@ -104,7 +104,7 @@
           url = url.substring(0, endOfUrlPos);
         }
         newText += "<a href=\"" + url + "\" target=\"_blank\">" + url + "</a>";
-        text = text.substring(protocolPos + url.length);
+        text        = text.substring(protocolPos + url.length);
         protocolPos = text.indexOf(protocol);
       }
       // now set the remainer (which may be the complete string when no URLs in it :-)
@@ -117,35 +117,37 @@
   app.controller('userController', function ($scope, $http, $window) {
 
 
-        function getUserName() {
-            return $window._keycloak.idTokenParsed.name;
-        }
+    function getUserName() {
+      return $window._keycloak.idTokenParsed.name;
+    }
 
-        function getRoles() {
-            return $window._keycloak.realmAccess.roles;
-        }
+    function getRoles() {
+      return $window._keycloak.realmAccess.roles;
+    }
 
-        function isAdmin() {
-            for (var i = 0; i < $window._keycloak.realmAccess.roles.length; i++) {
-              if ($window._keycloak.realmAccess.roles[i] === 'admin') {
-                return true;
-              }
-            }
+    function isAdmin() {
+      for (var i = 0; i < $window._keycloak.realmAccess.roles.length; i++) {
+        if ($window._keycloak.realmAccess.roles[i] === 'admin') {
+          return true;
+        }
+      }
 
-            return false;
+      return false;
+    }
+
+    function canModify() {
+      for (var i = 0; i < $window._keycloak.realmAccess.roles.length; i++) {
+        if ($window._keycloak.realmAccess.roles[i] === 'modify') {
+          return true;
         }
-        function canModify() {
-            for (var i = 0; i < $window._keycloak.realmAccess.roles.length; i++) {
-              if ($window._keycloak.realmAccess.roles[i] === 'modify') {
-                return true;
-              }
-            }
-            return false;
-        }
-        $scope.isAdmin = isAdmin;
-        $scope.canModify = canModify;
-        $scope.getUserName = getUserName;
-        $scope.getRoles = getRoles;
+      }
+      return false;
+    }
+
+    $scope.isAdmin     = isAdmin;
+    $scope.canModify   = canModify;
+    $scope.getUserName = getUserName;
+    $scope.getRoles    = getRoles;
   });
 
   app.controller('templateController', function ($scope, $http, $window) {
@@ -284,7 +286,7 @@
         }
 
         function getClassForStep(step) {
-          if( step.id == getStepIdFromHash()) {
+          if (step.id == getStepIdFromHash()) {
             return "list-group selectedStep";
           } else {
             return "list-group";
@@ -340,20 +342,20 @@
           }
         }
 
-        $scope.createChecklist          = createChecklist;
-        $scope.getClassForMilestone     = getClassForMilestone;
-        $scope.uploadFile               = uploadFile;
-        $scope.setTemplateName          = setTemplateName;
-        $scope.setFile                  = setFile;
-        $scope.hideModal                = hideModal;
-        $scope.showModal                = showModal;
-        $scope.showTemplate             = showTemplate;
-        $scope.showStats                = showStats;
-        $scope.getClassForStep          = getClassForStep;
-        $scope.uploadTemplate           = uploadTemplate;
-        $scope.downloadTemplate         = downloadTemplate;
-        $scope.deleteTemplate           = deleteTemplate;
-        $scope.toggleShowSubchecklists  = toggleShowSubchecklists;
+        $scope.createChecklist         = createChecklist;
+        $scope.getClassForMilestone    = getClassForMilestone;
+        $scope.uploadFile              = uploadFile;
+        $scope.setTemplateName         = setTemplateName;
+        $scope.setFile                 = setFile;
+        $scope.hideModal               = hideModal;
+        $scope.showModal               = showModal;
+        $scope.showTemplate            = showTemplate;
+        $scope.showStats               = showStats;
+        $scope.getClassForStep         = getClassForStep;
+        $scope.uploadTemplate          = uploadTemplate;
+        $scope.downloadTemplate        = downloadTemplate;
+        $scope.deleteTemplate          = deleteTemplate;
+        $scope.toggleShowSubchecklists = toggleShowSubchecklists;
         init();
       }
   );
@@ -427,7 +429,7 @@
                      || step.state === 'EXECUTION_FAILED_NO_COMMENT') {
             stepClass = "step nok";
           }
-          if( step.id == getStepIdFromHash()) {
+          if (step.id == getStepIdFromHash()) {
             return stepClass + " selectedStep";
           } else {
             return stepClass;
@@ -527,15 +529,15 @@
 
             var step = $scope.data.steps[i];
 
-            if( step.lastUpdate != null) {
+            if (step.lastUpdate != null) {
 
-              if( lastUpdatedStep == null || step.lastUpdate >= lastUpdatedStep.lastUpdate) {
+              if (lastUpdatedStep == null || step.lastUpdate >= lastUpdatedStep.lastUpdate) {
                 lastUpdatedStep = step;
               }
             }
           }
 
-          if( lastUpdatedStep != null) {
+          if (lastUpdatedStep != null) {
             repositionTo(lastUpdatedStep.id);
           }
         }
@@ -552,8 +554,8 @@
         }
 
         function repositionIfNeeded(step) {
-          if( step.id === getLastStep().id) {
-            if( $scope.hasToBeRepositionedToStep != null) {
+          if (step.id === getLastStep().id) {
+            if ($scope.hasToBeRepositionedToStep != null) {
               repositionTo($scope.hasToBeRepositionedToStep)
               $scope.hasToBeRepositionedToStep = null;
             }
@@ -577,7 +579,7 @@
 
           var stepId = $window.location.hash;
 
-          if( "" === stepId || "#" === stepId) {
+          if ("" === stepId || "#" === stepId) {
             stepId = null;
           } else {
             stepId = stepId.slice(1);
@@ -590,7 +592,7 @@
 
           var stepId = $window.location.hash;
 
-          if( "" === stepId) {
+          if ("" === stepId) {
             stepId = null;
           } else {
             stepId = stepId.slice(1);
@@ -633,26 +635,26 @@
           var step = getStepById(getStepIdFromHash());
 
           // If no step selected
-          if( step == null) {
+          if (step == null) {
             return;
           }
 
           // If the step is an action
-          if( step.action != null) {
+          if (step.action != null) {
 
             // If the status is UNKNOWN and if the action is startable
-            if( step.state === "UNKNOWN" && step.actionExpected === true) {
+            if (step.state === "UNKNOWN" && step.actionExpected === true) {
               startAction(step);
               return;
             }
 
-            if( step.state === "IN_PROGRESS") {
-              updateAction(step,true);
+            if (step.state === "IN_PROGRESS") {
+              updateAction(step, true);
               return;
             }
 
-            if( step.state === "EXECUTED") {
-              setCheckResult(step,null,true);
+            if (step.state === "EXECUTED") {
+              setCheckResult(step, null, true);
               return;
             }
 
@@ -660,40 +662,40 @@
           }
 
           // If the step is a question
-          if( step.question != null) {
+          if (step.question != null) {
 
-            if( step.complete) {
+            if (step.complete) {
               return;
             }
 
-            if( step.answerType === "text") {
+            if (step.answerType === "text") {
               document.getElementById(step.id + "_textarea").focus();
               return;
             }
 
-            if( step.answerType === "onlyOne") {
+            if (step.answerType === "onlyOne") {
 
               var selectedOption;
               var selectedElement;
               var nbOptions = step.options.length;
 
-              for(var i = 0; i < nbOptions; i++) {
+              for (var i = 0; i < nbOptions; i++) {
 
                 var optionElementWalker = document.getElementById(step.id + "_option_" + i);
 
-                if( optionElementWalker.checked) {
-                  selectedOption = i;
+                if (optionElementWalker.checked) {
+                  selectedOption  = i;
                   selectedElement = optionElementWalker;
-                  i = nbOptions;
+                  i               = nbOptions;
                 }
               }
 
-              if( selectedOption == null) {
-                selectedElement = document.getElementById(step.id + "_option_0");
+              if (selectedOption == null) {
+                selectedElement         = document.getElementById(step.id + "_option_0");
                 selectedElement.checked = true;
               }
 
-              if( selectedElement != null) {
+              if (selectedElement != null) {
                 selectedElement.click();
                 selectedElement.focus();
               }
@@ -701,19 +703,19 @@
               return;
             }
 
-            if( step.answerType === "multiple") {
+            if (step.answerType === "multiple") {
               document.getElementById(step.id + "_checkbox_0").focus();
             }
 
             return;
           }
 
-          if( step.subChecklist != null) {
+          if (step.subChecklist != null) {
 
             // If this checklist has already been instancied
-            if( step.child == null) {
+            if (step.child == null) {
 
-              if( step.actionExpected) {
+              if (step.actionExpected) {
                 launchSubChecklist(step);
               }
             } else {
@@ -731,7 +733,7 @@
 
           optionIndex++;
 
-          if( optionIndex >= step.options.length) {
+          if (optionIndex >= step.options.length) {
             optionIndex = 0;
           }
 
@@ -749,7 +751,7 @@
 
           optionIndex--;
 
-          if( optionIndex < 0) {
+          if (optionIndex < 0) {
             optionIndex = step.options.length - 1;
           }
 
@@ -767,7 +769,7 @@
 
           optionIndex++;
 
-          if( optionIndex >= step.options.length) {
+          if (optionIndex >= step.options.length) {
             optionIndex = 0;
           }
 
@@ -784,7 +786,7 @@
 
           optionIndex--;
 
-          if( optionIndex < 0) {
+          if (optionIndex < 0) {
             optionIndex = step.options.length - 1;
           }
 
@@ -792,7 +794,7 @@
           newCheckbox.focus();
         }
 
-    // =================================================
+        // =================================================
         // Backend update operations
         // =================================================
 
@@ -809,7 +811,7 @@
 
           var firstStep = $scope.data.steps[0];
 
-          if( step == null) {
+          if (step == null) {
             return firstStep;
           }
 
@@ -819,7 +821,7 @@
 
             if (stepWalker.id === step.id) {
 
-              if( i < $scope.data.steps.length - 1) {
+              if (i < $scope.data.steps.length - 1) {
                 return $scope.data.steps[++i];
               } else {
                 return firstStep;
@@ -834,7 +836,7 @@
         function getStepBefore(step) {
 
           // If no step is provided, we return the last step
-          if( step == null) {
+          if (step == null) {
             return getLastStep();
           }
 
@@ -856,22 +858,22 @@
         }
 
         function getLastStep() {
-          return $scope.data.steps[$scope.data.steps.length-1];
+          return $scope.data.steps[$scope.data.steps.length - 1];
         }
 
         function getUnfinishedStepAfter(stepId, data) {
 
-          if( data == null) {
+          if (data == null) {
             data = $scope.data;
           }
 
           var i = getStepPosById(stepId);
 
-          if( i == null) {
+          if (i == null) {
             return getFirstUnfinishedStep();
           }
 
-          for ( i++; i < data.steps.length; i++) {
+          for (i++; i < data.steps.length; i++) {
 
             var stepWalker = data.steps[i];
 
@@ -887,11 +889,11 @@
 
           var i = getStepPos(step);
 
-          if( i == null) {
+          if (i == null) {
             i = $scope.data.steps.length;
           }
 
-          for ( i--; i >= 0; i--) {
+          for (i--; i >= 0; i--) {
 
             var stepWalker = $scope.data.steps[i];
 
@@ -905,7 +907,7 @@
 
         function getFirstUnfinishedStep(data) {
 
-          if( data == null) {
+          if (data == null) {
             data = $scope.data;
           }
 
@@ -927,11 +929,11 @@
 
         function getStepById(stepId, data) {
 
-          if( data == null) {
+          if (data == null) {
             data = $scope.data;
           }
 
-          if( stepId == null) {
+          if (stepId == null) {
             return null;
           }
 
@@ -947,30 +949,30 @@
           return null;
         }
 
-          function getStepPos(step) {
+        function getStepPos(step) {
 
-              if( step == null) {
-                return null;
-              }
+          if (step == null) {
+            return null;
+          }
 
-              return getStepPosById(step.id);
+          return getStepPosById(step.id);
+        }
+
+        function getStepPosById(stepId) {
+
+          if (stepId == null) {
+            return null;
+          }
+
+          for (var i = 0; i < $scope.data.steps.length; i++) {
+
+            if ($scope.data.steps[i].id === stepId) {
+              return i;
             }
+          }
 
-          function getStepPosById(stepId) {
-
-              if( stepId == null) {
-                return null;
-              }
-
-              for (var i = 0; i < $scope.data.steps.length; i++) {
-
-                if ($scope.data.steps[i].id === stepId) {
-                  return i;
-                }
-              }
-
-              return null;
-            }
+          return null;
+        }
 
         /**
          * Action result for a step, send to the backend and reload.
@@ -979,7 +981,7 @@
           $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/actionresults/" + result)
                .success(function (data, status, headers, config) {
                  $scope.data = data;
-                 if( getStepIdFromHash() === step.id && getStepById(step.id).complete) {
+                 if (getStepIdFromHash() === step.id && getStepById(step.id).complete) {
                    repositionToNextUnfinishedStep();
                  }
                }).error(function (data, status, headers, config) {
@@ -999,7 +1001,7 @@
         function setAnswers(step, answer) {
           $http.put('rest/checklists/' + $location.search().id + "/" + step.id + '/answers', answer)
                .success(function (data, status, headers, config) {
-                 setHasToBeRepositionedToStepIfNeeded(step,data);
+                 setHasToBeRepositionedToStepIfNeeded(step, data);
                  $scope.data = data;
                }).error(function (data, status, headers, config) {
             console.log('Error updating step ' + step.id);
@@ -1025,20 +1027,20 @@
         }
 
         function setHasToBeRepositionedToStepIfNeeded(step, data) {
-          if( getStepById(step.id,data).complete && step.id === getStepIdFromHash()) {
+          if (getStepById(step.id, data).complete && step.id === getStepIdFromHash()) {
             $scope.hasToBeRepositionedToStep = getUnfinishedStepAfter(step.id, data).id;
           }
         }
 
         function updateAnswer(step, answer, event) {
-          if( event.target.checked) {
-            if( step.answers.indexOf(answer) === -1) {
+          if (event.target.checked) {
+            if (step.answers.indexOf(answer) === -1) {
               step.answers.push(answer);
             }
           } else {
             var indexOfAnswer = step.answers.indexOf(answer);
-            if( indexOfAnswer !== -1) {
-              step.answers.splice(indexOfAnswer,1);
+            if (indexOfAnswer !== -1) {
+              step.answers.splice(indexOfAnswer, 1);
             }
           }
         }
@@ -1067,16 +1069,16 @@
 
           var stepMap = $scope.checkResults[step.id];
 
-          if( check == null) {
+          if (check == null) {
             // A (probably not necessary) test to make sure that all checks are not yet done
-            if( Object.keys(stepMap).length < step.checks.length) {
+            if (Object.keys(stepMap).length < step.checks.length) {
               // Look for the first check that is not in the done checks
-              for( var i = 0; i < step.checks.length; i++) {
+              for (var i = 0; i < step.checks.length; i++) {
                 // If the check has not yet been done
-                if( stepMap[step.checks[i]] == null) {
+                if (stepMap[step.checks[i]] == null) {
                   stepMap[step.checks[i]] = result;
                   // Skip the loop
-                  i = step.checks.length;
+                  i                       = step.checks.length;
                 }
               }
             }
@@ -1093,7 +1095,7 @@
             $http.put('rest/checklists/' + $location.search().id + "/" + step.id + "/checkresults/" + (combinedResult === 1))
                  .success(function (data, status, headers, config) {
                    $scope.data = data;
-                   if( getStepIdFromHash() === step.id && getStepById(step.id).complete) {
+                   if (getStepIdFromHash() === step.id && getStepById(step.id).complete) {
                      repositionToNextUnfinishedStep();
                    }
                  }).error(function (data, status, headers, config) {
@@ -1430,20 +1432,20 @@
         $scope.addMileStoneToSelection = addMileStoneToSelection;
         $scope.instantiateFromTemplate = instantiateFromTemplate;
 
-        $scope.toggleRefresh = toggleRefresh;
-        $scope.getStepById = getStepById;
-        $scope.repositionIfNeeded = repositionIfNeeded;
-        $scope.repositionToNextStep = repositionToNextStep;
-        $scope.repositionToPreviousStep = repositionToPreviousStep;
-        $scope.repositionToNextUnfinishedStep = repositionToNextUnfinishedStep;
+        $scope.toggleRefresh                      = toggleRefresh;
+        $scope.getStepById                        = getStepById;
+        $scope.repositionIfNeeded                 = repositionIfNeeded;
+        $scope.repositionToNextStep               = repositionToNextStep;
+        $scope.repositionToPreviousStep           = repositionToPreviousStep;
+        $scope.repositionToNextUnfinishedStep     = repositionToNextUnfinishedStep;
         $scope.repositionToPreviousUnfinishedStep = repositionToPreviousUnfinishedStep;
-        $scope.applyNormalAction = applyNormalAction;
-        $scope.selectNextRadioButton = selectNextRadioButton;
-        $scope.selectPreviousRadioButton = selectPreviousRadioButton;
-        $scope.setAnswersByRadioButton = setAnswersByRadioButton;
-        $scope.selectNextCheckbox = selectNextCheckbox;
-        $scope.selectPreviousCheckbox = selectPreviousCheckbox;
-        $scope.setAnswersByCheckbox = setAnswersByCheckbox;
+        $scope.applyNormalAction                  = applyNormalAction;
+        $scope.selectNextRadioButton              = selectNextRadioButton;
+        $scope.selectPreviousRadioButton          = selectPreviousRadioButton;
+        $scope.setAnswersByRadioButton            = setAnswersByRadioButton;
+        $scope.selectNextCheckbox                 = selectNextCheckbox;
+        $scope.selectPreviousCheckbox             = selectPreviousCheckbox;
+        $scope.setAnswersByCheckbox               = setAnswersByCheckbox;
 
         $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
       }
