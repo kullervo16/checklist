@@ -61,7 +61,8 @@ steps :
       action: stepc3 - Action depending on stepc.option1 and stepc2
       conditions:
           - stepId: stepc
-            expectedAnswers: option1
+            expectedAnswers:
+              - option1
           - stepId: stepc2
     - id: step1
       responsible: resp1
@@ -112,6 +113,7 @@ steps :
     - id: subchecklist
       responsible: development
       subchecklist: /stvar/verifyDeployment
-      condition:
-          - selectionPoint: step1
-          - option: option2
+      conditions:
+          - stepId: step1
+            expectedAnswers:
+              - option2

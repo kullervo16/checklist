@@ -303,7 +303,7 @@ public class Step {
                 for (final Map<String, Object> conditionsFromMapWalker : conditionsFromMap) {
 
                     final String stepId = (String) conditionsFromMapWalker.get("stepId");
-                    final Object expectedfAnswersObject = conditionsFromMapWalker.get("expectedfAnswers");
+                    final Object expectedfAnswersObject = conditionsFromMapWalker.get("expectedAnswers");
                     Step conditionStep = null;
                     List<String> expectedfAnswers = null;
 
@@ -328,7 +328,7 @@ public class Step {
                     if (expectedfAnswersObject != null) {
 
                         // We accept a single string and a string list for conveniency
-                        if (expectedfAnswers instanceof List) {
+                        if (expectedfAnswersObject instanceof List) {
                             expectedfAnswers = (List<String>) expectedfAnswersObject;
                         } else {
                             expectedfAnswers = singletonList((String) expectedfAnswersObject);

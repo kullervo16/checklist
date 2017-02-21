@@ -1104,13 +1104,27 @@
           }
         }
 
+        function canModify() {
+          for (var i = 0; i < $window._keycloak.realmAccess.roles.length; i++) {
+            if ($window._keycloak.realmAccess.roles[i] === 'modify') {
+              return true;
+            }
+          }
+          return false;
+        }
+
         function launchSubChecklist(step) {
-          $http.post('rest/checklists' + step.subChecklist + '?parent=' + $location.search().id + '&step=' + step.id)
-               .success(function (data, status, headers, config) {
-                 $window.location.href = './checklist.html?id=' + data;
-               }).error(function (data, status, headers, config) {
-            console.log('Error creating new checklist');
-          });
+
+          if (canModify() && step.actionExpected) {
+
+            $http.post('rest/checklists' + step.subChecklist + '?parent=' + $location.search().id + '&step=' + step.id)
+                 .success(function (data, status, headers, config) {
+                   $window.location.href = './checklist.html?id=' + data;
+                 })
+                 .error(function (data, status, headers, config) {
+                   console.log('Error creating new checklist');
+                 });
+          }
         }
 
         function revalidate(step) {
