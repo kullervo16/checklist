@@ -185,7 +185,7 @@
       if (event.keyCode === 80) {
 
         if( scope.data.parent != null) {
-          scope.gotoChecklist(scope.data.parent);
+          scope.gotoChecklist(scope.data.parent,scope.data.parentStepId);
           event.preventDefault();
           return;
         }
@@ -240,7 +240,7 @@
           <button id="closeClButton" type="button" class="btn btn-default" title="Close" ng-click="closeChecklist()" ng-if="data.progress < 100 && canModify()">
             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
           </button>
-          <button id="gotoParentClButton" type="button" class="btn btn-default" title="Go to parent" ng-if="data.parent" ng-click="gotoChecklist(data.parent)">
+          <button id="gotoParentClButton" type="button" class="btn btn-default" title="Go to parent" ng-if="data.parent" ng-click="gotoChecklist(data.parent,data.parentStepId)">
             <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
           </button>
         </p>
@@ -373,7 +373,7 @@
         </div>
       </div>
       <div ng-show="showGoBackToParent()">
-        <h2>Your subtemplate is now complete. Click <a ng-click="gotoChecklist(data.parent)">here</a> to go back to the parent and continue.</h2>
+        <h2>Your subtemplate is now complete. Click <a ng-click="gotoChecklist(data.parent,data.parentStepId)">here</a> to go back to the parent and continue.</h2>
       </div>
     </div>
     <div id="tagModal" class="modal fade" role="dialog">

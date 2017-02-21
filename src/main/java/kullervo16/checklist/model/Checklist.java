@@ -31,6 +31,8 @@ public class Checklist extends Template {
 
     private String parent;
 
+    private String parentStepId;
+
     private String template;
 
     private boolean uniqueTagcombination;
@@ -47,7 +49,7 @@ public class Checklist extends Template {
     }
 
 
-    public Checklist(final String uuid, final Template template, final File file, final Checklist parent) {
+    public Checklist(final String uuid, final Template template, final File file, final Checklist parent, final String parentStepId) {
 
         this(file);
 
@@ -95,6 +97,7 @@ public class Checklist extends Template {
 
             hasSpecificTags = true;
             this.parent = parent.getId();
+            this.parentStepId = parentStepId;
 
         } else {
             hasSpecificTags = false;
@@ -231,6 +234,16 @@ public class Checklist extends Template {
 
     public void setParent(final String parent) {
         this.parent = parent;
+    }
+
+
+    public String getParentStepId() {
+        return parentStepId;
+    }
+
+
+    public void setParentStepId(String parentStepId) {
+        this.parentStepId = parentStepId;
     }
 
 

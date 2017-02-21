@@ -87,8 +87,8 @@ public enum ChecklistRepository {
     }
 
 
-    public String createFromTemplate(final String folder, final String templateName, final Template template, final String parent, final String userName) {
-        return createFromTemplate('/' + folder + '/' + templateName, template, parent, userName);
+    public String createFromTemplate(final String folder, final String templateName, final Template template, final String parent, final String parentStepId, final String userName) {
+        return createFromTemplate('/' + folder + '/' + templateName, template, parent, parentStepId, userName);
     }
 
 
@@ -100,7 +100,7 @@ public enum ChecklistRepository {
      * @param parent
      * @return a UUID
      */
-    public String createFromTemplate(final String templateId, final Template template, final String parent, final String userName) {
+    public String createFromTemplate(final String templateId, final Template template, final String parent, final String parentStepId, final String userName) {
 
         Checklist parentCL = null;
 
@@ -121,7 +121,7 @@ public enum ChecklistRepository {
             // TODO: delete result ignored
             subfolder.mkdirs();
 
-            final Checklist checklist = new Checklist(uuid, template, new File(subfolder, uuid), parentCL);
+            final Checklist checklist = new Checklist(uuid, template, new File(subfolder, uuid), parentCL, parentStepId);
 
             checklist.setCreationTime(System.currentTimeMillis());
             checklist.setUser(userName);

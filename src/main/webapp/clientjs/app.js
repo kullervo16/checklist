@@ -498,8 +498,8 @@
           return step.answerType === 'text' && step.state === 'UNKNOWN';
         }
 
-        function gotoChecklist(cl) {
-          $window.location = 'checklist.html?id=' + cl;
+        function gotoChecklist(cl,stepId) {
+          $window.location = 'checklist.html?id=' + cl + (stepId == null ? "" : "#" + stepId);
         }
 
         function gotoTemplate(templateId) {
