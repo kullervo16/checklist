@@ -28,17 +28,20 @@ import org.keycloak.KeycloakSecurityContext;
 @RequestScoped
 public class UserInfoService {
 
-   
-    
+    public static final String USER_ID_PROPERTY_NAME = "userName";
+
+    public static final String USER_NAME_PROPERTY_NAME = "name";
+
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Map getUserInfo(@Context SecurityContext context) {
         Map result = new HashMap();
         if(context == null || context.getUserPrincipal() == null) {
-            result.put("userName", "unknown");        
-            result.put("name", "unknown");
+            result.put(USER_ID_PROPERTY_NAME, "unknown");
+            result.put(USER_NAME_PROPERTY_NAME, "unknown");
             result.put("roles", new LinkedList());
-            
+
         } else {
             if(context.getUserPrincipal() instanceof KeycloakPrincipal) {
                 KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>)  context.getUserPrincipal();
@@ -46,17 +49,17 @@ public class UserInfoService {
                   // this is how to get the real userName (or rather the login name)
                   if(kp.getKeycloakSecurityContext().getIdToken() != null) {
                       // webapp style login
-                      result.put("userName",kp.getKeycloakSecurityContext().getIdToken().getPreferredUsername());
-                      result.put("name", kp.getKeycloakSecurityContext().getIdToken().getName());
+                      result.put(USER_ID_PROPERTY_NAME,kp.getKeycloakSecurityContext().getIdToken().getPreferredUsername());
+                      result.put(USER_NAME_PROPERTY_NAME, kp.getKeycloakSecurityContext().getIdToken().getName());
                   } else {
                       // oAuth2 style
-                      result.put("userName",kp.getKeycloakSecurityContext().getToken().getPreferredUsername());
-                      result.put("name", kp.getKeycloakSecurityContext().getToken().getName());
+                      result.put(USER_ID_PROPERTY_NAME,kp.getKeycloakSecurityContext().getToken().getPreferredUsername());
+                      result.put(USER_NAME_PROPERTY_NAME, kp.getKeycloakSecurityContext().getToken().getName());
                   }
                   result.put("roles", kp.getKeycloakSecurityContext().getToken().getRealmAccess().getRoles());
             } else {
-                result.put("userName",context.getUserPrincipal().getName());
-                result.put("name", "unknown"); 
+                result.put(USER_ID_PROPERTY_NAME,context.getUserPrincipal().getName());
+                result.put(USER_NAME_PROPERTY_NAME, "unknown");
                 List<String> roles = new LinkedList<>();
                 roles.add("admin");
                 roles.add("modify");
@@ -64,11 +67,19 @@ public class UserInfoService {
                 result.put("roles", roles); // no generic way to get the roles based on this information... so add them all for the GUI to show, the backend will refuse when needed 
             }
         }
-        
+
         return result;
     }
-    
-    public String getUserName(SecurityContext context) {
-        return (String) this.getUserInfo(context).get("name");
+
+    public String getUserName(final SecurityContext context) {
+        return getUserName(this.getUserInfo(context));
+    }
+
+    public String getUserName(final Map<String,String> userProperties) {
+        return (String) userProperties.get(USER_NAME_PROPERTY_NAME);
+    }
+
+    public String getUserId(final Map<String,String> userProperties) {
+        return (String) userProperties.get(USER_ID_PROPERTY_NAME);
     }
 }

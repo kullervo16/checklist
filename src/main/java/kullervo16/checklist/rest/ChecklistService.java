@@ -6,13 +6,12 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonReader;
-import javax.json.JsonValue;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -70,7 +69,9 @@ public class ChecklistService {
     @Path("/{folder}/{name}")
     @Produces(MediaType.TEXT_PLAIN)
     @RolesAllowed("modify")
-    public String createChecklist(@PathParam("folder") final String folder, @PathParam("name") final String name, @QueryParam("parent") final String parentName, @QueryParam("step") final String stepName, @Context SecurityContext context) throws URISyntaxException {
+    public String createChecklist(@PathParam("folder") final String folder, @PathParam("name") final String name, @QueryParam("parent") final String parentName,
+                                  @QueryParam("step") final String stepName, @Context SecurityContext context)
+            throws URISyntaxException {
 
         final Template template = templateRepository.getTemplate(folder, name);
 
@@ -78,7 +79,10 @@ public class ChecklistService {
             throw new IllegalArgumentException("Unknown template " + folder + '/' + name);
         }
 
-        final String childUUID = checklistRepository.createFromTemplate(folder, name, template, parentName, stepName, userInfo.getUserName(context));
+        final Map userInfo = this.userInfo.getUserInfo(context);
+        final String userName = this.userInfo.getUserName(userInfo);
+        final String userId = this.userInfo.getUserId(userInfo);
+        final String childUUID = checklistRepository.createFromTemplate(folder, name, template, parentName, stepName, userName, userId);
 
         if (parentName != null) {
 
@@ -89,7 +93,7 @@ public class ChecklistService {
             for (final Step step : parent.getSteps()) {
 
                 if (step.getId().equals(stepName)) {
-                    parent.updateStepState(step, State.IN_PROGRESS, userInfo.getUserName(context));
+                    parent.updateStepState(step, State.IN_PROGRESS, userName, userId);
                     step.setChild(childUUID);
                 }
             }
@@ -149,7 +153,9 @@ public class ChecklistService {
             return Response.status(Response.Status.GONE).build();
         }
 
-        checklistRepository.deleteChecklist(cl, userInfo.getUserName(context));
+        final Map userInfo = this.userInfo.getUserInfo(context);
+
+        checklistRepository.deleteChecklist(cl, this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
 
         return Response.ok().build();
     }
@@ -158,11 +164,12 @@ public class ChecklistService {
     @POST
     @Path("/{id}/actions/close")
     @RolesAllowed("modify")
-    public Response closeCL(@PathParam("id") final String id, @Context SecurityContext context) {
+    public Response closeCL(@PathParam("id") final String id, @Context final SecurityContext context) {
 
         final Checklist cl = checklistRepository.getChecklist(id);
+        final Map userInfo = this.userInfo.getUserInfo(context);
 
-        cl.close(userInfo.getUserName(context));
+        cl.close(this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(id), null);
 
         return Response.ok().build();
@@ -177,9 +184,11 @@ public class ChecklistService {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
+        final Map userInfo = this.userInfo.getUserInfo(context);
 
         cl.updateStepState(step, result ? step.getChecks().isEmpty() ? OK : EXECUTED
-                                        : EXECUTION_FAILED_NO_COMMENT, userInfo.getUserName(context));
+                                        : EXECUTION_FAILED_NO_COMMENT,
+                           this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
 
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
@@ -198,7 +207,10 @@ public class ChecklistService {
 
         // revalidate only allowed when in check failed... otherwise we ignore the request
         if (CHECK_FAILED.equals(step.getState())) {
-            cl.updateStepState(step, EXECUTED, userInfo.getUserName(context));
+
+            final Map userInfo = this.userInfo.getUserInfo(context);
+
+            cl.updateStepState(step, EXECUTED, this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
             ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         }
 
@@ -214,8 +226,9 @@ public class ChecklistService {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
+        final Map userInfo = this.userInfo.getUserInfo(context);
 
-        cl.updateStepState(step, UNKNOWN, userInfo.getUserName(context));
+        cl.updateStepState(step, UNKNOWN, this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
         step.setErrors(new LinkedList<>());
 
         // Remove the milestone if any
@@ -244,7 +257,10 @@ public class ChecklistService {
 
         // If the step can be marker as IN_PROGRESS
         if (step.getAction() != null && step.getState() == UNKNOWN) {
-            cl.updateStepState(step, IN_PROGRESS, userInfo.getUserName(context));
+
+            final Map userInfo = this.userInfo.getUserInfo(context);
+
+            cl.updateStepState(step, IN_PROGRESS, this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
         }
 
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
@@ -260,8 +276,9 @@ public class ChecklistService {
     public Checklist setCheckResult(@PathParam("id") final String checklistId, @PathParam("step") final String stepId, @PathParam("result") final boolean result, @Context SecurityContext context) {
 
         final Checklist cl = getChecklist(checklistId);
+        final Map userInfo = this.userInfo.getUserInfo(context);
 
-        cl.updateStepState(getStep(cl, stepId), result ? OK : CHECK_FAILED_NO_COMMENT, userInfo.getUserName(context));
+        cl.updateStepState(getStep(cl, stepId), result ? OK : CHECK_FAILED_NO_COMMENT, this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
         return cl;
@@ -276,15 +293,16 @@ public class ChecklistService {
 
         final Checklist cl = getChecklist(checklistId);
         final Step step = getStep(cl, stepId);
+        final Map userInfo = this.userInfo.getUserInfo(context);
 
         switch (step.getState()) {
 
             case EXECUTION_FAILED_NO_COMMENT:
-                cl.updateStepState(step, EXECUTION_FAILED, userInfo.getUserName(context));
+                cl.updateStepState(step, EXECUTION_FAILED, this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
                 break;
 
             case CHECK_FAILED_NO_COMMENT:
-                cl.updateStepState(step, CHECK_FAILED, userInfo.getUserName(context));
+                cl.updateStepState(step, CHECK_FAILED, this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
                 break;
 
             default:
@@ -314,6 +332,7 @@ public class ChecklistService {
         if (step.getQuestion() != null) {
 
             final List<String> answers = step.getAnswers();
+            final Map userInfo = this.userInfo.getUserInfo(context);
 
             answers.clear();
 
@@ -332,7 +351,7 @@ public class ChecklistService {
                 answers.add(answer);
             }
 
-            cl.updateStepState(step, step.getChecks().isEmpty() ? OK : EXECUTED, userInfo.getUserName(context));
+            cl.updateStepState(step, step.getChecks().isEmpty() ? OK : EXECUTED, this.userInfo.getUserName(userInfo), this.userInfo.getUserId(userInfo));
             ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
         }
 

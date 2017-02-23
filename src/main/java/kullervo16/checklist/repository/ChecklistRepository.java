@@ -87,8 +87,9 @@ public enum ChecklistRepository {
     }
 
 
-    public String createFromTemplate(final String folder, final String templateName, final Template template, final String parent, final String parentStepId, final String userName) {
-        return createFromTemplate('/' + folder + '/' + templateName, template, parent, parentStepId, userName);
+    public String createFromTemplate(final String folder, final String templateName, final Template template, final String parent, final String parentStepId,
+                                     final String userName, final String userId) {
+        return createFromTemplate('/' + folder + '/' + templateName, template, parent, parentStepId, userName, userId);
     }
 
 
@@ -100,7 +101,8 @@ public enum ChecklistRepository {
      * @param parent
      * @return a UUID
      */
-    public String createFromTemplate(final String templateId, final Template template, final String parent, final String parentStepId, final String userName) {
+    public String createFromTemplate(final String templateId, final Template template, final String parent, final String parentStepId, final String userName,
+                                     final String userId) {
 
         Checklist parentCL = null;
 
@@ -125,6 +127,7 @@ public enum ChecklistRepository {
 
             checklist.setCreationTime(System.currentTimeMillis());
             checklist.setUser(userName);
+            checklist.addUserTag(userId);
             checklist.setUniqueTagcombination(isTagCombinationUnique(checklist.getTags(), null));
             data.put(uuid, checklist);
         }
@@ -375,7 +378,7 @@ public enum ChecklistRepository {
      *
      * @param cl The checklist to delete.
      */
-    public void deleteChecklist(final Checklist cl, final String userName) {
+    public void deleteChecklist(final Checklist cl, final String userName, final String userId) {
 
         if (cl == null) {
             return;
@@ -396,7 +399,7 @@ public enum ChecklistRepository {
                 // Set the parent to null to avoid the deleteChecklist call to update this checklist
                 childCl.setParent(null);
 
-                deleteChecklist(childCl, userName);
+                deleteChecklist(childCl, userName, userId);
             }
         }
 
@@ -412,7 +415,7 @@ public enum ChecklistRepository {
 
                     if (clId.equals(stepWalker.getChild())) {
                         stepWalker.setChild(null);
-                        parentCl.updateStepState(stepWalker, State.UNKNOWN, userName);
+                        parentCl.updateStepState(stepWalker, State.UNKNOWN, userName, userId);
                         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(parentClId), null);
                         break;
                     }
