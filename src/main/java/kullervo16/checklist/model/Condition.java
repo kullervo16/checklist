@@ -5,7 +5,10 @@
  */
 package kullervo16.checklist.model;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author jef
@@ -16,48 +19,55 @@ public class Condition {
 
     private final List<String> expectedAnswers;
 
+    private final Set<State> expectedStates;
 
-    public Condition(final Step step, final List<String> expectedAnswers) {
+
+    public Condition(final Step step, final List<String> expectedAnswers, final Set<State> expectedStates) {
         this.step = step;
         this.expectedAnswers = expectedAnswers == null || expectedAnswers.isEmpty() ? null : expectedAnswers;
+        this.expectedStates = expectedStates == null || expectedStates.isEmpty() ? null : expectedStates;
     }
 
 
     public boolean isConditionReachable() {
 
-        // If the step state is NOT_APPLICABLE and there is no answer to match, we consider the condition is reachable
-        if (this.step.getState() == State.NOT_APPLICABLE && this.expectedAnswers == null) {
-            return true;
-        }
+        // If there is at least one expected answers defined in the condition and if the step is OK
+        if (this.expectedAnswers != null && this.step.getState() == State.OK) {
 
-        // If the step state is not OK, we consider the step is not reachable
-        if (this.step.getState() != State.OK) {
-            return false;
-        }
+            final List<String> stepAnswers = this.step.getAnswers();
 
-        // If there is no answers defined in the condition, we consider the condition is reachable
-        if (this.expectedAnswers == null) {
-            return true;
-        }
+            // If there is at least one answer defined by the user
+            if (stepAnswers != null) {
 
-        // If there is no answers defined by the user, we consider the step is not reachable
-        if (this.step.getAnswers() == null) {
-            return false;
-        }
+                for (final String expectedAnswerWalker : this.expectedAnswers) {
 
-        // Indicate if at least one the expected answers is in the answers list
-        boolean reachable = false;
+                    // If the expected answer is in the answers list
+                    if (stepAnswers.contains(expectedAnswerWalker)) {
 
-        for (final String expectedAnswerWalker : this.expectedAnswers) {
-
-            // If the expected answer is in the answers list
-            if (this.step.getAnswers().contains(expectedAnswerWalker)) {
-                reachable = true;
-                break;
+                        return true;
+                    }
+                }
             }
         }
 
-        return reachable;
+        // If there is at least one expected state in the condition
+        if (expectedStates != null) {
+
+            final State stepState = step.getState();
+
+            for (final State expectedStateWalker : expectedStates) {
+
+                if (stepState == expectedStateWalker) {
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // We will reach this line only if no expectedAnswer and no expectedState is defined (should not happen if the condition is correctly written)
+        return this.expectedAnswers == null;
     }
 
 
@@ -68,5 +78,10 @@ public class Condition {
 
     public List<String> getExpectedAnswers() {
         return expectedAnswers;
+    }
+
+
+    public Set<State> getExpectedStates() {
+        return expectedStates;
     }
 }

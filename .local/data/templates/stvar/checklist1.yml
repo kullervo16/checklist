@@ -110,6 +110,33 @@ steps :
       condition:
           - selectionPoint: step1
       documentation: http://www.google.be
+    - id: step6
+      responsible: resp1
+      action: step6 - Action depending on step5 not applicable
+      check: check1
+      milestone: milestone5
+      conditions:
+          - stepId: step1
+            expectedStates: NOT_APPLICABLE
+      documentation: http://www.google.be
+    - id: step7
+      responsible: resp1
+      action: step7 - Action depending on step6 error
+      check: check1
+      milestone: milestone5
+      conditions:
+          - stepId: step6
+            expectedStates: ERROR
+      documentation: http://www.google.be
+    - id: step8
+      responsible: resp1
+      action: step8 - Action depending on step6 completion
+      check: check1
+      milestone: milestone5
+      conditions:
+          - stepId: step6
+            expectedStates: COMPLETE
+      documentation: http://www.google.be
     - id: subchecklist
       responsible: development
       subchecklist: /stvar/verifyDeployment

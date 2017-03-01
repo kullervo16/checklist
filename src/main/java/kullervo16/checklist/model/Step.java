@@ -2,16 +2,20 @@ package kullervo16.checklist.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import static java.util.Collections.singletonList;
 import static kullervo16.checklist.model.State.NOT_APPLICABLE;
 import static kullervo16.checklist.model.State.NOT_YET_APPLICABLE;
+import static kullervo16.checklist.model.State.OK;
 import static kullervo16.checklist.model.State.UNKNOWN;
 import static kullervo16.checklist.utils.CollectionUtils.isCollectionNullOrEmpty;
 import static kullervo16.checklist.utils.StringUtils.isStringNullOrEmptyOrBlank;
@@ -22,6 +26,10 @@ import static kullervo16.checklist.utils.StringUtils.isStringNullOrEmptyOrBlank;
  * @author jeve
  */
 public class Step {
+
+    private static final Set<State> DEFAULT_EXTECTED_STATES = new HashSet<>(singletonList(OK));
+
+    private static final Logger logger = Logger.getLogger(Step.class.getName());
 
     protected String id;
 
@@ -119,7 +127,7 @@ public class Step {
                     }
 
                     state = NOT_YET_APPLICABLE;
-                    conditions.add(new Condition(selectionPoint, conditionWalker.getExpectedAnswers()));
+                    conditions.add(new Condition(selectionPoint, conditionWalker.getExpectedAnswers(), conditionWalker.getExpectedStates()));
                 }
             }
         }
@@ -278,8 +286,10 @@ public class Step {
 
             this.conditions = new ArrayList<>(nbConditions);
 
+            // This code is kept for backward compatibility.
             if (conditionFromMap != null) {
 
+                logger.warning("The 'condition' property in the step '" + id + "' should be converted to 'conditions'.");
                 Step selectionPoint = null;
 
                 for (final Step stepWalker : stepList) {
@@ -295,7 +305,9 @@ public class Step {
 
                 this.conditions.add(new Condition(selectionPoint,
                                                   conditionFromMap.size() == 1 ? null
-                                                                               : singletonList((String) conditionFromMap.get(1).get("option"))));
+                                                                               : singletonList((String) conditionFromMap.get(1).get("option")),
+                                                  conditionFromMap.size() == 1 ? DEFAULT_EXTECTED_STATES
+                                                                               : null));
             }
 
             if (conditionsFromMap != null) {
@@ -304,8 +316,11 @@ public class Step {
 
                     final String stepId = (String) conditionsFromMapWalker.get("stepId");
                     final Object expectedfAnswersObject = conditionsFromMapWalker.get("expectedAnswers");
+                    final Object expectedfStatesObject = conditionsFromMapWalker.get("expectedStates");
                     Step conditionStep = null;
                     List<String> expectedfAnswers = null;
+                    List<String> expectedfStatesStrings = null;
+                    Set<State> expectedfStates = null;
 
                     // If there is no stepId defined in the condition: bad format
                     if (stepId == null) {
@@ -325,6 +340,7 @@ public class Step {
                         throw new IllegalStateException("Unable to meet condition for step " + id);
                     }
 
+                    // If at least one expected answer is defined
                     if (expectedfAnswersObject != null) {
 
                         // We accept a single string and a string list for conveniency
@@ -335,7 +351,51 @@ public class Step {
                         }
                     }
 
-                    this.conditions.add(new Condition(conditionStep, expectedfAnswers));
+                    // If no expected state is defined
+                    if (expectedfStatesObject == null) {
+
+                        // If no expected answer is defined, use the default expected states set
+                        if (expectedfAnswers == null) {
+
+                            expectedfStates = DEFAULT_EXTECTED_STATES;
+                        }
+
+                    } else {
+
+                        // We accept a single string and a string list for conveniency
+                        if (expectedfStatesObject instanceof List) {
+                            expectedfStatesStrings = (List<String>) expectedfStatesObject;
+                        } else {
+                            expectedfStatesStrings = singletonList((String) expectedfStatesObject);
+                        }
+
+                        expectedfStates = new HashSet<>();
+
+                        for (final String expectedfStateString : expectedfStatesStrings) {
+
+                            switch (expectedfStateString) {
+
+                                case "ERROR":
+                                    expectedfStates.addAll(State.getCompleteWithErrors());
+                                    break;
+
+                                case "COMPLETE":
+                                    expectedfStates.addAll(State.getComplete());
+                                    break;
+
+                                default:
+                                    try {
+                                        expectedfStates.add(State.valueOf(expectedfStateString));
+                                    } catch (final IllegalArgumentException e) {
+                                        throw new IllegalStateException("State or group of state '" + expectedfStateString + "' is not supported !");
+                                    }
+                            }
+                        }
+
+                        expectedfStates = new HashSet<>(expectedfStates);
+                    }
+
+                    this.conditions.add(new Condition(conditionStep, expectedfAnswers, expectedfStates));
                 }
             }
         }

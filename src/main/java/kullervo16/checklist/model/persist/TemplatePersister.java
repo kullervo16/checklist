@@ -507,6 +507,15 @@ public class TemplatePersister {
                             writer.append(SEPARATOR_1).append(SEPARATOR_1).append(SEPARATOR_2).append(expectedAnswer).append('\n');
                         }
                     }
+
+                    if (condition.getExpectedStates() != null) {
+
+                        writer.append(SEPARATOR_1).append(SEPARATOR_1).append("expectedStates:\n");
+
+                        for (final State expectedState : condition.getExpectedStates()) {
+                            writer.append(SEPARATOR_1).append(SEPARATOR_1).append(SEPARATOR_2).append(expectedState.toString()).append('\n');
+                        }
+                    }
                 }
             }
         }

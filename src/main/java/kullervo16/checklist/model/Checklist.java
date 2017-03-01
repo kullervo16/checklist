@@ -300,8 +300,8 @@ public class Checklist extends Template {
             }
         }
 
-        // If the state completion has changed or if the step has been opened/unopened
-        if (previousState == null || previousState.isComplete() != state.isComplete() || previousState.isOpen() != state.isOpen()) {
+        // If the state has changed
+        if (previousState == null || previousState != state) {
 
             updateDependentStepsState(step);
             updateStepReopenable(step);
@@ -365,8 +365,10 @@ public class Checklist extends Template {
      */
     private void updateDependentStepsState(final Step step) {
 
+        final int stepsSize = steps.size();
+
         // Start form the end of the list
-        for (int stepPos = this.steps.size() - 1; stepPos >= 0; stepPos--) {
+        for (int stepPos = getStepPos(step) + 1; stepPos < stepsSize; stepPos++) {
 
             final Step stepWalker = this.steps.get(stepPos);
 
@@ -384,6 +386,24 @@ public class Checklist extends Template {
                 }
             }
         }
+    }
+
+
+    private int getStepPos(final Step step) {
+
+        int stepPos = 0;
+
+        for (final Step stepWalker : steps) {
+
+            if (stepWalker.getId().equals(step.getId())) {
+
+                return stepPos;
+            }
+
+            stepPos++;
+        }
+
+        return -1;
     }
 
 
