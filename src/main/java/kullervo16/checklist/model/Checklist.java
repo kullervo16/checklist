@@ -90,7 +90,12 @@ public class Checklist extends Template {
 
                 // Do not add existing tags
                 // Do not add the tag generated tags based on the template ID to keep tags set unique
-                if (!tags.contains(parentTag) && !parentTag.equals(parentTtemplateIdTags[0]) && !parentTag.equals(parentTtemplateIdTags[1])) {
+                // Do not add @user tags
+                if (!tags.contains(parentTag)
+                    && !parentTag.equals(parentTtemplateIdTags[0])
+                    && !parentTag.equals(parentTtemplateIdTags[1])
+                    && !(parentTag.length() > 0 && parentTag.charAt(0) == '@')) {
+
                     tags.add(parentTag);
                 }
             }
