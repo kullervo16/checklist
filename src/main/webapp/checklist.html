@@ -192,6 +192,13 @@
 
         return;
       }
+
+      // R or BACKSPACE
+      if (event.keyCode === 82 || event.keyCode === 8) {
+        scope.$apply(scope.reopen(scope.getStepById(scope.getStepIdFromHash())));
+        event.preventDefault();
+        return;
+      }
     }
   </script>
 </head>

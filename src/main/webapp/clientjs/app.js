@@ -1138,13 +1138,15 @@
         }
 
         function reopen(step) {
-          $scope.checkResults[step.id] = {};
-          $http.put('rest/checklists/' + $location.search().id + "/" + step.id + '/reopen')
-               .success(function (data, status, headers, config) {
-                 $scope.data = data;
-               }).error(function (data, status, headers, config) {
-            console.log('Error updating step ' + step.id);
-          });
+          if( step != null && step.reopenable) {
+            $scope.checkResults[step.id] = {};
+            $http.put('rest/checklists/' + $location.search().id + "/" + step.id + '/reopen')
+                 .success(function (data, status, headers, config) {
+                   $scope.data = data;
+                 }).error(function (data, status, headers, config) {
+              console.log('Error updating step ' + step.id);
+            });
+          }
         }
 
         function deleteChecklist() {
@@ -1460,6 +1462,7 @@
         $scope.selectNextCheckbox                 = selectNextCheckbox;
         $scope.selectPreviousCheckbox             = selectPreviousCheckbox;
         $scope.setAnswersByCheckbox               = setAnswersByCheckbox;
+        $scope.getStepIdFromHash                  = getStepIdFromHash;
 
         $scope.arrayToComaSeparatedString = arrayToComaSeparatedString;
       }

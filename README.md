@@ -300,6 +300,10 @@ On the checklist page, you can use the keyboard to do some actions:
     -   On a not started sub-checklist step :
 
         -   `ENTER` : go to the sub-checklist
+    
+    -   On a reonable step :
+    
+        -   `R` or `BACKSPACE`: reopen the step
 
 ## REST interface
 
