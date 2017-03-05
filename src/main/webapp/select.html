@@ -57,11 +57,11 @@
     <h3>Current selection : {{tagSelection}}
         &nbsp;&nbsp;&nbsp;
         
-      <button type="button" class="btn btn-default" title="Go to selection" ng-if="tagSelection !== ''" ng-click="openOverview()">
+      <button type="button" class="btn btn-default" id="tags_goto" title="Go to selection" ng-if="tagSelection !== ''" ng-click="openOverview()">
         <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
       </button>
         &nbsp;&nbsp;&nbsp;
-      <button type="button" class="btn btn-default" title="Clear selection" ng-if="tagSelection !== ''" ng-click="clearTagSelection()">
+      <button type="button" class="btn btn-default" id="tags_clear" title="Clear selection" ng-if="tagSelection !== ''" ng-click="clearTagSelection()">
         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
       </button>
     </h3>
@@ -70,11 +70,11 @@
     <h2>Milestones : </h2>
     <h3>Current selection : {{milestoneSelection}}
         &nbsp;&nbsp;&nbsp;
-      <button type="button" class="btn btn-default" title="Go to selection" ng-if="milestoneSelection !== ''" ng-click="openOverview()">
+      <button type="button" class="btn btn-default" id="milestone_goto" title="Go to selection" ng-if="milestoneSelection !== ''" ng-click="openOverview()">
         <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
       </button>
         &nbsp;&nbsp;&nbsp;
-      <button type="button" class="btn btn-default" title="Clear selection" ng-if="milestoneSelection !== ''" ng-click="clearMilestoneSelection()">
+      <button type="button" class="btn btn-default" id="milestone_clear" title="Clear selection" ng-if="milestoneSelection !== ''" ng-click="clearMilestoneSelection()">
         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
       </button>
     </h3>
