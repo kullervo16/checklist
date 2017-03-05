@@ -1,0 +1,102 @@
+displayName: "Openshift V2 first deployment"
+description: "Checklist to monitor a first deployment of an application for Openshift V2"
+tags: 
+    - "deployment"
+    - "openshift"
+    - "undefined"
+    - "ewrer"
+    - "1.0.7"
+user: ""
+template: /deployment/firstDeployment
+specificTagSet: true
+uniqueTagcombination: true
+steps:
+  - id: "existingDomain"
+    responsible: "middleware"
+    action: "Does the business domain of the application already exist in Openshift?"
+    state: "OK"
+    weight: "1"
+    selectedOption: "yes"
+    lastUpdate: "1475000850564"
+    options:
+      - yes
+      - no
+  - id: "createDomain"
+    responsible: "middleware"
+    action: "create an openshift domain for the application."
+    state: "UNKNOWN"
+    weight: "1"
+    check: 
+      - step: domain is created in acc
+      - step: domain is created in prd
+  - id: "createConfigurationGit"
+    responsible: "toolingDep"
+    action: "create the configuration GIT for this specific application (in acc and prd)"
+    state: "UNKNOWN"
+    weight: "1"
+    check: "git clone <repo> returns a (n empty) repo."
+  - id: "createApplication"
+    responsible: "middleware"
+    action: "create the application in the domain. Make sure to enable scaling."
+    state: "UNKNOWN"
+    weight: "1"
+    check: 
+      - step: application is visible in the webconsole
+      - step: scaling is active, current setting is 1
+  - id: "odtCheckout"
+    responsible: "middleware"
+    action: "odt checkout <domain> <application>. Accept the RSA key fingerprint."
+    state: "UNKNOWN"
+    weight: "1"
+    check: 
+      - step: cd <application> -> folder exists
+      - step: ls -la -> should show a .git and a .openshift folder
+  - id: "odtInit"
+    responsible: "middleware"
+    action: "odt init"
+    state: "UNKNOWN"
+    weight: "1"
+    check: 
+      - step: in output -> MVN OK
+      - step: ls -l -> no more pom.xml and no more src folder
+      - step: rhc app-show <application> -n <domain>  --gears -> 2 gears, both with haproxy-1.4 in the gear list
+  - id: "verifyInit"
+    responsible: "development"
+    action: "verify the odt.properties"
+    state: "UNKNOWN"
+    weight: "1"
+    check: "the properties correspond with the values in integration"
+    milestone: 
+      - name: applicationCreated
+      - reached: false
+  - id: "verifyAutomaticDBCRForSchema"
+    responsible: "DBA"
+    action: "verify the schema setup"
+    state: "UNKNOWN"
+    weight: "1"
+    check: "the stored procedures are present"
+    milestone: 
+      - name: dbReadyForDBCR
+      - reached: false
+  - id: "reverseProxyConfiguration"
+    responsible: "middleware"
+    action: "add the 2 gears in the RP configuration with their external name"
+    state: "UNKNOWN"
+    weight: "1"
+    check: "go to the configured url and see that the application is alive"
+    milestone: 
+      - name: reachableViaRP
+      - reached: false
+  - id: "exposesPipes"
+    responsible: "development"
+    action: "Does the application exposes pipes on the customer bus?"
+    state: "UNKNOWN"
+    weight: "1"
+    options:
+      - yes
+      - no
+  - id: "idpcustomerConfiguration"
+    responsible: "development"
+    action: "communicate to 'customer-analysts@customer.company.com' the new creation of the app"
+    state: "UNKNOWN"
+    weight: "1"

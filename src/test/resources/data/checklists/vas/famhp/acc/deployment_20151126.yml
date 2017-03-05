@@ -6,10 +6,10 @@ template: /deployment/firstDeployment
 steps:
   - id: createSecureGit
     responsible: middleware
-    action: request secure GIT to JDSS. Request URL
+    action: request secure GIT to toolingDep. Request URL
     state: OK
     executor: ikke
-    check: on the deployment station, perform git clone with the URL from JDSS
+    check: on the deployment station, perform git clone with the URL from toolingDep
   - id: createApplication
     responsible: middleware
     action: create the application in the proper zone

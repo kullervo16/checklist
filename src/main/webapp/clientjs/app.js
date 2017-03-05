@@ -373,6 +373,7 @@
 
         $scope.tagSelection         = '';
         $scope.milestoneSelection   = '';
+        $scope.filter               = '';
         $scope.hideClosedChecklists = false;
         if ($scope.mode === 'template') {
           // if mode is template, we show a template in the checklist view (but in readonly)
@@ -1286,6 +1287,10 @@
         function openOverview() {
           window.open('checklistOverview.html#tags=' + $scope.tagSelection + "&milestones=" + $scope.milestoneSelection, '_self');
         }
+        
+        function filterTags() {            
+            filterAndDisplayTagData();
+        }
 
         function addTagToSelection(tag) {
           if ($scope.tagSelection === '') {
@@ -1293,27 +1298,43 @@
           } else {
             $scope.tagSelection = $scope.tagSelection + "," + tag.innerText;
           }
+          $scope.filter = '';
+          
           createTagCloud('rest/tags?filter=' + $scope.tagSelection);
+        }
+        
+        function filterAndDisplayTagData() {
+            var data = [];
+            var nbEntries = $scope.rawTags.entries.length;
+            for (var i = 0; i < nbEntries; i++) {
+                if($scope.filter === '' || $scope.rawTags.entries[i].text.indexOf($scope.filter) >= 0) {
+                    data.push($scope.rawTags.entries[i]);
+                }
+            }
+            
+            nbEntries       = data.length;            
+            if (nbEntries == 0) {
+               openOverview();
+            }
+            $('#tags').empty();
+             $('#tags').jQCloud('destroy');
+             for (var i = 0; i < nbEntries; i++) {
+               var entriesWalker                  = data[i];
+               entriesWalker['handlers']          = {};
+               entriesWalker['handlers']['click'] = function () {
+                 angular.element('#tags').scope().addTagToSelection(this)
+               };
+             }
+             $('#tags').jQCloud(data);
         }
 
         function createTagCloud(path) {
           $http.get(path)
-               .success(function (data, status, headers, config) {
-                 $scope.tagSelection = $scope.arrayToComaSeparatedString(data.selection);
-                 var nbEntries       = data.entries.length;
-                 if (nbEntries == 0) {
-                   openOverview();
-                 }
-                 $('#tags').empty();
-                 $('#tags').jQCloud('destroy');
-                 for (var i = 0; i < nbEntries; i++) {
-                   var entriesWalker                  = data.entries[i];
-                   entriesWalker['handlers']          = {};
-                   entriesWalker['handlers']['click'] = function () {
-                     angular.element('#tags').scope().addTagToSelection(this)
-                   };
-                 }
-                 $('#tags').jQCloud(data.entries);
+               .success(function (data, status, headers, config) {                 
+                 $scope.rawTags = data;
+                 $scope.tagSelection = $scope.arrayToComaSeparatedString(data.selection);                                  
+                 filterAndDisplayTagData();
+                 
                }).error(function (data, status, headers, config) {
             console.log('Error getting rest/tags');
           });
@@ -1444,6 +1465,7 @@
         $scope.clearTagSelection       = clearTagSelection;
         $scope.clearMilestoneSelection = clearMilestoneSelection;
         $scope.openOverview            = openOverview;
+        $scope.filterTags              = filterTags;
         $scope.addTagToSelection       = addTagToSelection;
         $scope.addMileStoneToSelection = addMileStoneToSelection;
         $scope.instantiateFromTemplate = instantiateFromTemplate;

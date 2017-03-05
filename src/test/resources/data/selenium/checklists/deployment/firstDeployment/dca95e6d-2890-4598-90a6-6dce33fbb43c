@@ -1,0 +1,114 @@
+displayName: "Openshift V2 first deployment"
+description: "Checklist to monitor a first deployment of an application for Openshift V2"
+tags: 
+    - "deployment"
+    - "openshift"
+    - "subchecklist"
+    - "st2"
+    - "1.0.7"
+user: ""
+parent: 8cc85b11-a730-43d6-9a31-83e191549134
+template: /deployment/firstDeployment
+specificTagSet: true
+uniqueTagcombination: true
+steps:
+  - id: "existingDomain"
+    responsible: "middleware"
+    action: "Does the business domain of the application already exist in Openshift?"
+    state: "OK"
+    weight: "1"
+    selectedOption: "yes"
+    lastUpdate: "1477418397037"
+    options:
+      - yes
+      - no
+  - id: "createDomain"
+    responsible: "middleware"
+    action: "create an openshift domain for the application."
+    state: "NOT_APPLICABLE"
+    weight: "1"
+    lastUpdate: "1477418415329"
+    check: 
+      - step: domain is created in acc
+      - step: domain is created in prd
+  - id: "createConfigurationGit"
+    responsible: "toolingDep"
+    action: "create the configuration GIT for this specific application (in acc and prd)"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1477418399626"
+    check: "git clone <repo> returns a (n empty) repo."
+  - id: "createApplication"
+    responsible: "middleware"
+    action: "create the application in the domain. Make sure to enable scaling."
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1477418401538"
+    check: 
+      - step: application is visible in the webconsole
+      - step: scaling is active, current setting is 1
+  - id: "odtCheckout"
+    responsible: "middleware"
+    action: "odt checkout <domain> <application>. Accept the RSA key fingerprint."
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1477418404226"
+    check: 
+      - step: cd <application> -> folder exists
+      - step: ls -la -> should show a .git and a .openshift folder
+  - id: "odtInit"
+    responsible: "middleware"
+    action: "odt init"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1477418406552"
+    check: 
+      - step: in output -> MVN OK
+      - step: ls -l -> no more pom.xml and no more src folder
+      - step: rhc app-show <application> -n <domain>  --gears -> 2 gears, both with haproxy-1.4 in the gear list
+  - id: "verifyInit"
+    responsible: "development"
+    action: "verify the odt.properties"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1477418408304"
+    check: "the properties correspond with the values in integration"
+    milestone: 
+      - name: applicationCreated
+      - reached: true
+  - id: "verifyAutomaticDBCRForSchema"
+    responsible: "DBA"
+    action: "verify the schema setup"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1477418410281"
+    check: "the stored procedures are present"
+    milestone: 
+      - name: dbReadyForDBCR
+      - reached: true
+  - id: "reverseProxyConfiguration"
+    responsible: "middleware"
+    action: "add the 2 gears in the RP configuration with their external name"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1477418412192"
+    check: "go to the configured url and see that the application is alive"
+    milestone: 
+      - name: reachableViaRP
+      - reached: true
+  - id: "exposesPipes"
+    responsible: "development"
+    action: "Does the application exposes pipes on the customer bus?"
+    state: "OK"
+    weight: "1"
+    selectedOption: "no"
+    lastUpdate: "1477418415329"
+    options:
+      - yes
+      - no
+  - id: "idpcustomerConfiguration"
+    responsible: "development"
+    action: "communicate to 'customer-analysts@customer.company.com' the new creation of the app"
+    state: "NOT_APPLICABLE"
+    weight: "1"
+    lastUpdate: "1477418415329"

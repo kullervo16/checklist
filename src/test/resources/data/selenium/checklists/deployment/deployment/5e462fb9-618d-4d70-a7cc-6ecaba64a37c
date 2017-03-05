@@ -1,0 +1,87 @@
+displayName: "Openshift V2 deployment"
+description: "Checklist to monitor a deployment of an application for Openshift V2"
+tags: 
+    - "deployment"
+    - "openshift"
+    - "1.0.7"
+user: ""
+template: /deployment/deployment
+specificTagSet: false
+uniqueTagcombination: false
+steps:
+  - id: "firstDeployment"
+    responsible: "middleware"
+    action: "Is this the first deployment of the application?"
+    state: "UNKNOWN"
+    weight: "1"
+    options:
+      - yes
+      - no
+  - id: "odtCheckout"
+    responsible: "middleware"
+    action: "odt checkout <domain> <application>. Accept the RSA key fingerprint."
+    state: "UNKNOWN"
+    weight: "1"
+    check: 
+      - step: cd <application> -> folder exists
+      - step: ls -la -> should show a .git and a .openshift folder
+  - id: "prepareDeployment"
+    responsible: "middleware"
+    state: "UNKNOWN"
+    subchecklist: "/deployment/firstDeployment"
+    weight: "1"
+  - id: "odtCreate"
+    responsible: "middleware"
+    action: "odt create <version>"
+    state: "UNKNOWN"
+    weight: "1"
+    check: "ls in the deployments folder has to show the correct .war / .ear"
+  - id: "configurationChanges"
+    responsible: "middleware"
+    action: "Does the create output mention any manual changes to be handled?"
+    state: "UNKNOWN"
+    weight: "1"
+    options:
+      - yes
+      - no
+  - id: "mergeChanges"
+    responsible: "middleware"
+    action: "odt diff for each file. Use the graphical 3-way merge to create your config."
+    state: "UNKNOWN"
+    weight: "1"
+  - id: "commitConfig"
+    responsible: "middleware"
+    action: "git status / git add / git commit (with proper comment)"
+    state: "UNKNOWN"
+    weight: "1"
+    check: "git status should not show any uncommited files anymore"
+  - id: "odtConfirm"
+    responsible: "middleware"
+    action: "odt confirm"
+    state: "UNKNOWN"
+    weight: "1"
+    milestone: 
+      - name: configurationReady
+      - reached: false
+  - id: "odtDeploy"
+    responsible: "middleware"
+    action: "odt deploy"
+    state: "UNKNOWN"
+    weight: "1"
+    check: "no errors from the deployment script"
+    milestone: 
+      - name: deployed
+      - reached: false
+  - id: "verification"
+    responsible: "development"
+    action: "verify deployment"
+    state: "UNKNOWN"
+    weight: "1"
+    check: 
+      - step: no exceptions in the logs
+      - step: monitoring XML is ok
+      - step: application is working
+      - step: if any, automatic DBCRs are executed (check dbcr_history table)
+    milestone: 
+      - name: verified
+      - reached: false

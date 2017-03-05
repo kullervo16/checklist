@@ -155,6 +155,7 @@ public class TemplateTest extends BaseSeleniumTest {
         alert.accept();
         
         // damn, we're not allowed to delete this one... ok
+        Thread.sleep(500);
         alert = driver.switchTo().alert();
         assertEquals("The template /development/verifyDeployment is referenced by the template /development/verifyDeployment. Please remove the link between those 2 templates before deleting /development/verifyDeployment.",alert.getText());
         alert.dismiss();

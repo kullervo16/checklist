@@ -47,12 +47,12 @@ public class ChecklistTest {
         assertEquals("middleware", steps.get(1).getResponsible());
         assertEquals("middleware", steps.get(2).getResponsible());
         
-        assertEquals("request secure GIT to JDSS. Request URL", steps.get(0).getAction());
+        assertEquals("request secure GIT to toolingDep. Request URL", steps.get(0).getAction());
         assertEquals("create the application in the proper zone", steps.get(1).getAction());
         assertEquals("perform odt init", steps.get(2).getAction());
         
         assertEquals(1, steps.get(0).getChecks().size());
-        assertEquals("on the deployment station, perform git clone with the URL from JDSS", steps.get(0).getChecks().get(0));
+        assertEquals("on the deployment station, perform git clone with the URL from toolingDep", steps.get(0).getChecks().get(0));
         
         assertEquals(2, steps.get(1).getChecks().size());
         assertEquals("verify proper gear type (must match environment)", steps.get(1).getChecks().get(0));

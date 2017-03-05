@@ -53,8 +53,10 @@
       <h1>Tags & milestones</h1>
     </div>
     <h2>Tags : </h2>
+    <p>Filter :&nbsp;&nbsp;&nbsp;<input id="filter" type="text" ng-change="filterTags()" ng-model="filter"/></p>
     <h3>Current selection : {{tagSelection}}
         &nbsp;&nbsp;&nbsp;
+        
       <button type="button" class="btn btn-default" title="Go to selection" ng-if="tagSelection !== ''" ng-click="openOverview()">
         <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
       </button>

@@ -3,8 +3,6 @@ package kullervo16.checklist.selenium;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
@@ -15,7 +13,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -32,7 +30,8 @@ public abstract class BaseSeleniumTest {
 
     @Before
     public void setUp() throws Exception {
-        driver = new FirefoxDriver();
+        System.setProperty("webdriver.chrome.driver", "./chromedriver/chromedriver");
+        driver = new ChromeDriver();
         wait = new WebDriverWait(driver, 2);
     }
 

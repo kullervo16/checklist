@@ -1,0 +1,100 @@
+displayName: "Openshift V2 deployment"
+description: "Checklist to monitor a deployment of an application for Openshift V2"
+tags: 
+    - "deployment"
+    - "openshift"
+    - "stede"
+    - "1.0.7"
+user: ""
+template: /deployment/deployment
+specificTagSet: true
+uniqueTagcombination: true
+steps:
+  - id: "firstDeployment"
+    responsible: "middleware"
+    action: "Is this the first deployment of the application?"
+    state: "OK"
+    weight: "1"
+    selectedOption: "no"
+    lastUpdate: "1470036345870"
+    options:
+      - yes
+      - no
+  - id: "odtCheckout"
+    responsible: "middleware"
+    action: "odt checkout <domain> <application>. Accept the RSA key fingerprint."
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1470036359968"
+    check: 
+      - step: cd <application> -> folder exists
+      - step: ls -la -> should show a .git and a .openshift folder
+  - id: "prepareDeployment"
+    responsible: "middleware"
+    state: "NOT_APPLICABLE"
+    subchecklist: "/deployment/firstDeployment"
+    weight: "1"
+    lastUpdate: "1470036379876"
+  - id: "odtCreate"
+    responsible: "middleware"
+    action: "odt create <version>"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1470036371057"
+    check: "ls in the deployments folder has to show the correct .war / .ear"
+  - id: "configurationChanges"
+    responsible: "middleware"
+    action: "Does the create output mention any manual changes to be handled?"
+    state: "OK"
+    weight: "1"
+    selectedOption: "yes"
+    lastUpdate: "1470036379876"
+    options:
+      - yes
+      - no
+  - id: "mergeChanges"
+    responsible: "middleware"
+    action: "odt diff for each file. Use the graphical 3-way merge to create your config."
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1470036388177"
+  - id: "commitConfig"
+    responsible: "middleware"
+    action: "git status / git add / git commit (with proper comment)"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1470036396140"
+    check: "git status should not show any uncommited files anymore"
+  - id: "odtConfirm"
+    responsible: "middleware"
+    action: "odt confirm"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1470036398269"
+    milestone: 
+      - name: configurationReady
+      - reached: false
+  - id: "odtDeploy"
+    responsible: "middleware"
+    action: "odt deploy"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1470036408387"
+    check: "no errors from the deployment script"
+    milestone: 
+      - name: deployed
+      - reached: true
+  - id: "verification"
+    responsible: "development"
+    action: "verify deployment"
+    state: "OK"
+    weight: "1"
+    lastUpdate: "1470036423650"
+    check: 
+      - step: no exceptions in the logs
+      - step: monitoring XML is ok
+      - step: application is working
+      - step: if any, automatic DBCRs are executed (check dbcr_history table)
+    milestone: 
+      - name: verified
+      - reached: true
