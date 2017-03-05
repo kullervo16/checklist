@@ -67,7 +67,7 @@ public class ChecklistRepositoryTest {
         List<String> tagList = new LinkedList<>();
         tagList.add("odt");
         List<ChecklistInfo> cli = this.repository.getChecklistInformation(tagList, null, false);
-        assertEquals(2, cli.size());
+        assertEquals(3, cli.size());
         assertNotNull(cli.get(0).getUuid());        
         assertNotNull(cli.get(0).getTags());    
         tagList.clear();
@@ -143,7 +143,7 @@ public class ChecklistRepositoryTest {
 
             if ("cl1".equals(tagcloudEntry.getText())) {
                 assertEquals(1, tagcloudEntry.getWeight());
-            } else if ("odt".equals(tagcloudEntry.getText())) {
+            } else if ("firstDeployment".equals(tagcloudEntry.getText())) {
                 assertEquals(2, tagcloudEntry.getWeight());
             } else {
                 Assert.fail("Unexpected tag: " + tagcloudEntry.getText());
@@ -158,7 +158,7 @@ public class ChecklistRepositoryTest {
 
             if ("cl1".equals(tagcloudEntry.getText())) {
                 assertEquals(1, tagcloudEntry.getWeight());
-            } else if ("odt".equals(tagcloudEntry.getText())) {
+            } else if ("firstDeployment".equals(tagcloudEntry.getText())) {
                 assertEquals(2, tagcloudEntry.getWeight());
             } else {
                 Assert.fail("Unexpected tag: " + tagcloudEntry.getText());
