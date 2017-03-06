@@ -57,6 +57,8 @@ public class Step {
 
     protected String subChecklist;
 
+    protected List<String> subChecklistTags;
+
     protected List<String> options;
 
     protected List<Condition> conditions;
@@ -99,6 +101,7 @@ public class Step {
         weight = step.getWeight();
         documentation = step.getDocumentation();
         subChecklist = step.getSubChecklist();
+        subChecklistTags = step.getSubChecklistTags();
         options = step.getOptions();
         question = step.getQuestion();
         answerType = step.getAnswerType();
@@ -155,12 +158,32 @@ public class Step {
         checks = new LinkedList<>();
         executor = (String) stepMap.get("executor");
         documentation = (String) stepMap.get("documentation");
-        subChecklist = (String) stepMap.get("subchecklist");
         question = (String) stepMap.get("question");
         answerType = (String) stepMap.get("answerType");
         child = (String) stepMap.get("child");
         weight = stepMap.get("weight") == null ? 1 : Integer.parseInt(stepMap.get("weight").toString());
         user = (String) stepMap.get("user");
+
+        // Process the subchecklist property
+        {
+            final Object subChecklistProperty = stepMap.get("subchecklist");
+
+            if (subChecklistProperty != null) {
+
+                // This is kept for backward compatibility
+                if (subChecklistProperty instanceof String) {
+
+                    subChecklist = (String) subChecklistProperty;
+
+                } else {
+
+                    final Map<String,Object> subChecklistProperties = (Map<String, Object>) subChecklistProperty;
+
+                    subChecklist = (String) subChecklistProperties.get("id");
+                    subChecklistTags = (List<String>) subChecklistProperties.get("tags");
+                }
+            }
+        }
 
         if (stepMap.get("check") != null) {
 
@@ -589,6 +612,11 @@ public class Step {
 
     public String getSubChecklist() {
         return subChecklist;
+    }
+
+
+    public List<String> getSubChecklistTags() {
+        return subChecklistTags;
     }
 
 

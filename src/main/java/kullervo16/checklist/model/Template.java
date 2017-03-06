@@ -108,6 +108,19 @@ public class Template {
     }
 
 
+    public Step getStepById(final String id) {
+
+        for (final Step step : steps) {
+
+            if (step.getId().equals(id)) {
+                return step;
+            }
+        }
+
+        return null;
+    }
+
+
     protected void checkAndLoadDataFromFile() {
         if (persister != null) {
             persister.checkAndLoadDataFromFile();

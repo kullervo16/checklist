@@ -288,6 +288,7 @@
           <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'template'"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoTemplate(step.subChecklist)">{{step.subChecklist}}</a></h4>
           <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child != null" id="{{step.id}}_subcl1"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="gotoChecklist(step.child)">{{step.subChecklist}}</a></h4>
           <h4 class="subchecklist" ng-if="showSubchecklist(step) && mode === 'checklist' && step.child == null" id="{{step.id}}_subcl2"><span class="goto-checklist glyphicon glyphicon-new-window" aria-hidden="true"></span><a ng-click="launchSubChecklist(step)">{{step.subChecklist}}</a></h4>
+          <span ng-if="showSubchecklist(step)" ng-repeat="tag in step.subChecklistTags | orderBy: tag" class="label label-primary subchecklist-tag">{{tag}}</span>
           <div class="answer" ng-if="step.question" id="{{step.id}}_answer">
             <p ng-if="showAnswerTextBox(step) && canModify()" id="{{step.id}}_answer_txt">
               <textarea id="{{step.id}}_textarea" ng-model="step.answers[0]" onkeyup="autoGrow(this)" onclick="autoGrow(this)" onmouseenter="autoGrow(this)"></textarea>

@@ -83,20 +83,29 @@ public class Checklist extends Template {
             // Add the subchecklist tag to identify sub-checklists
             tags.add("subchecklist");
 
-            final String[] parentTtemplateIdTags = getTagsFromTemplateId(parent.template);
-
             // Add parent's tags to the sub-checklist
             for (final String parentTag : parent.getTags()) {
 
-                // Do not add existing tags
-                // Do not add the tag generated tags based on the template ID to keep tags set unique
+                // Do no add the original parent tags
                 // Do not add @user tags
-                if (!tags.contains(parentTag)
-                    && !parentTag.equals(parentTtemplateIdTags[0])
-                    && !parentTag.equals(parentTtemplateIdTags[1])
+                if (!parent.getOriginalTemplateTags().contains(parentTag)
                     && !(parentTag.length() > 0 && parentTag.charAt(0) == '@')) {
 
-                    tags.add(parentTag);
+                    addTag(parentTag);
+                }
+            }
+
+            // Add the tags defined in the parent step
+            {
+                final List<String> subChecklistTags = parent.getStepById(parentStepId).getSubChecklistTags();
+
+                if (subChecklistTags != null) {
+
+                    for (final String subChecklistTag : subChecklistTags) {
+
+                        addOriginalTag(subChecklistTag);
+                        addTag(subChecklistTag);
+                    }
                 }
             }
 
@@ -114,9 +123,9 @@ public class Checklist extends Template {
         super.checkAndLoadDataFromFile();
 
         // migration : if the originalTemplateTags are empty but the template has tags, add them at this moment (otherwise the tag management does not work as it should)
-        if( this.getOriginalTemplateTags().isEmpty()) {
+        if( this.originalTemplateTags.isEmpty()) {
             Template template = TemplateRepository.INSTANCE.getTemplate(this.template);
-            this.setOriginalTemplateTags(this.getTagsFromTemplate(template));
+            this.originalTemplateTags = this.getTagsFromTemplate(template);
             for(String ttag : this.originalTemplateTags) {
                 if(!this.tags.contains(ttag)) {
                     this.tags.add(ttag); // also add the tag to the taglist (like it should have been done at creation)
@@ -489,6 +498,13 @@ public class Checklist extends Template {
 
         if (!tags.contains(tag)) {
             tags.add(tag);
+        }
+    }
+
+    public void addOriginalTag(final String tag) {
+
+        if (!originalTemplateTags.contains(tag)) {
+            originalTemplateTags.add(tag);
         }
     }
 }

@@ -1,7 +1,7 @@
 description: Checklist to verify a deployment
 tags:
-    - tag1
-    - tag2    
+  - tag1
+  - tag2
 steps :    
     - id: stepa
       responsible: dev
@@ -137,9 +137,31 @@ steps :
           - stepId: step6
             expectedStates: COMPLETE
       documentation: http://www.google.be
-    - id: subchecklist
+    - id: subchecklist1
       responsible: development
       subchecklist: /stvar/verifyDeployment
+      conditions:
+          - stepId: step1
+            expectedAnswers:
+              - option2
+    - id: subchecklist_acc
+      responsible: development
+      subchecklist:
+        id: /stvar/verifyDeployment
+        tags:
+          - acc
+      conditions:
+          - stepId: step1
+            expectedAnswers:
+              - option2
+    - id: subchecklist_prd
+      responsible: development
+      subchecklist:
+        id: /stvar/verifyDeployment
+        tags:
+          - prd
+          - prd2
+          - prd3
       conditions:
           - stepId: step1
             expectedAnswers:

@@ -454,11 +454,30 @@ public class TemplatePersister {
         printLine(writer, "  executor", step.getExecutor());
         printLine(writer, "  comment", step.getComment());
         printLine(writer, "  documentation", step.getDocumentation());
-        printLine(writer, "  subchecklist", step.getSubChecklist());
         printLine(writer, "  weight", "" + step.getWeight());
         printLine(writer, "  question", step.getQuestion());
         printLine(writer, "  answerType", step.getAnswerType());
         printLine(writer, "  child", step.getChild());
+
+        {
+            final String subChecklist = step.getSubChecklist();
+            final List<String> subChecklistTags = step.getSubChecklistTags();
+
+            if (subChecklist != null) {
+
+                writer.append("    ").append("subchecklist: \n");
+                writer.append("      ").append("id: ").append(subChecklist).append('\n');
+
+                if (subChecklistTags != null) {
+
+                    writer.append("      ").append("tags: ").append('\n');
+
+                    for (final String tagsWalker : subChecklistTags) {
+                        writer.append("        - ").append(tagsWalker).append('\n');
+                    }
+                }
+            }
+        }
 
         if (step.getLastUpdate() != null) {
             printLine(writer, "  lastUpdate", "" + step.getLastUpdate().getTime());
