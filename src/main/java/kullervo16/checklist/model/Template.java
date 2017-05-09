@@ -8,9 +8,11 @@ package kullervo16.checklist.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import kullervo16.checklist.model.persist.TemplatePersister;
 
@@ -27,7 +29,7 @@ public class Template {
 
     protected String description;
 
-    protected List<String> tags = new LinkedList<>();
+    protected Set<String> tags = new HashSet<>();
 
     protected TemplatePersister persister;
 
@@ -75,7 +77,7 @@ public class Template {
 
 
     public void setTags(final List<String> tags) {
-        this.tags = tags;
+        this.tags = new HashSet<>(tags);
     }
 
 
@@ -98,7 +100,7 @@ public class Template {
 
     public List<String> getTags() {
         checkAndLoadDataFromFile();
-        return tags;
+        return new LinkedList<String>(tags);
     }
 
 
