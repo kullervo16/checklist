@@ -4,9 +4,11 @@ package kullervo16.checklist.rest;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
@@ -386,11 +388,11 @@ public class ChecklistService {
 
             if (!cl.getTags().contains(tag)) {
 
-                final List<String> newTagList = new LinkedList<>(cl.getTags());
+                final Set<String> newTagList = new HashSet<>(cl.getTags());
 
                 newTagList.add(tag);
                 cl.setUniqueTagcombination(checklistRepository.isTagCombinationUnique(newTagList, cl.getId()));
-                cl.getTags().add(tag);
+                cl.setTags(newTagList);
                 cl.setSpecificTagSet(true);
             }
 
@@ -424,11 +426,11 @@ public class ChecklistService {
             }
         }
 
-        final List<String> newTagList = new LinkedList<>(cl.getTags());
+        final Set<String> newTagSet = new HashSet<>(cl.getTags());
 
-        newTagList.remove(tag);
-        cl.setUniqueTagcombination(checklistRepository.isTagCombinationUnique(newTagList, cl.getId()));
-        cl.getTags().remove(tag);
+        newTagSet.remove(tag);
+        cl.setUniqueTagcombination(checklistRepository.isTagCombinationUnique(newTagSet, cl.getId()));
+        cl.setTags(newTagSet);
         ActorRepository.getPersistenceActor().tell(new PersistenceRequest(checklistId), null);
 
         return Response.status(Response.Status.OK).entity(cl).build();

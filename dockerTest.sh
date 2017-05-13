@@ -1,3 +1,4 @@
+mvn clean install -DskipTests
 ./dockerBuild.sh
 
 PROJECT_DIR="$(pwd)"

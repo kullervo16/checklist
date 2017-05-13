@@ -259,7 +259,7 @@
       </p>
     </div>
     <div ng-show="data.tags.length">
-      <p><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+      <p id="tagList"><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
         <span id="tags" ng-repeat="tag in data.tags | orderBy: tag"><span class="label label-primary" ng-click="removeTagFromChecklist(tag)">{{tag}}</span></span>
         <button id="addTagButton" type="button" class="btn btn-default btn-sm" title="Add tag" ng-click="showModal('#tagModal')" ng-show="mode === 'checklist' && canModify()">
           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>

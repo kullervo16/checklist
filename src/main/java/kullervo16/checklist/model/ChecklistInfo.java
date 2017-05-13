@@ -3,6 +3,7 @@ package kullervo16.checklist.model;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Info object for checklists. It's natural ordering is on the last activity.
@@ -21,7 +22,7 @@ public class ChecklistInfo implements Comparable<ChecklistInfo> {
 
     private long lastActive;
 
-    private final List<String> tags;
+    private final Set<String> tags;
 
 
     public ChecklistInfo(final Checklist cl) {
@@ -72,7 +73,7 @@ public class ChecklistInfo implements Comparable<ChecklistInfo> {
     }
 
 
-    public List<String> getTags() {
+    public Set<String> getTags() {
         return tags;
     }
 

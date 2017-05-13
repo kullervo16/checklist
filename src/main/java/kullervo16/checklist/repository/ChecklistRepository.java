@@ -217,7 +217,7 @@ public enum ChecklistRepository {
                     }
                 }
 
-                final List<String> clTags = cl.getTags();
+                final Set<String> clTags = cl.getTags();
 
                 // If it is the first checklist
                 if (commonTags == null) {
@@ -441,7 +441,7 @@ public enum ChecklistRepository {
      * @param id   the id of the checklist in question (is not taken into account during comparison)
      * @return
      */
-    public boolean isTagCombinationUnique(final List<String> tags, final String id) {
+    public boolean isTagCombinationUnique(final Set<String> tags, final String id) {
 
         synchronized (lock) {
 
@@ -481,15 +481,17 @@ public enum ChecklistRepository {
        
         synchronized (lock) {
             for(Checklist walker : data.values()) {
-                if(walker.getTags().contains(tagName)) {
+                Set<String> workingSet = new HashSet<>(walker.getTags());
+                if(workingSet.contains(tagName)) {
                     if(!walker.getOriginalTemplateTags().contains(tagName)) {
-                        walker.getTags().remove(tagName);
+                        workingSet.remove(tagName);
                     }                    
-                    if(!walker.getTags().contains(mergeInto)) {
-                        walker.getTags().add(mergeInto);
+                    if(!workingSet.contains(mergeInto)) {
+                        workingSet.add(mergeInto);
                     }                    
                     ActorRepository.getPersistenceActor().tell(new PersistenceRequest(walker.getId()), null);                    
                 }
+                walker.setTags(workingSet);
             }
         }
     }

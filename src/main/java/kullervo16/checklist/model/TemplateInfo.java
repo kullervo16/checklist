@@ -6,6 +6,7 @@
 package kullervo16.checklist.model;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Data object specifying the info for a template
@@ -16,7 +17,7 @@ public class TemplateInfo implements Comparable<TemplateInfo> {
 
     private String description;
 
-    private List<String> tags;
+    private Set<String> tags;
 
     private List<Milestone> milestones;
 
@@ -47,12 +48,12 @@ public class TemplateInfo implements Comparable<TemplateInfo> {
     }
 
 
-    public List<String> getTags() {
+    public Set<String> getTags() {
         return tags;
     }
 
 
-    public void setTags(final List<String> tags) {
+    public void setTags(final Set<String> tags) {
         this.tags = tags;
     }
 
