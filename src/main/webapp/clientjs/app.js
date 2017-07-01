@@ -11,13 +11,20 @@
 
   app.directive('ngEnter', function () {
     return function (scope, element, attrs) {
-      element.bind("keydown keypress", function (event) {
+      element.bind("keydown keypress", function (event) {          
         if (event.which === 13) {
+            console.log("Executing enter");
           scope.$apply(function () {
             scope.$eval(attrs.ngEnter);
           });
           event.preventDefault();
-        }
+        } else if(event.which === 8) {
+           console.log("backspace intercepted");
+           event.currentTarget.value = event.currentTarget.value.substring(0, event.currentTarget.value.length-1);
+        } else if (event.which === 82) {
+            console.log("r intercepted");
+            event.currentTarget.value = event.currentTarget.value + event.key; // handles both r and R
+        }                                    
       });
     };
   });
@@ -1047,7 +1054,8 @@
         }
 
         function addTag(tag) {
-          $http.put('rest/checklists/' + $location.search().id + "/tags/" + tag)
+          var encodedTag = encodeURI(tag.replace('/',''));
+          $http.put('rest/checklists/' + $location.search().id + "/tags/" + encodedTag)
                .success(function (data, status, headers, config) {
                  $scope.newTag = '';
                  $scope.data   = data;
